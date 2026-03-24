@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/helper/Code.php';
 // 应用公共文件
 function Show($code, $data = [], $msg = 0){
     // 如果 msg 为空或者是数字，使用 lang() 获取多语言

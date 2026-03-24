@@ -74,7 +74,7 @@ class LoginCon extends BaseCon
 
             $userNo = $newUserId + USER_NO_OFFSET;
             // 邀请码改为基于 user_no 生成，确保与用户编号一一对应、天然唯一
-            $invitationCode = strtoupper(base_convert((string)$userNo, 10, 36));
+            $invitationCode = $userNo;
             // 无邀请码时，创建新的团队ID（使用自己的 user_no）
             $userTeam = $userNo;
             // 有邀请码且上级存在团队号时，继承上级团队ID
@@ -135,7 +135,7 @@ class LoginCon extends BaseCon
             return Show(ERROR, [], 10002);
         }
 
-        if ($userInfo['pwd'] !== ShiftDecode($post['pwd'])) {
+        if ($userInfo['pwd'] !== ShiftEncode($post['pwd'])) {
             return Show(ERROR, [], 10001);
         }
 
