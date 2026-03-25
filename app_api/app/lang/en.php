@@ -75,4 +75,8 @@ return array(
     10111 => 'Today\'s VIP reward has already been claimed',
     10112 => 'VIP reward claimed successfully',
     10113 => 'Failed to claim VIP reward, please try again later',
+
+    // VIP upgrade related
+    10120 => 'Failed to increase VIP experience, please try again later',
+    10121 => 'Failed to upgrade VIP level, please try again later',
 );

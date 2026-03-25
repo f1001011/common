@@ -55,7 +55,7 @@ class VipCon extends BaseCon
         $user = CommonUserModel::PageDataOne(['id' => $userId]);
         if (!$user || (int)($user['level_vip'] ?? 0) <= 0) {
             Cache::delete($lockKey);
-            return Show(ERROR, [], VIP_DAILY_REWARD_NO_VIP);
+            return Show(ERROR, [], 10110);
         }
 
         // 根据用户当前VIP等级查询对应的每日奖励配置
@@ -63,7 +63,7 @@ class VipCon extends BaseCon
         $vipConfig = CommonVipModel::PageDataOne(['vip' => $vipLevel]);
         if (!$vipConfig) {
             Cache::delete($lockKey);
-            return Show(ERROR, [], VIP_DAILY_REWARD_NO_VIP);
+            return Show(ERROR, [], 10110);
         }
 
         // 检查今天是否已领取过VIP每日奖励
@@ -71,14 +71,14 @@ class VipCon extends BaseCon
         $todayLog = CommonVipDailyRewardLogModel::getTodayClaim($userId, $claimDate);
         if ($todayLog) {
             Cache::delete($lockKey);
-            return Show(ERROR, [], VIP_DAILY_REWARD_ALREADY);
+            return Show(ERROR, [], 10111);
         }
 
         // reward_money 为当前VIP等级每天可领取的基础奖励金额
         $rewardAmount = (float)($vipConfig['reward_money'] ?? 0);
         if ($rewardAmount <= 0) {
             Cache::delete($lockKey);
-            return Show(ERROR, [], VIP_DAILY_REWARD_NO_VIP);
+            return Show(ERROR, [], 10110);
         }
 
         // 开启事务，确保“发放奖励 + 写资金流水 + 写领取日志”一致成功
@@ -138,11 +138,11 @@ class VipCon extends BaseCon
                 'reward_amount' => $rewardAmount,
                 'reward_type' => VIP_DAILY_REWARD_TYPE,
                 'claim_date' => $claimDate,
-            ], VIP_DAILY_REWARD_SUCCESS);
+            ], 10112);
         } catch (\Throwable $e) {
             Db::rollback();
             Cache::delete($lockKey);
-            return Show(ERROR, [], VIP_DAILY_REWARD_FAILED);
+            return Show(ERROR, [], 10113);
         }
     }
 }

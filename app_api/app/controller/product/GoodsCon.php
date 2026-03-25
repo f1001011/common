@@ -6,8 +6,9 @@ namespace app\controller\product;
 use app\controller\BaseCon;
 use app\model\CommonGoodsModel;
 use app\model\CommonGoodsOrderModel;
-use app\model\CommonUserModel;
 use app\model\CommonPayMoneyLogModel;
+use app\model\CommonUserModel;
+use app\model\CommonVipModel;
 use think\facade\Db;
 use think\facade\Cache;
 
@@ -209,6 +210,19 @@ class GoodsCon extends BaseCon
                 $num // 购买数量
             );
             
+            // 7.5 处理VIP升级逻辑
+            // 当前项目具体走哪一套升级规则，统一由 VIP_UPGRADE_MODE 配置控制：
+            // 0-关闭
+            // 1-按购买金额累计经验升级
+            // 2-按指定商品和数量升级
+            // 这里收口调用模型方法，后续即使增加第三套规则，也不需要改购买主流程
+            CommonVipModel::handleUpgradeAfterBuy(
+                $user,
+                $goods,
+                (float)$orderMoney,
+                (int)$num
+            );
+
             // 提交事务，确认所有数据变更
             Db::commit();
             // 删除缓存锁，允许用户下次操作
@@ -222,7 +236,13 @@ class GoodsCon extends BaseCon
             Db::rollback();
             // 删除缓存锁
             Cache::delete($lockKey);
-            // 返回错误提示
+            // 如果是VIP升级过程中抛出的状态码异常，则优先返回对应多语言状态码
+            $errorCode = (int)$e->getCode();
+            if ($errorCode > 0) {
+                return Show(ERROR, [], $errorCode);
+            }
+
+            // 其他未单独定义状态码的异常，统一返回购买失败
             return Show(ERROR, [], 10078);
         }
     }

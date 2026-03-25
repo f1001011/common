@@ -55,4 +55,22 @@ class CommonUserModel extends BaseModel
     {
         return self::where('id', $userId)->inc('money_integral', $amount)->update();
     }
+
+    /**
+     * 增加用户当前经验值
+     */
+    public static function incCurrentExperience($userId, $amount)
+    {
+        return self::where('id', $userId)->inc('current_experience', $amount)->update();
+    }
+
+    /**
+     * 更新用户VIP等级
+     */
+    public static function updateVipLevel($userId, $vipLevel)
+    {
+        return self::where('id', $userId)->update([
+            'level_vip' => $vipLevel,
+        ]);
+    }
 }

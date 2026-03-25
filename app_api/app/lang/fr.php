@@ -42,6 +42,10 @@ return array(
     10111 => 'La récompense VIP du jour a déjà été réclamée',
     10112 => 'Récompense VIP réclamée avec succès',
     10113 => 'Échec de la réclamation de la récompense VIP, veuillez réessayer plus tard',
+
+    // VIP upgrade related
+    10120 => 'Échec de l\'augmentation de l\'expérience VIP, veuillez réessayer plus tard',
+    10121 => 'Échec de la mise à niveau VIP, veuillez réessayer plus tard',
     
     // Général
     1000 => 'Opération réussie',

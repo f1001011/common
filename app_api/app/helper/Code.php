@@ -70,17 +70,6 @@ const SIGN_EXTRA_DAYS = [
 
 /*
 |--------------------------------------------------------------------------
-| VIP每日奖励状态码
-|--------------------------------------------------------------------------
-*/
-
-const VIP_DAILY_REWARD_NO_VIP = 10110; // 当前没有可领取奖励的VIP等级
-const VIP_DAILY_REWARD_ALREADY = 10111; // 今日已领取
-const VIP_DAILY_REWARD_SUCCESS = 10112; // 领取成功
-const VIP_DAILY_REWARD_FAILED = 10113; // 领取失败
-
-/*
-|--------------------------------------------------------------------------
 | VIP每日奖励配置
 |--------------------------------------------------------------------------
 */
@@ -91,4 +80,23 @@ const VIP_DAILY_REWARD_TYPE_INTEGRAL = 2;
 
 // 当前VIP每日奖励默认发放类型
 const VIP_DAILY_REWARD_TYPE = VIP_DAILY_REWARD_TYPE_BALANCE;
+
+/*
+|--------------------------------------------------------------------------
+| VIP升级配置
+|--------------------------------------------------------------------------
+*/
+
+// VIP升级模式：0-关闭，1-按购买金额累计经验升级，2-按指定商品和数量升级
+const VIP_UPGRADE_MODE_OFF = 0;
+const VIP_UPGRADE_MODE_EXPERIENCE = 1;
+const VIP_UPGRADE_MODE_GOODS = 2;
+
+// 当前项目启用的VIP升级模式
+// 模式1：每次购买商品后，把订单金额累加到 current_experience，再按 ntp_common_vip.experience 判断是否升级
+// 模式2：每次购买商品后，判断当前商品ID和购买数量是否满足 ntp_common_vip.buy_goods_id、buy_goods_num 的升级条件
+//       如果满足则直接升级；如果不满足则 current_experience + 1
+// 关闭：不执行任何VIP升级逻辑，方便后续扩展第三套方案
+const VIP_UPGRADE_MODE = VIP_UPGRADE_MODE_OFF;
+
 
