@@ -23,6 +23,48 @@ Route::group('api', function(){
     // 参数: page, limit
     // ----------------------------------------
     Route::post('email/list', \app\controller\config\EmailCon::class . '@GetEmailList');
+
+    // ----------------------------------------
+    // 邮件标记已读
+    // 说明: 将指定邮件标记为已读状态
+    // 参数: id(邮件ID)
+    // ----------------------------------------
+    Route::post('email/mark/read', \app\controller\config\EmailCon::class . '@MarkRead');
+
+    // ----------------------------------------
+    // 通知列表
+    // 说明: 查询当前用户的所有通知，按未读和创建时间倒序排序
+    // 参数: page, limit
+    // ----------------------------------------
+    Route::post('notification/list', \app\controller\config\NotificationCon::class . '@GetNotificationList');
+
+    // ----------------------------------------
+    // 通知标记已读
+    // 说明: 将指定通知标记为已读状态
+    // 参数: id(通知ID)
+    // ----------------------------------------
+    Route::post('notification/mark/read', \app\controller\config\NotificationCon::class . '@MarkRead');
+
+    // ----------------------------------------
+    // 签到
+    // 说明: 用户签到->发放奖励->写入签到记录->返回奖励金额
+    // 参数: 无
+    // ----------------------------------------
+    Route::post('sign/do', \app\controller\activity\UserSignCon::class . '@DoSign');
+
+    // ----------------------------------------
+    // 签到信息
+    // 说明: 获取用户签到状态、连续签到天数、明日奖励预览
+    // 参数: 无
+    // ----------------------------------------
+    Route::post('sign/info', \app\controller\activity\UserSignCon::class . '@GetSignInfo');
+
+    // ----------------------------------------
+    // 签到记录列表
+    // 说明: 获取用户签到历史记录，按id倒序
+    // 参数: page, limit
+    // ----------------------------------------
+    Route::post('sign/log', \app\controller\activity\UserSignLogCon::class . '@GetSignLogList');
     
     // ----------------------------------------
     // 6. 订单列表

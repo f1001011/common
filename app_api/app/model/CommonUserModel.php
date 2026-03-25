@@ -47,4 +47,12 @@ class CommonUserModel extends BaseModel
     {
         return self::where('id', $userId)->where('money_integral', '>=', $amount)->dec('money_integral', $amount)->update();
     }
+
+    /**
+     * 增加用户积分
+     */
+    public static function incIntegral($userId, $amount)
+    {
+        return self::where('id', $userId)->inc('money_integral', $amount)->update();
+    }
 }

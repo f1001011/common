@@ -44,4 +44,47 @@ class EmailCon extends BaseCon
         // 返回成功数据
         return Show(SUCCESS, $list);
     }
+
+    /**
+     * 邮件标记已读接口
+     * 将指定邮件标记为已读状态
+     * 
+     * @return mixed 返回操作结果
+     */
+    public function MarkRead()
+    {
+        // 定义需要接收的参数字段：id-邮件ID
+        $postField = 'id';
+        $post = $this->request->only(explode(',', $postField), 'post', null);
+        
+        // 获取邮件ID
+        $id = $post['id'] ?? 0;
+        
+        // 校验邮件ID是否传入
+        if (!$id) {
+            return Show(ERROR, [], 'id_required');
+        }
+        
+        // 获取当前登录用户的ID
+        $userId = $this->request->UserID;
+        
+        // 查询邮件是否存在
+        $email = CommonEmailModel::PageDataOne(['id' => $id, 'user_id' => $userId]);
+        
+        // 若邮件不存在，则返回错误提示
+        if (!$email) {
+            return Show(ERROR, [], 'email_not_found');
+        }
+        
+        // 若邮件已是已读状态，则直接返回成功
+        if ($email['is_read'] == CommonEmailModel::IS_READ_YES) {
+            return Show(SUCCESS, [], 'email_already_read');
+        }
+        
+        // 更新邮件为已读状态
+        $result = CommonEmailModel::where('id', $id)->update(['is_read' => CommonEmailModel::IS_READ_YES]);
+        
+        // 返回成功数据
+        return Show(SUCCESS, [], 'email_marked_read');
+    }
 }
