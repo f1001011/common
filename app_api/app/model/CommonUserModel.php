@@ -23,4 +23,28 @@ class CommonUserModel extends BaseModel
 
     const IS_WITHDRAW_NO = 0; // 不可提现
     const IS_WITHDRAW_YES = 1; // 可提现
+
+    /**
+     * 增加用户余额
+     */
+    public static function incMoney($userId, $amount)
+    {
+        return self::where('id', $userId)->inc('money_balance', $amount)->update();
+    }
+    
+    /**
+     * 减少用户余额（有锁）
+     */
+    public static function decMoney($userId, $amount)
+    {
+        return self::where('id', $userId)->where('money_balance', '>=', $amount)->dec('money_balance', $amount)->update();
+    }
+    
+    /**
+     * 减少用户积分（有锁）
+     */
+    public static function decIntegral($userId, $amount)
+    {
+        return self::where('id', $userId)->where('money_integral', '>=', $amount)->dec('money_integral', $amount)->update();
+    }
 }
