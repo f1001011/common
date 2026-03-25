@@ -90,7 +90,7 @@ my_app/
 
 后端接口域名统一配置在：
 
-- `src/config.js`
+- `src/config/config.js`
 
 当前默认值：
 
@@ -153,7 +153,7 @@ export const REQUEST_TIMEOUT = 10000
 ## 8. 开发规则
 
 - 新增接口时，先改 `src/api/`，不要在页面里直接写 `axios`
-- 新增域名或请求超时配置时，只改 `src/config.js`
+- 新增域名或请求超时配置时，只改 `src/config/config.js`
 - 新增页面时，先补路由，再补多语言文案
 - 弹窗统一通过 `usePopup()` 调用
 - 颜色主题统一通过 `src/config/colors.ts` 管理

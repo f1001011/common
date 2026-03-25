@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from 'axios'
 import { usePopup } from '@/composables/usePopup'
 import router from '@/router'
-import { API_BASE_URL, REQUEST_TIMEOUT } from '@/config.js'
+import { API_BASE_URL, REQUEST_TIMEOUT } from '@/config/config.js'
 
 const request = axios.create({
     baseURL: API_BASE_URL,
