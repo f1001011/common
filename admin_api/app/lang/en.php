@@ -90,4 +90,19 @@ return array(
     10156 => 'Wares does not exist',
     10157 => 'Please provide at least one field to update',
     10158 => 'Wares deleted successfully',
+
+    // Admin recharge and withdraw management related
+    10160 => 'Recharge order does not exist',
+    10161 => 'Recharge order updated successfully',
+    10162 => 'Recharge order has already been credited, amount or status can no longer be changed',
+    10163 => 'Failed to update recharge order',
+    10164 => 'Withdraw order does not exist',
+    10165 => 'Withdraw order has already been reviewed, status or amount cannot be changed again',
+    10166 => 'Payment channel does not exist',
+    10167 => 'Withdraw order updated successfully',
+    10168 => 'Failed to update withdraw order',
+    10169 => 'Payment channel created successfully',
+    10170 => 'Payment channel updated successfully',
+    10171 => 'Payment channel deleted successfully',
+    10173 => 'Payment channel configuration does not exist',
 );

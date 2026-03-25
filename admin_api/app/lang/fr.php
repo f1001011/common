@@ -63,6 +63,21 @@ return array(
     10157 => 'Veuillez fournir au moins un champ à modifier',
     10158 => 'Produit d\'échange supprimé avec succès',
     
+    // Gestion admin des recharges et retraits
+    10160 => 'La commande de recharge est introuvable',
+    10161 => 'La commande de recharge a été modifiée avec succès',
+    10162 => 'La commande de recharge a déjà été créditée, le montant ou le statut ne peuvent plus être modifiés',
+    10163 => 'Échec de la modification de la commande de recharge',
+    10164 => 'La commande de retrait est introuvable',
+    10165 => 'La commande de retrait a déjà été traitée, le statut ou le montant ne peuvent plus être modifiés',
+    10166 => 'Le canal de paiement n\'existe pas',
+    10167 => 'La commande de retrait a été modifiée avec succès',
+    10168 => 'Échec de la modification de la commande de retrait',
+    10169 => 'Canal de paiement ajouté avec succès',
+    10170 => 'Canal de paiement modifié avec succès',
+    10171 => 'Canal de paiement supprimé avec succès',
+    10173 => 'La configuration du canal de paiement est introuvable',
+    
     // Général
     1000 => 'Opération réussie',
     1001 => 'Opération échouée',

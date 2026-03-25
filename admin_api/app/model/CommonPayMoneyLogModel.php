@@ -12,6 +12,10 @@ class CommonPayMoneyLogModel extends BaseModel
     const MONEY_TYPE_BALANCE = 1; // 余额账户
     const MONEY_TYPE_INTEGRAL = 2; // 积分账户
 
+    const STATUS_RECHARGE = 101; // 充值到账
+    const STATUS_WITHDRAW = 201; // 提现扣款
+    const STATUS_WITHDRAW_REJECT_REFUND = 202; // 提现拒绝退回余额
+
     const STATUS_ADMIN_INC_BALANCE = 120; // 管理员增加余额
     const STATUS_ADMIN_DEC_BALANCE = 121; // 管理员扣除余额
     const STATUS_ADMIN_INC_INTEGRAL = 122; // 管理员增加积分

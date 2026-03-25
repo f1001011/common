@@ -36,8 +36,29 @@ Route::group('api', function(){
     // 充值记录
     Route::post('pay/recharge/list', \app\controller\payment\PayRechargeCon::class . '@GetRechargeList');
 
+    // 充值订单修改
+    Route::post('pay/recharge/update', \app\controller\payment\PayRechargeCon::class . '@UpdateRechargeOrder');
+
     // 提现记录
     Route::post('pay/cash/list', \app\controller\payment\PayCashCon::class . '@GetCashList');
+
+    // 提现订单修改
+    Route::post('pay/cash/update', \app\controller\payment\PayCashCon::class . '@UpdateCashOrder');
+
+    // 支付渠道列表
+    Route::post('pay/channel/list', \app\controller\payment\PayChannelCon::class . '@GetChannelList');
+
+    // 支付渠道新增
+    Route::post('pay/channel/add', \app\controller\payment\PayChannelCon::class . '@AddChannel');
+
+    // 支付渠道修改
+    Route::post('pay/channel/update', \app\controller\payment\PayChannelCon::class . '@UpdateChannel');
+
+    // 支付渠道删除
+    Route::post('pay/channel/delete', \app\controller\payment\PayChannelCon::class . '@DeleteChannel');
+
+    // 提现凭证展示列表
+    Route::post('withdraw/showcase/list', \app\controller\payment\WithdrawShowcaseCon::class . '@GetShowcaseList');
 
     // 商品订单记录
     Route::post('goods/order/list', \app\controller\product\GoodsOrderCon::class . '@GetOrderList');
