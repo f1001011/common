@@ -44,6 +44,27 @@ Route::group('api', function(){
     // 参数: page, limit
     // ----------------------------------------
     Route::post('income/claim/pending', \app\controller\product\IncomeClaimLogCon::class . '@GetPendingList');
+
+    // ----------------------------------------
+    // 领取收益
+    // 说明: 查找最近即将过期的待领取记录->增加用户余额->写入流水->更新记录状态->返回待领取数量
+    // 参数: 无
+    // ----------------------------------------
+    Route::post('income/claim', \app\controller\product\GoodsOrderCon::class . '@ClaimIncome');
+
+    // ----------------------------------------
+    // 获取待领取数量
+    // 说明: 查询用户所有待领取收益数量
+    // 参数: 无
+    // ----------------------------------------
+    Route::post('income/pending/count', \app\controller\product\GoodsOrderCon::class . '@GetPendingClaimCount');
+
+    // ----------------------------------------
+    // 购买记录（含待领取数量）
+    // 说明: 查询用户订单，status=0正常分红中，附带待领取数量
+    // 参数: page, limit
+    // ----------------------------------------
+    Route::post('goods/buy/record', \app\controller\product\GoodsOrderCon::class . '@GetBuyRecordList');
     
     // ----------------------------------------
     // 8. 抽奖次数

@@ -31,6 +31,11 @@ return array(
     50001 => 'Déjà réclamé',
     50002 => 'Expiré',
     50003 => 'Réclamation réussie',
+
+    // Claim income related
+    10091 => 'Aucun revenu à réclamer',
+    10092 => 'Réclamation réussie',
+    10093 => 'Échec de la réclamation, veuillez réessayer plus tard',
     
     // Général
     1000 => 'Opération réussie',

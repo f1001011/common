@@ -64,4 +64,9 @@ return array(
     10054 => 'Missing avatar info',
     10055 => 'Avatar update failed',
     10056 => 'Minimum withdrawal amount is %s',
+
+    // Claim income related
+    10091 => 'No income to claim',
+    10092 => 'Claim successful',
+    10093 => 'Claim failed, please try again later',
 );

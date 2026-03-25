@@ -8,25 +8,37 @@ use app\model\CommonNotificationModel;
 
 /**
  * 通知控制器
+ * 负责处理用户通知消息相关的业务逻辑
+ * 提供系统通知和交易通知的列表查询，用于用户查看各类通知信息
  */
 class NotificationCon extends BaseCon
 {
     /**
-     * 通知列表
+     * 通知列表接口
+     * 获取当前用户的所有通知列表，按已读状态和创建时间倒序排列
+     * 用于用户中心展示系统通知和交易通知
+     * 
+     * @return mixed 返回通知列表数据，包含通知类型、标题、内容、已读状态、创建时间等
      */
     public function GetNotificationList()
     {
+        // 定义需要接收的参数字段：page-当前页码, limit-每页数量
         $postField = 'page,limit';
         $post = $this->request->only(explode(',', $postField), 'post', null);
         
+        // 获取分页参数，默认为page=1, limit=20
         $page = $post['page'] ?? 1;
         $limit = $post['limit'] ?? 20;
+        // 获取当前登录用户的ID
         $uid = $this->request->UserID;
         
+        // 构建查询条件：当前用户ID
         $map = ['uid' => $uid];
         
+        // 调用模型的分页查询方法，按已读状态正序(未读在前)、创建时间倒序排列
         $list = CommonNotificationModel::PageList($map, '*', (int)$page, (int)$limit, 'is_read asc, create_time desc');
         
+        // 返回成功数据
         return Show(SUCCESS, $list);
     }
 }
