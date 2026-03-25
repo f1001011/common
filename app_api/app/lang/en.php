@@ -79,4 +79,14 @@ return array(
     // VIP upgrade related
     10120 => 'Failed to increase VIP experience, please try again later',
     10121 => 'Failed to upgrade VIP level, please try again later',
+
+    // Withdraw voucher upload related
+    10130 => 'Withdrawal record does not exist',
+    10131 => 'This withdrawal record does not belong to the current user',
+    10132 => 'The current withdrawal status does not allow voucher upload',
+    10133 => 'A voucher has already been uploaded for this withdrawal record',
+    10134 => 'Please upload a valid image format',
+    10135 => 'Upload failed, please try again later',
+    10136 => 'Upload successful',
+    10137 => 'Invalid withdrawal record ID',
 );

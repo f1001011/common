@@ -1,7 +1,7 @@
 <?php
 namespace app\middleware;
 
-use app\model\CommonHomeTokenModel;
+use app\model\CommonAdminTokenModel;
 
 class AuthMiddleware
 {
@@ -13,13 +13,16 @@ class AuthMiddleware
             return Show(ERROR_TOKEN,[],10015);
         }
         
-        $tokenInfo = CommonHomeTokenModel::PageDataOne(['token'=>$token]);
+        $tokenInfo = CommonAdminTokenModel::PageDataOne(['token' => $token]);
         
         if (!$tokenInfo) {
             return Show(ERROR_TOKEN,[],10015);
         }
         
-        $request->UserID = $tokenInfo['user_id'];
+        // admin_api 统一使用管理员token，这里写入 AdminID 供后台接口识别当前登录管理员。
+        // 为兼容当前已写的后台代码，也同步赋值给 UserID，避免已有代码取不到管理员ID。
+        $request->AdminID = (int)$tokenInfo['admin_uid'];
+        $request->UserID = (int)$tokenInfo['admin_uid'];
         
         return $next($request);
     }

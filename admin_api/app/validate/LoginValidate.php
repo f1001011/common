@@ -41,5 +41,6 @@ class LoginValidate extends Validate
 
     protected $scene = [
         'login'=>  ['phone','pwd'],
+        'adminLogin' => ['user_name', 'pwd'],
     ];
 }

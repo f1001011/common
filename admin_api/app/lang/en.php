@@ -64,4 +64,19 @@ return array(
     10054 => 'Missing avatar info',
     10055 => 'Avatar update failed',
     10056 => 'Minimum withdrawal amount is %s',
+
+    // Admin user management related
+    10130 => 'User basic info updated successfully',
+    10131 => 'User freeze status updated successfully',
+    10132 => 'User online status updated successfully',
+    10133 => 'User balance updated successfully',
+    10134 => 'User integral updated successfully',
+    10135 => 'Failed to update user balance, please check whether the balance is sufficient',
+    10136 => 'Failed to update user integral, please check whether the integral is sufficient',
+    10137 => 'Please provide at least one field to update',
+
+    // Admin login related
+    10140 => 'Admin account does not exist',
+    10141 => 'Admin password is incorrect',
+    10142 => 'Admin login successful',
 );

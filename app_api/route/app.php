@@ -149,6 +149,13 @@ Route::group('api', function(){
     // 参数: page, limit
     // ----------------------------------------
     Route::post('pay/cash/list', \app\controller\payment\PayCashCon::class . '@GetCashList');
+
+    // ----------------------------------------
+    // 上传提现凭证
+    // 说明: 上传提现成功凭证图片，一条提现记录只允许上传一次
+    // 参数: withdraw_id, voucher_image(file)
+    // ----------------------------------------
+    Route::post('pay/cash/upload', \app\controller\payment\PayCashCon::class . '@UploadVoucher');
     
     // ----------------------------------------
     // 14. 优惠券列表

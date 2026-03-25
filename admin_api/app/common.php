@@ -99,3 +99,22 @@ function curl_request($url, $datas = null, $method = 'post', $header = array("co
     }
     return $data;
 }
+
+// 加密
+function ShiftEncode($data, $shift = 3) {
+    $result = '';
+    for ($i = 0; $i < strlen($data); $i++) {
+        $result .= chr(ord($data[$i]) + $shift);
+    }
+    return base64_encode($result);
+}
+
+// 解密
+function ShiftDecode($data, $shift = 3) {
+    $data = base64_decode($data);
+    $result = '';
+    for ($i = 0; $i < strlen($data); $i++) {
+        $result .= chr(ord($data[$i]) - $shift);
+    }
+    return $result;
+}
