@@ -36,6 +36,12 @@ return array(
     10091 => 'Aucun revenu à réclamer',
     10092 => 'Réclamation réussie',
     10093 => 'Échec de la réclamation, veuillez réessayer plus tard',
+
+    // VIP daily reward related
+    10110 => 'Aucune récompense VIP disponible à réclamer',
+    10111 => 'La récompense VIP du jour a déjà été réclamée',
+    10112 => 'Récompense VIP réclamée avec succès',
+    10113 => 'Échec de la réclamation de la récompense VIP, veuillez réessayer plus tard',
     
     // Général
     1000 => 'Opération réussie',

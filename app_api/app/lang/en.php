@@ -69,4 +69,10 @@ return array(
     10091 => 'No income to claim',
     10092 => 'Claim successful',
     10093 => 'Claim failed, please try again later',
+
+    // VIP daily reward related
+    10110 => 'No VIP reward available to claim',
+    10111 => 'Today\'s VIP reward has already been claimed',
+    10112 => 'VIP reward claimed successfully',
+    10113 => 'Failed to claim VIP reward, please try again later',
 );

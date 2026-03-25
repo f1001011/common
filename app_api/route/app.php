@@ -205,6 +205,13 @@ Route::group('api', function(){
     // 参数: page, limit
     // ----------------------------------------
     Route::post('vip/daily/reward/log', \app\controller\config\VipDailyRewardLogCon::class . '@GetVipDailyRewardLogList');
+
+    // ----------------------------------------
+    // VIP每日奖励领取
+    // 说明: 根据当前用户VIP等级领取每日奖励，并按配置发放到余额或积分
+    // 参数: 无
+    // ----------------------------------------
+    Route::post('vip/daily/reward/claim', \app\controller\config\VipCon::class . '@ClaimDailyReward');
     
     // ----------------------------------------
     // 37. 积分商品订单列表
