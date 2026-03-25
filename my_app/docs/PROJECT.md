@@ -1,173 +1,197 @@
-# Project Context — v1 App
+# my_app 项目文档
 
-## Tech Stack
+## 1. 项目定位
 
-| Layer | Library |
+`my_app` 当前已经收缩为一个新的前端认证项目，只保留以下能力：
+
+- 登录
+- 注册
+- 多语言基础能力
+- 全局弹窗提示
+- 统一主题色注入
+
+原来的首页、余额中心、商品页、VIP 页没有直接删除，已经归档到 `src/views/archive/`，后续需要时可以继续参考。
+
+## 2. 技术栈
+
+| 层 | 技术 |
 |---|---|
-| Framework | Vue 3 (Composition API, `<script setup>`) |
-| Language | TypeScript |
-| Router | Vue Router 4 |
-| i18n | Vue I18n 9 (legacy: false) |
-| Animations | @vueuse/motion (`v-motion`) |
-| Icons | lucide-vue-next |
-| HTTP | Axios (via `src/api/request.ts`) |
-| Build | Vite |
+| 框架 | Vue 3 |
+| 语言 | TypeScript |
+| 构建 | Vite 5 |
+| 路由 | Vue Router 4 |
+| 多语言 | Vue I18n 9 |
+| 网络请求 | Axios |
+| 动效 | @vueuse/motion |
+| 图标 | lucide-vue-next |
 
----
+## 3. 当前项目范围
 
-## Design System
+当前只保留两个页面：
 
-### Color Palette — Clash Color Scheme
-All colors live in `src/config/colors.ts` and are injected as CSS variables via `src/composables/useTheme.ts`.
+- `Login.vue`
+- `Register.vue`
 
-```
-Background:  #080c18  (deep navy)
-Red:         #ff4d4d / #ff1744
-Cyan:        #00e5ff / #00b0ff
-Amber:       #ffb800 / #ff6d00
-Lime:        #69ff47 / #00e676
-```
+当前只保留两类请求：
 
-**CSS Variables (auto-injected to :root)**
-```
---bg-base        --bg-card        --bg-card-hover
---nav-bg         --orb-red        --orb-cyan        --orb-amber
---color-red      --color-cyan     --color-amber     --color-lime
---text-primary   --text-secondary --text-muted
---border         --border-light
-```
+- 登录接口
+- 注册接口
 
-### Glass Card Pattern
-```css
-background: var(--bg-card);           /* rgba(255,255,255,0.07) */
-backdrop-filter: blur(28px) saturate(160%);
-border: 1px solid var(--border);      /* rgba(255,255,255,0.13) */
-border-radius: 20px;
-```
+当前路由只有：
 
-### 3D Icon Pattern
-```css
-transform: perspective(100px) rotateX(10deg) rotateY(-7deg);
-box-shadow: 3px 4px 0 rgba(0,0,0,0.32), 6px 8px 0 rgba(0,0,0,0.16), 0 0 16px var(--glow);
-```
-On hover: flatten + lift (`rotateX(5deg) rotateY(-3deg) translateY(-4px)`).
+- `/login`
+- `/register`
+- `/` 重定向到 `/login`
 
-### Floating Orb Background
-Every page has a fixed `.bg-canvas` with 1–3 blurred orbs using CSS vars:
-```html
-<div class="bg-canvas">
-  <div class="orb orb-red"></div>
-  <div class="orb orb-cyan"></div>
-  <div class="orb orb-amber"></div>
-</div>
-```
-Orbs animate with `@keyframes drift` (translate + scale, 16–24s loops).
+## 4. 目录结构
 
-### Typography
-```
-Font stack: 'Inter', 'SF Pro Text', -apple-system, 'PingFang SC', 'Noto Sans SC', sans-serif
-```
-
-### Animation — v-motion Spring
-```html
-v-motion
-:initial="{ opacity:0, y:30, scale:0.95 }"
-:enter="{ opacity:1, y:0, scale:1, transition:{ delay:120, type:'spring', stiffness:200, damping:22 } }"
-```
-
----
-
-## File Structure
-
-```
-src/
-├── api/
-│   ├── auth.ts          login/logout API calls
-│   ├── balance.ts       fetchBalanceData()
-│   ├── product.ts       fetchCategories(), fetchProducts(), fetchHomeBalance()
-│   └── request.ts       Axios instance (baseURL, token interceptor)
-├── components/
-│   ├── ActionModal.vue  Bottom-sheet modal for balance actions (deposit/withdraw/transfer/history)
-│   ├── BottomNav.vue    Fixed bottom navigation (4 tabs: Home/Products/Vip/Mine)
-│   └── PopupModal.vue   Toast/popup notification component
-├── composables/
-│   ├── usePopup.ts      showPopup(message, preset) — triggers PopupModal
-│   └── useTheme.ts      Injects cssVarMap into document.documentElement
-├── config/
-│   ├── colors.ts        Master color palette + cssVarMap export
-│   ├── config.ts        CURRENCY = '¥'
-│   └── popupPresets.ts  Popup style presets keyed by name
-├── hooks/
-│   └── useAuth.ts       login(), logout(), token management
-├── locales/
-│   ├── zh.json          Chinese translations
-│   └── en.json          English translations
-├── router/
-│   └── index.ts         Routes + beforeEach (lang param + auth guard)
-├── types/
-│   ├── balance.ts       BalanceData interface
-│   └── product.ts       CategoryItem, ProductItem interfaces
-├── views/
-│   ├── Home.vue         Product listing + carousel + balance quick card
-│   ├── BalanceCenter.vue  Full balance page with digit roller + actions
-│   ├── Login.vue        Simple login form
-│   ├── Products.vue     Placeholder (coming soon)
-│   └── Vip.vue          Placeholder (coming soon)
-├── App.vue              Root: useTheme() + PopupModal + BottomNav + RouterView
-├── config.ts            Re-exports CURRENCY
-├── i18n.ts              Shared i18n instance + setLocale()
-└── main.ts              App bootstrap
+```text
+my_app/
+├── docs/
+│   ├── PROJECT.md
+│   └── 文档说明.md
+├── src/
+│   ├── api/
+│   │   ├── auth.ts
+│   │   └── request.ts
+│   ├── components/
+│   │   └── PopupModal.vue
+│   ├── composables/
+│   │   ├── usePopup.ts
+│   │   └── useTheme.ts
+│   ├── config/
+│   │   ├── colors.ts
+│   │   └── popupPresets.ts
+│   ├── hooks/
+│   │   └── useAuth.ts
+│   ├── locales/
+│   │   ├── zh.json
+│   │   └── en.json
+│   ├── router/
+│   │   └── index.ts
+│   ├── stypes/
+│   │   └── README.md
+│   ├── views/
+│   │   ├── archive/
+│   │   ├── Login.vue
+│   │   └── Register.vue
+│   ├── App.vue
+│   ├── config.js
+│   ├── config.d.ts
+│   ├── env.d.ts
+│   ├── i18n.ts
+│   └── main.ts
+├── index.html
+├── package.json
+└── vite.config.js
 ```
 
----
+## 5. 后端配置
 
-## Key Patterns
+后端接口域名统一配置在：
 
-### i18n — Language Switching
-- Shared instance in `src/i18n.ts`
-- Persisted to `localStorage` key `app_locale`
-- URL param: `?lang=zh` or `?lang=en` → triggers `setLocale()` in router `beforeEach`
-- Supported locales: `zh` (default), `en`
+- `src/config.js`
 
-### Theme Injection
-`App.vue` calls `useTheme()` once on mount → sets all CSS vars on `:root`.
-To change a color globally: edit `src/config/colors.ts`.
+当前默认值：
 
-### Auth Guard
-Routes with `meta: { requiresAuth: true }` redirect to `Login` if no `token` in localStorage.
-Public routes: Login, Home, BalanceCenter.
-
-### API Layer
-`src/api/request.ts` — Axios instance with:
-- `baseURL` from env or config
-- Request interceptor: attaches `Authorization: Bearer <token>`
-- Response interceptor: handles 401 → redirect to login
-
-### Popup System
-```ts
-const { showPopup } = usePopup()
-showPopup('操作成功', 'success')   // preset key from popupPresets.ts
+```js
+export const API_BASE_URL = 'http://127.0.0.1:8080'
+export const REQUEST_TIMEOUT = 10000
 ```
 
----
+如果后端域名调整，只改这一处，不要在业务文件里写死域名。
 
-## Routes
+## 6. 接口约定
 
-| Name | Path | Auth | Component |
-|---|---|---|---|
-| Login | /login | No | Login.vue |
-| Home | / | No | Home.vue |
-| Products | /products | Yes | Products.vue |
-| Vip | /vip | Yes | Vip.vue |
-| BalanceCenter | /balance | No | BalanceCenter.vue |
+### 登录
 
----
+- 路径：`POST /api/login`
+- 参数：
 
-## Adding a New Page — Checklist
+```json
+{
+  "phone": "123456789",
+  "pwd": "abc12345"
+}
+```
 
-1. Create `src/views/NewPage.vue` — use orb background + glass card pattern
-2. Add route to `src/router/index.ts`
-3. Add nav item to `src/components/BottomNav.vue` if needed (with `labelKey`)
-4. Add i18n keys to `src/locales/zh.json` and `en.json`
-5. Use colors from `src/config/colors.ts` — never hardcode hex values
-6. Use `v-motion` for entrance animations with spring transitions
+### 注册
+
+- 路径：`POST /api/register`
+- 参数：
+
+```json
+{
+  "phone": "123456789",
+  "pwd": "abc12345",
+  "invitation_code": "1008"
+}
+```
+
+`invitation_code` 为可选字段。
+
+## 7. 样式目录规范
+
+后续新增的样式文件，统一放到：
+
+- `src/stypes/`
+
+规范说明：
+
+- 公共样式文件放在 `src/stypes/` 下
+- 页面拆分出来的独立样式文件也放在 `src/stypes/` 下
+- 不要把独立的 `.css` / `.scss` 文件散落到别的目录
+- 如果只是当前单文件组件内部的小范围样式，可以继续写在 `.vue` 文件的 `<style>` 中
+
+推荐命名方式：
+
+- `src/stypes/auth.css`
+- `src/stypes/login.css`
+- `src/stypes/register.css`
+- `src/stypes/theme.css`
+
+## 8. 开发规则
+
+- 新增接口时，先改 `src/api/`，不要在页面里直接写 `axios`
+- 新增域名或请求超时配置时，只改 `src/config.js`
+- 新增页面时，先补路由，再补多语言文案
+- 弹窗统一通过 `usePopup()` 调用
+- 颜色主题统一通过 `src/config/colors.ts` 管理
+- 需要拆分的样式文件统一放到 `src/stypes/`
+
+## 9. 启动命令
+
+安装依赖：
+
+```bash
+npm install
+```
+
+本地开发：
+
+```bash
+npm run dev
+```
+
+生产构建：
+
+```bash
+npm run build
+```
+
+TypeScript 检查：
+
+```bash
+npx tsc --noEmit
+```
+
+## 10. 归档说明
+
+已归档页面位置：
+
+- `src/views/archive/Home.vue`
+- `src/views/archive/BalanceCenter.vue`
+- `src/views/archive/Products.vue`
+- `src/views/archive/Vip.vue`
+
+这些文件当前不参与路由和业务运行，仅作为历史页面参考。
