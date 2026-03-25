@@ -1,0 +1,28 @@
+{
+  "login": "登录",
+  "password": "密码",
+  "loginSuccess": "登录成功",
+  "auth": {
+    "appName": "FlowPay",
+    "appSlogan": "安全 · 快捷 · 智能",
+    "phone": "手机号",
+    "phonePlaceholder": "请输入 1 开头的 9 位手机号",
+    "passwordPlaceholder": "请输入登录密码",
+    "forgotPassword": "忘记密码？",
+    "loginBtn": "立即登录",
+    "noAccount": "还没有账号？",
+    "toRegister": "立即注册",
+    "registerTitle": "创建账号",
+    "registerSubtitle": "当前项目仅保留登录与注册模块",
+    "newPasswordPlaceholder": "请输入 8-25 位字母或数字密码",
+    "registerBtn": "立即注册",
+    "hasAccount": "已有账号？",
+    "toLogin": "去登录",
+    "phoneError": "请输入 1 开头的 9 位手机号",
+    "passwordError": "密码需为 8-25 位字母或数字",
+    "registerSuccess": "注册成功，请使用新账号登录",
+    "invitationCode": "邀请码",
+    "invitationCodePlaceholder": "请输入邀请码（选填）",
+    "invitationCodeTip": "没有邀请码可以留空"
+  }
+}

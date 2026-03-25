@@ -1,0 +1,28 @@
+{
+  "login": "Login",
+  "password": "Password",
+  "loginSuccess": "Login successful",
+  "auth": {
+    "appName": "FlowPay",
+    "appSlogan": "Secure · Fast · Smart",
+    "phone": "Phone",
+    "phonePlaceholder": "Enter a 9-digit phone number starting with 1",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot password?",
+    "loginBtn": "Login",
+    "noAccount": "No account yet?",
+    "toRegister": "Create one",
+    "registerTitle": "Create Account",
+    "registerSubtitle": "Only login and register are kept in this project now",
+    "newPasswordPlaceholder": "Use 8-25 letters or numbers",
+    "registerBtn": "Create Account",
+    "hasAccount": "Already have an account?",
+    "toLogin": "Back to login",
+    "phoneError": "Enter a valid 9-digit phone number starting with 1",
+    "passwordError": "Password must be 8-25 letters or numbers",
+    "registerSuccess": "Registration successful, please log in",
+    "invitationCode": "Invitation Code",
+    "invitationCodePlaceholder": "Enter invitation code (optional)",
+    "invitationCodeTip": "Leave blank if you do not have one"
+  }
+}
