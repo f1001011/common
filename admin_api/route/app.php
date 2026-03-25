@@ -48,6 +48,30 @@ Route::group('api', function(){
     // 积分商品订单记录
     Route::post('wares/order/list', \app\controller\product\WaresOrderCon::class . '@GetWaresOrderList');
 
+    // 商品列表
+    Route::post('goods/list', \app\controller\product\GoodsCon::class . '@GetGoodsList');
+
+    // 商品新增
+    Route::post('goods/add', \app\controller\product\GoodsCon::class . '@AddGoods');
+
+    // 商品修改
+    Route::post('goods/update', \app\controller\product\GoodsCon::class . '@UpdateGoods');
+
+    // 商品删除
+    Route::post('goods/delete', \app\controller\product\GoodsCon::class . '@DeleteGoods');
+
+    // 兑换商品列表
+    Route::post('wares/list', \app\controller\product\WaresCon::class . '@GetWaresList');
+
+    // 兑换商品新增
+    Route::post('wares/add', \app\controller\product\WaresCon::class . '@AddWares');
+
+    // 兑换商品修改
+    Route::post('wares/update', \app\controller\product\WaresCon::class . '@UpdateWares');
+
+    // 兑换商品删除
+    Route::post('wares/delete', \app\controller\product\WaresCon::class . '@DeleteWares');
+
 })->middleware([AuthMiddleware::class]);
 
 Route::group('api', function(){

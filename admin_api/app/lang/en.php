@@ -79,4 +79,15 @@ return array(
     10140 => 'Admin account does not exist',
     10141 => 'Admin password is incorrect',
     10142 => 'Admin login successful',
+
+    // Admin product management related
+    10150 => 'Goods created successfully',
+    10151 => 'Goods updated successfully',
+    10152 => 'Goods deleted successfully',
+    10153 => 'Goods does not exist',
+    10154 => 'Wares created successfully',
+    10155 => 'Wares updated successfully',
+    10156 => 'Wares does not exist',
+    10157 => 'Please provide at least one field to update',
+    10158 => 'Wares deleted successfully',
 );

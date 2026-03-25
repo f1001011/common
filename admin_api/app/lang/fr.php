@@ -51,6 +51,17 @@ return array(
     10140 => 'Le compte administrateur n\'existe pas',
     10141 => 'Mot de passe administrateur incorrect',
     10142 => 'Connexion administrateur réussie',
+
+    // Gestion des produits côté admin
+    10150 => 'Produit ajouté avec succès',
+    10151 => 'Produit modifié avec succès',
+    10152 => 'Produit supprimé avec succès',
+    10153 => 'Produit introuvable',
+    10154 => 'Produit d\'échange ajouté avec succès',
+    10155 => 'Produit d\'échange modifié avec succès',
+    10156 => 'Produit d\'échange introuvable',
+    10157 => 'Veuillez fournir au moins un champ à modifier',
+    10158 => 'Produit d\'échange supprimé avec succès',
     
     // Général
     1000 => 'Opération réussie',
