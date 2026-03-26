@@ -9,6 +9,7 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 use app\middleware\AuthMiddleware;
+use app\middleware\AdminLogMiddleware;
 use think\facade\Route;
 // 需要token的接口
 Route::group('api', function(){
@@ -93,7 +94,7 @@ Route::group('api', function(){
     // 兑换商品删除
     Route::post('wares/delete', \app\controller\product\WaresCon::class . '@DeleteWares');
 
-})->middleware([AuthMiddleware::class]);
+})->middleware([AuthMiddleware::class, AdminLogMiddleware::class]);
 
 Route::group('api', function(){
 

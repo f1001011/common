@@ -11,7 +11,7 @@
  Target Server Version : 50726 (5.7.26)
  File Encoding         : 65001
 
- Date: 25/03/2026 15:16:38
+ Date: 26/03/2026 13:58:42
 */
 
 SET NAMES utf8mb4;
@@ -38,6 +38,25 @@ CREATE TABLE `ntp_common_admin`  (
 
 -- ----------------------------
 -- Records of ntp_common_admin
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for ntp_common_admin_log
+-- ----------------------------
+DROP TABLE IF EXISTS `ntp_common_admin_log`;
+CREATE TABLE `ntp_common_admin_log`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '操作人名',
+  `admin_id` int(11) NULL DEFAULT NULL,
+  `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '操作ip',
+  `func` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '操作方法',
+  `create_time` datetime NULL DEFAULT NULL,
+  `rmark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ntp_common_admin_log
 -- ----------------------------
 
 -- ----------------------------

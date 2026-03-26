@@ -1,6 +1,7 @@
 <?php
 namespace app\middleware;
 
+use app\model\CommonAdminModel;
 use app\model\CommonAdminTokenModel;
 
 class AuthMiddleware
@@ -18,11 +19,17 @@ class AuthMiddleware
         if (!$tokenInfo) {
             return Show(ERROR_TOKEN,[],10015);
         }
+
+        $adminInfo = CommonAdminModel::PageDataOne(['id' => (int)$tokenInfo['admin_uid']], 'id,user_name');
+        if (!$adminInfo) {
+            return Show(ERROR_TOKEN,[],10015);
+        }
         
         // admin_api 统一使用管理员token，这里写入 AdminID 供后台接口识别当前登录管理员。
         // 为兼容当前已写的后台代码，也同步赋值给 UserID，避免已有代码取不到管理员ID。
-        $request->AdminID = (int)$tokenInfo['admin_uid'];
-        $request->UserID = (int)$tokenInfo['admin_uid'];
+        $request->AdminID = (int)$adminInfo['id'];
+        $request->UserID = (int)$adminInfo['id'];
+        $request->AdminName = (string)($adminInfo['user_name'] ?? '');
         
         return $next($request);
     }
