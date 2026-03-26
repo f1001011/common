@@ -37,6 +37,7 @@
       v-bind="$attrs"
       :id="uuid"
       :data="processTableData"
+      size="large"
       :border="border"
       :row-key="rowKey"
       @selection-change="selectionChange"

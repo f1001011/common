@@ -111,7 +111,7 @@ const columns = reactive<ColumnProps<Cash.ResListItem>[]>([
   { prop: "actual_amount", label: "实际到账", width: 120 },
   { prop: "channel_name", label: "渠道名称", minWidth: 120 },
   { prop: "u_bank_name", label: "银行名称", minWidth: 140 },
-  { prop: "u_back_card", label: "收款账号", minWidth: 150 },
+  { prop: "u_back_card", label: "收款账号", minWidth: 220 },
   { prop: "is_status", label: "平台提交", width: 110 },
   {
     prop: "create_time",

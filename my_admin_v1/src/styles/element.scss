@@ -1,9 +1,9 @@
-/* el-alert */
+﻿/* el-alert */
 .el-alert {
   border: 1px solid;
 }
 
-/* 当前页面最大化 css */
+/* 褰撳墠椤甸潰鏈€澶у寲 css */
 .main-maximize {
   .aside-split,
   .el-aside,
@@ -31,7 +31,7 @@
   box-shadow: 0 0 12px rgb(0 0 0 / 5%);
 }
 
-/* ProTable 不需要 card 样式（在组件内使用 ProTable 会使用到） */
+/* ProTable 涓嶉渶瑕?card 鏍峰紡锛堝湪缁勪欢鍐呬娇鐢?ProTable 浼氫娇鐢ㄥ埌锛?*/
 .no-card {
   .card {
     padding: 0;
@@ -46,7 +46,7 @@
   }
 }
 
-/* content-box (常用内容盒子) */
+/* content-box (甯哥敤鍐呭鐩掑瓙) */
 .content-box {
   display: flex;
   flex-direction: column;
@@ -70,7 +70,7 @@
   }
 }
 
-/* main-box (树形表格 treeFilter 页面会使用，左右布局 flex) */
+/* main-box (鏍戝舰琛ㄦ牸 treeFilter 椤甸潰浼氫娇鐢紝宸﹀彸甯冨眬 flex) */
 .main-box {
   display: flex;
   width: 100%;
@@ -88,8 +88,10 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
 
-  // table-search 表格搜索样式
+  // table-search 琛ㄦ牸鎼滅储鏍峰紡
   .table-search {
     padding: 18px 18px 0;
     margin-bottom: 10px;
@@ -98,7 +100,7 @@
         width: 100%;
       }
 
-      // 去除时间选择器上下 padding
+      // 鍘婚櫎鏃堕棿閫夋嫨鍣ㄤ笂涓?padding
       .el-range-editor.el-input__wrapper {
         padding: 0 10px;
       }
@@ -111,7 +113,7 @@
     }
   }
 
-  // 表格 header 样式
+  // 琛ㄦ牸 header 鏍峰紡
   .table-header {
     .header-button-lf,
     .header-button-ri {
@@ -131,11 +133,13 @@
     }
   }
 
-  // el-table 表格样式
+  // el-table 琛ㄦ牸鏍峰紡
   .el-table {
     flex: 1;
+    min-width: 0;
+    min-height: 0;
 
-    // 修复 safari 浏览器表格错位 https://github.com/HalseySpicy/Geeker-Admin/issues/83
+    // 淇 safari 娴忚鍣ㄨ〃鏍奸敊浣?https://github.com/HalseySpicy/Geeker-Admin/issues/83
     table {
       width: 100%;
     }
@@ -157,13 +161,13 @@
       }
     }
 
-    // 设置 el-table 中 header 文字不换行，并省略
+    // 璁剧疆 el-table 涓?header 鏂囧瓧涓嶆崲琛岋紝骞剁渷鐣?
     .el-table__header .el-table__cell > .cell {
       // white-space: nowrap;
       white-space: wrap;
     }
 
-    // 解决表格数据为空时样式不居中问题(仅在element-plus中)
+    // 瑙ｅ喅琛ㄦ牸鏁版嵁涓虹┖鏃舵牱寮忎笉灞呬腑闂(浠呭湪element-plus涓?
     .el-table__empty-block {
       position: absolute;
       .table-empty {
@@ -174,7 +178,7 @@
       }
     }
 
-    // table 中 image 图片样式
+    // table 涓?image 鍥剧墖鏍峰紡
     .table-image {
       width: 50px;
       height: 50px;
@@ -182,15 +186,17 @@
     }
   }
 
-  // 表格 pagination 样式
+  // 琛ㄦ牸 pagination 鏍峰紡
   .el-pagination {
     display: flex;
+    flex-wrap: wrap;
+    gap: 12px 8px;
     justify-content: flex-end;
     margin-top: 20px;
   }
 }
 
-/* el-table 组件大小 */
+/* el-table 缁勪欢澶у皬 */
 .el-table--small {
   .el-table__header th {
     height: 40px !important;
@@ -228,12 +234,12 @@
     border-top: 1px solid var(--el-border-color-lighter);
   }
 
-  // select 样式
+  // select 鏍峰紡
   .el-select {
     width: 100%;
   }
 
-  // drawer-form 中存在两列 form-item 样式
+  // drawer-form 涓瓨鍦ㄤ袱鍒?form-item 鏍峰紡
   .drawer-multiColumn-form {
     display: flex;
     flex-wrap: wrap;

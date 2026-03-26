@@ -64,17 +64,17 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="银行名称">
             <el-input v-model.trim="form.u_bank_name" placeholder="请输入银行名称" />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="12">
           <el-form-item label="收款账号">
             <el-input v-model.trim="form.u_back_card" placeholder="请输入收款账号" />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="收款人">
             <el-input v-model.trim="form.u_back_user_name" placeholder="请输入收款人" />
           </el-form-item>
