@@ -19,8 +19,8 @@ const config = {
   baseURL: import.meta.env.VITE_API_URL as string,
   // 设置超时时间
   timeout: ResultEnum.TIMEOUT as number,
-  // 跨域时候允许携带凭证
-  withCredentials: true
+  // admin_api 使用 token 鉴权，不依赖 cookie，关闭跨域凭证可减少 CORS 限制
+  withCredentials: false
 };
 
 const axiosCanceler = new AxiosCanceler();
@@ -45,10 +45,9 @@ class RequestHttp {
         // 当前请求不需要显示 loading，在 api 服务中通过指定的第三个参数: { loading: false } 来控制
         config.loading ??= true;
         config.loading && showFullScreenLoading();
-        if (config.headers && typeof config.headers.set === "function") {
-          // admin_api 识别 authorization 或 token 头
+        if (config.headers && typeof config.headers.set === "function" && userStore.token) {
+          // admin_api 中间件识别 authorization；登录前不发送自定义 token 头，避免触发 CORS 拒绝
           config.headers.set("authorization", userStore.token);
-          config.headers.set("token", userStore.token);
         }
         return config;
       },

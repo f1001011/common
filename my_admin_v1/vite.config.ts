@@ -6,6 +6,9 @@ import { createVitePlugins } from "./build/plugins";
 import pkg from "./package.json";
 import dayjs from "dayjs";
 
+// Silence Dart Sass deprecation warnings from current legacy style pipeline.
+process.env.SASS_SILENCE_DEPRECATIONS = "import,legacy-js-api";
+
 const { dependencies, devDependencies, name, version } = pkg;
 const __APP_INFO__ = {
   pkg: { dependencies, devDependencies, name, version },
@@ -33,7 +36,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `@import "@/styles/var.scss";`
+          additionalData: `@import "@/styles/var.scss";`,
+          silenceDeprecations: ["import", "legacy-js-api"]
         }
       }
     },
