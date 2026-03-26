@@ -31,3 +31,7 @@
                 }
 
 11  所有需要分页的参数   都需要前端传 limit 每页显示数量  page 当前页 每页默认数量都是 20条，默认当前页是 1，所有接口都是以用户 的id为 选择条件，所有 表备注字段都不显示，备注是汉语，不能显示出来
+
+
+上传图片存放位置
+ $saveDir = dirname(app()->getRootPath()) . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 种类 . DIRECTORY_SEPARATOR . date('Ym');

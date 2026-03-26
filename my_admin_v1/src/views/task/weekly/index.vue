@@ -71,7 +71,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="reward_amount" label="奖励金额" min-width="120">
-              <template #default="{ row }">S/ {{ formatMoney(row.reward_amount) }}</template>
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.reward_amount) }}</template>
             </el-table-column>
             <el-table-column prop="sort" label="排序" min-width="80" />
             <el-table-column prop="status" label="状态" min-width="100">
@@ -168,7 +168,7 @@
             </el-table-column>
             <el-table-column prop="current_progress" label="当前进度" min-width="100" />
             <el-table-column prop="reward_amount" label="奖励金额" min-width="120">
-              <template #default="{ row }">S/ {{ formatMoney(row.reward_amount || 0) }}</template>
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.reward_amount || 0) }}</template>
             </el-table-column>
             <el-table-column prop="is_completed" label="完成状态" min-width="110">
               <template #default="{ row }">
@@ -251,7 +251,7 @@
             </el-table-column>
             <el-table-column prop="task_name" label="任务名称" min-width="220" />
             <el-table-column prop="reward_amount" label="奖励金额" min-width="120">
-              <template #default="{ row }">S/ {{ formatMoney(row.reward_amount) }}</template>
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.reward_amount) }}</template>
             </el-table-column>
             <el-table-column prop="week_start_date" label="周开始日期" min-width="140" />
             <el-table-column prop="create_time" label="领取时间" min-width="180" />
@@ -342,6 +342,7 @@ import {
   getTaskRewardLogList,
   updateTaskConfig
 } from "@/api/modules/task";
+import { currencyPrefix } from "@/utils";
 
 const activeTab = ref("config");
 

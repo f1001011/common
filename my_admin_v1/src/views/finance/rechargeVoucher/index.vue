@@ -18,7 +18,7 @@
       </template>
 
       <template #amount="scope">
-        <span class="amount">S/ {{ formatMoney(scope.row.amount) }}</span>
+        <span class="amount">{{ currencyPrefix }}{{ formatMoney(scope.row.amount) }}</span>
       </template>
 
       <template #voucher_image="scope">
@@ -43,6 +43,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import { RechargeVoucher } from "@/api/interface";
 import { getRechargeVoucherList } from "@/api/modules/payment";
+import { currencyPrefix } from "@/utils";
 
 const columns = reactive<ColumnProps<RechargeVoucher.ResListItem>[]>([
   { type: "index", label: "#", width: 70 },

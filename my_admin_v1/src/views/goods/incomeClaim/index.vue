@@ -20,7 +20,7 @@
       </template>
 
       <template #claim_amount="scope">
-        <span class="amount success-text">S/ {{ formatMoney(scope.row.claim_amount) }}</span>
+        <span class="amount success-text">{{ currencyPrefix }}{{ formatMoney(scope.row.claim_amount) }}</span>
       </template>
     </ProTable>
   </div>
@@ -32,6 +32,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import { IncomeClaimLog } from "@/api/interface";
 import { getIncomeClaimLogList } from "@/api/modules/product";
+import { currencyPrefix } from "@/utils";
 
 const statusOptions = [
   { label: "全部", value: "" },

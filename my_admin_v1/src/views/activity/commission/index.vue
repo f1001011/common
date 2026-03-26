@@ -44,7 +44,7 @@
         </div>
         <div class="summary-card success">
           <span class="summary-label">返佣金额</span>
-          <strong>S/ {{ formatMoney(stats.gift_amount || 0) }}</strong>
+          <strong>{{ currencyPrefix }}{{ formatMoney(stats.gift_amount || 0) }}</strong>
         </div>
         <div class="summary-card primary">
           <span class="summary-label">返佣记录数</span>
@@ -58,7 +58,7 @@
           <div v-for="item in stats.reward_breakdown || []" :key="item.money_type" class="breakdown-item">
             <span>{{ item.money_type_text || `类型${item.money_type}` }}</span>
             <span>{{ item.total_count }} 条</span>
-            <strong>S/ {{ formatMoney(item.total_amount) }}</strong>
+            <strong>{{ currencyPrefix }}{{ formatMoney(item.total_amount) }}</strong>
           </div>
           <el-empty v-if="!(stats.reward_breakdown || []).length" description="暂无统计" />
         </div>
@@ -87,7 +87,7 @@
         </el-table-column>
         <el-table-column prop="money_type_text" label="返佣类型" min-width="120" />
         <el-table-column prop="money_amount" label="返佣金额" min-width="120">
-          <template #default="{ row }">S/ {{ formatMoney(row.money_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.money_amount) }}</template>
         </el-table-column>
         <el-table-column prop="is_add_to_user_account" label="入账状态" min-width="100">
           <template #default="{ row }">
@@ -123,6 +123,7 @@ import dayjs from "dayjs";
 import { onMounted, reactive, ref } from "vue";
 import { Report } from "@/api/interface";
 import { getCommissionLogList, getCommissionStats } from "@/api/modules/report";
+import { currencyPrefix } from "@/utils";
 
 const loading = ref(false);
 const rangeType = ref("today");

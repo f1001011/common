@@ -58,7 +58,7 @@ class UserCon extends BaseCon
 
         $levelVip = $post['level_vip'] ?? '';
         if ($levelVip !== '' && $levelVip !== null && is_numeric($levelVip)) {
-            $query->where('level_vip', (int)$levelVip);
+            $query->where('level_vip', '>=', (int)$levelVip);
         }
 
         $status = $post['status'] ?? '';
@@ -96,6 +96,7 @@ class UserCon extends BaseCon
 
         return Show(SUCCESS, $list);
     }
+
 
     /**
      * 将用户密码转为后台展示可读文本。

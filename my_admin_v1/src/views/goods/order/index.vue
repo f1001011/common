@@ -20,15 +20,15 @@
       </template>
 
       <template #order_money="scope">
-        <span class="amount">S/ {{ formatMoney(scope.row.order_money) }}</span>
+        <span class="amount">{{ currencyPrefix }}{{ formatMoney(scope.row.order_money) }}</span>
       </template>
 
       <template #total_red_money="scope">
-        <span class="success-text">S/ {{ formatMoney(scope.row.total_red_money) }}</span>
+        <span class="success-text">{{ currencyPrefix }}{{ formatMoney(scope.row.total_red_money) }}</span>
       </template>
 
       <template #coupon_money="scope">
-        <span>S/ {{ formatMoney(scope.row.coupon_money) }}</span>
+        <span>{{ currencyPrefix }}{{ formatMoney(scope.row.coupon_money) }}</span>
       </template>
     </ProTable>
   </div>
@@ -40,6 +40,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import { GoodsOrder } from "@/api/interface";
 import { getGoodsOrderList } from "@/api/modules/product";
+import { currencyPrefix } from "@/utils";
 
 const statusOptions = [
   { label: "全部", value: "" },

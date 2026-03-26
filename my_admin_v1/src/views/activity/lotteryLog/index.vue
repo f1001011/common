@@ -49,7 +49,7 @@
               <template #default="{ row }">{{ Number(row.prize_type) === 1 ? "现金" : "实物" }}</template>
             </el-table-column>
             <el-table-column prop="amount" label="中奖金额" min-width="120">
-              <template #default="{ row }">S/ {{ formatMoney(row.amount) }}</template>
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.amount) }}</template>
             </el-table-column>
             <el-table-column prop="create_time" label="创建时间" min-width="180" />
           </el-table>
@@ -138,6 +138,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { Activity } from "@/api/interface";
 import { getLotteryChanceList, getLotteryLogList } from "@/api/modules/activity";
+import { currencyPrefix } from "@/utils";
 
 const activeTab = ref("log");
 const logLoading = ref(false);

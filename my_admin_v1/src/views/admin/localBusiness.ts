@@ -1,3 +1,5 @@
+import { formatCurrency } from "@/utils";
+
 export interface VipLevelItem {
   id: number;
   vip: number;
@@ -95,13 +97,90 @@ export interface CommissionLogItem {
 export const cloneBusinessData = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 export const defaultVipLevels: VipLevelItem[] = [
-  { id: 1, vip: 1, experience: 0, reward_money: 50, buy_goods_id: 2, buy_goods_num: 2, team_total_recharge: 100, one_time_reward: 6, commission_rate: 1, reward_days: 60 },
-  { id: 2, vip: 2, experience: 0, reward_money: 80, buy_goods_id: 3, buy_goods_num: 2, team_total_recharge: 500, one_time_reward: 30, commission_rate: 2, reward_days: 90 },
-  { id: 3, vip: 3, experience: 0, reward_money: 120, buy_goods_id: 4, buy_goods_num: 2, team_total_recharge: 2500, one_time_reward: 150, commission_rate: 3, reward_days: 120 },
-  { id: 4, vip: 4, experience: 0, reward_money: 160, buy_goods_id: 5, buy_goods_num: 2, team_total_recharge: 7500, one_time_reward: 450, commission_rate: 4, reward_days: 150 },
-  { id: 5, vip: 5, experience: 0, reward_money: 200, buy_goods_id: 6, buy_goods_num: 2, team_total_recharge: 15000, one_time_reward: 900, commission_rate: 6, reward_days: 180 },
-  { id: 6, vip: 6, experience: 0, reward_money: 240, buy_goods_id: 7, buy_goods_num: 2, team_total_recharge: 30000, one_time_reward: 1800, commission_rate: 8, reward_days: 240 },
-  { id: 7, vip: 7, experience: 0, reward_money: 280, buy_goods_id: 8, buy_goods_num: 2, team_total_recharge: 50000, one_time_reward: 3000, commission_rate: 12, reward_days: 300 }
+  {
+    id: 1,
+    vip: 1,
+    experience: 0,
+    reward_money: 50,
+    buy_goods_id: 2,
+    buy_goods_num: 2,
+    team_total_recharge: 100,
+    one_time_reward: 6,
+    commission_rate: 1,
+    reward_days: 60
+  },
+  {
+    id: 2,
+    vip: 2,
+    experience: 0,
+    reward_money: 80,
+    buy_goods_id: 3,
+    buy_goods_num: 2,
+    team_total_recharge: 500,
+    one_time_reward: 30,
+    commission_rate: 2,
+    reward_days: 90
+  },
+  {
+    id: 3,
+    vip: 3,
+    experience: 0,
+    reward_money: 120,
+    buy_goods_id: 4,
+    buy_goods_num: 2,
+    team_total_recharge: 2500,
+    one_time_reward: 150,
+    commission_rate: 3,
+    reward_days: 120
+  },
+  {
+    id: 4,
+    vip: 4,
+    experience: 0,
+    reward_money: 160,
+    buy_goods_id: 5,
+    buy_goods_num: 2,
+    team_total_recharge: 7500,
+    one_time_reward: 450,
+    commission_rate: 4,
+    reward_days: 150
+  },
+  {
+    id: 5,
+    vip: 5,
+    experience: 0,
+    reward_money: 200,
+    buy_goods_id: 6,
+    buy_goods_num: 2,
+    team_total_recharge: 15000,
+    one_time_reward: 900,
+    commission_rate: 6,
+    reward_days: 180
+  },
+  {
+    id: 6,
+    vip: 6,
+    experience: 0,
+    reward_money: 240,
+    buy_goods_id: 7,
+    buy_goods_num: 2,
+    team_total_recharge: 30000,
+    one_time_reward: 1800,
+    commission_rate: 8,
+    reward_days: 240
+  },
+  {
+    id: 7,
+    vip: 7,
+    experience: 0,
+    reward_money: 280,
+    buy_goods_id: 8,
+    buy_goods_num: 2,
+    team_total_recharge: 50000,
+    one_time_reward: 3000,
+    commission_rate: 12,
+    reward_days: 300
+  }
 ];
 
 export const defaultCommissionRates = {
@@ -111,8 +190,22 @@ export const defaultCommissionRates = {
 };
 
 export const defaultCommissionLogs: CommissionLogItem[] = [
-  { id: 1, user_name: "market_001", vip_level: 4, reward_type: "一级返现", reward_amount: 120, create_time: "2026-03-25 14:20:00" },
-  { id: 2, user_name: "market_002", vip_level: 6, reward_type: "二级返现", reward_amount: 66, create_time: "2026-03-25 15:30:00" },
+  {
+    id: 1,
+    user_name: "market_001",
+    vip_level: 4,
+    reward_type: "一级返现",
+    reward_amount: 120,
+    create_time: "2026-03-25 14:20:00"
+  },
+  {
+    id: 2,
+    user_name: "market_002",
+    vip_level: 6,
+    reward_type: "二级返现",
+    reward_amount: 66,
+    create_time: "2026-03-25 15:30:00"
+  },
   { id: 3, user_name: "market_003", vip_level: 7, reward_type: "三级返现", reward_amount: 30, create_time: "2026-03-26 09:10:00" }
 ];
 
@@ -128,11 +221,61 @@ export const defaultWeeklySettings = {
 };
 
 export const defaultWeeklyTasks: WeeklyTaskItem[] = [
-  { id: 1, level: "Lv1", task_name: "邀请 1 人", required_invites: 1, reward_amount: 3, active_users: 0, completed_users: 0, claimed_users: 0, status: 1 },
-  { id: 2, level: "Lv2", task_name: "邀请 3 人", required_invites: 3, reward_amount: 10, active_users: 2, completed_users: 1, claimed_users: 1, status: 1 },
-  { id: 3, level: "Lv3", task_name: "邀请 6 人", required_invites: 6, reward_amount: 20, active_users: 5, completed_users: 2, claimed_users: 1, status: 1 },
-  { id: 4, level: "Lv4", task_name: "邀请 9 人", required_invites: 9, reward_amount: 30, active_users: 9, completed_users: 4, claimed_users: 3, status: 1 },
-  { id: 5, level: "Lv5", task_name: "邀请 15 人", required_invites: 15, reward_amount: 50, active_users: 15, completed_users: 6, claimed_users: 4, status: 1 }
+  {
+    id: 1,
+    level: "Lv1",
+    task_name: "邀请 1 人",
+    required_invites: 1,
+    reward_amount: 3,
+    active_users: 0,
+    completed_users: 0,
+    claimed_users: 0,
+    status: 1
+  },
+  {
+    id: 2,
+    level: "Lv2",
+    task_name: "邀请 3 人",
+    required_invites: 3,
+    reward_amount: 10,
+    active_users: 2,
+    completed_users: 1,
+    claimed_users: 1,
+    status: 1
+  },
+  {
+    id: 3,
+    level: "Lv3",
+    task_name: "邀请 6 人",
+    required_invites: 6,
+    reward_amount: 20,
+    active_users: 5,
+    completed_users: 2,
+    claimed_users: 1,
+    status: 1
+  },
+  {
+    id: 4,
+    level: "Lv4",
+    task_name: "邀请 9 人",
+    required_invites: 9,
+    reward_amount: 30,
+    active_users: 9,
+    completed_users: 4,
+    claimed_users: 3,
+    status: 1
+  },
+  {
+    id: 5,
+    level: "Lv5",
+    task_name: "邀请 15 人",
+    required_invites: 15,
+    reward_amount: 50,
+    active_users: 15,
+    completed_users: 6,
+    claimed_users: 4,
+    status: 1
+  }
 ];
 
 export const defaultPrizePoolSetting: PrizePoolSetting = {
@@ -170,17 +313,44 @@ export const defaultLotteryTiers: LotteryRechargeTier[] = [
 ];
 
 export const defaultLotteryPrizes: LotteryPrizeItem[] = [
-  { id: 1, name: "S/ 10.00", amount: 10, probability: 10, type: 1, status: 1 },
-  { id: 2, name: "S/ 20.00", amount: 20, probability: 30, type: 1, status: 1 },
-  { id: 3, name: "S/ 40.00", amount: 40, probability: 25, type: 1, status: 1 },
-  { id: 4, name: "S/ 60.00", amount: 60, probability: 15, type: 1, status: 1 },
+  { id: 1, name: formatCurrency(10), amount: 10, probability: 10, type: 1, status: 1 },
+  { id: 2, name: formatCurrency(20), amount: 20, probability: 30, type: 1, status: 1 },
+  { id: 3, name: formatCurrency(40), amount: 40, probability: 25, type: 1, status: 1 },
+  { id: 4, name: formatCurrency(60), amount: 60, probability: 15, type: 1, status: 1 },
   { id: 5, name: "智能手表", amount: 0, probability: 8, type: 2, status: 1 },
   { id: 6, name: "充电宝", amount: 0, probability: 7, type: 2, status: 1 },
-  { id: 7, name: "S/ 100.00", amount: 100, probability: 5, type: 1, status: 1 }
+  { id: 7, name: formatCurrency(100), amount: 100, probability: 5, type: 1, status: 1 }
 ];
 
 export const defaultLotteryUsage: LotteryUsageItem[] = [
-  { id: 1, date: "2026-03-20", prize_count: 2, prize_amount: 60, lottery_users: 18, lottery_times: 38, recharge_bonus_amount: 0, recharge_bonus_times: 8 },
-  { id: 2, date: "2026-03-21", prize_count: 3, prize_amount: 120, lottery_users: 22, lottery_times: 41, recharge_bonus_amount: 0, recharge_bonus_times: 10 },
-  { id: 3, date: "2026-03-22", prize_count: 1, prize_amount: 20, lottery_users: 9, lottery_times: 12, recharge_bonus_amount: 0, recharge_bonus_times: 3 }
+  {
+    id: 1,
+    date: "2026-03-20",
+    prize_count: 2,
+    prize_amount: 60,
+    lottery_users: 18,
+    lottery_times: 38,
+    recharge_bonus_amount: 0,
+    recharge_bonus_times: 8
+  },
+  {
+    id: 2,
+    date: "2026-03-21",
+    prize_count: 3,
+    prize_amount: 120,
+    lottery_users: 22,
+    lottery_times: 41,
+    recharge_bonus_amount: 0,
+    recharge_bonus_times: 10
+  },
+  {
+    id: 3,
+    date: "2026-03-22",
+    prize_count: 1,
+    prize_amount: 20,
+    lottery_users: 9,
+    lottery_times: 12,
+    recharge_bonus_amount: 0,
+    recharge_bonus_times: 3
+  }
 ];

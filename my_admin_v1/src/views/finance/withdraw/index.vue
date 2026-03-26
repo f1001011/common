@@ -15,7 +15,7 @@
       </div>
       <div class="summary-card">
         <span class="summary-label">当前页总额</span>
-        <strong>S/ {{ formatMoney(summary.totalMoney) }}</strong>
+        <strong>{{ currencyPrefix }}{{ formatMoney(summary.totalMoney) }}</strong>
       </div>
     </div>
 
@@ -40,15 +40,15 @@
       </template>
 
       <template #money="scope">
-        <span class="amount">S/ {{ formatMoney(scope.row.money) }}</span>
+        <span class="amount">{{ currencyPrefix }}{{ formatMoney(scope.row.money) }}</span>
       </template>
 
       <template #actual_amount="scope">
-        <span class="success-text">S/ {{ formatMoney(scope.row.actual_amount) }}</span>
+        <span class="success-text">{{ currencyPrefix }}{{ formatMoney(scope.row.actual_amount) }}</span>
       </template>
 
       <template #fee="scope">
-        <span>S/ {{ formatMoney(scope.row.fee) }}</span>
+        <span>{{ currencyPrefix }}{{ formatMoney(scope.row.fee) }}</span>
       </template>
 
       <template #is_status="scope">
@@ -72,6 +72,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { Cash } from "@/api/interface";
 import { getCashList } from "@/api/modules/payment";
+import { currencyPrefix } from "@/utils";
 import WithdrawDialog from "@/views/finance/components/WithdrawDialog.vue";
 
 const proTable = ref<ProTableInstance>();

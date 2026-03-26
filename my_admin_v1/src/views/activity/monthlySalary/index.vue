@@ -40,11 +40,11 @@
         </div>
         <div class="summary-card success">
           <span class="summary-label">奖励金额</span>
-          <strong>S/ {{ formatMoney(stats.gift_amount || 0) }}</strong>
+          <strong>{{ currencyPrefix }}{{ formatMoney(stats.gift_amount || 0) }}</strong>
         </div>
         <div class="summary-card primary">
           <span class="summary-label">团队充值额</span>
-          <strong>S/ {{ formatMoney(stats.team_recharge_amount || 0) }}</strong>
+          <strong>{{ currencyPrefix }}{{ formatMoney(stats.team_recharge_amount || 0) }}</strong>
         </div>
       </div>
 
@@ -54,7 +54,7 @@
           <div v-for="item in stats.reward_breakdown || []" :key="item.status" class="breakdown-item">
             <span>{{ salaryStatusText(item.status) }}</span>
             <span>{{ item.total_count }} 条</span>
-            <strong>S/ {{ formatMoney(item.total_amount) }}</strong>
+            <strong>{{ currencyPrefix }}{{ formatMoney(item.total_amount) }}</strong>
           </div>
           <el-empty v-if="!(stats.reward_breakdown || []).length" description="暂无统计" />
         </div>
@@ -74,10 +74,10 @@
         </el-table-column>
         <el-table-column prop="claim_month" label="领取月份" min-width="120" />
         <el-table-column prop="team_recharge_amount" label="团队充值金额" min-width="140">
-          <template #default="{ row }">S/ {{ formatMoney(row.team_recharge_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.team_recharge_amount) }}</template>
         </el-table-column>
         <el-table-column prop="reward_amount" label="奖励金额" min-width="120">
-          <template #default="{ row }">S/ {{ formatMoney(row.reward_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.reward_amount) }}</template>
         </el-table-column>
         <el-table-column prop="status" label="状态" min-width="100">
           <template #default="{ row }">
@@ -108,6 +108,7 @@ import dayjs from "dayjs";
 import { onMounted, reactive, ref } from "vue";
 import { Report } from "@/api/interface";
 import { getMonthlySalaryLogList, getMonthlySalaryStats } from "@/api/modules/report";
+import { currencyPrefix } from "@/utils";
 
 const loading = ref(false);
 const rangeType = ref("today");

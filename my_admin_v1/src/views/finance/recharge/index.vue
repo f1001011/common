@@ -40,11 +40,11 @@
       </template>
 
       <template #money="scope">
-        <span class="amount">S/ {{ formatMoney(scope.row.money) }}</span>
+        <span class="amount">{{ currencyPrefix }}{{ formatMoney(scope.row.money) }}</span>
       </template>
 
       <template #actual_amount="scope">
-        <span class="amount success-text">S/ {{ formatMoney(scope.row.actual_amount) }}</span>
+        <span class="amount success-text">{{ currencyPrefix }}{{ formatMoney(scope.row.actual_amount) }}</span>
       </template>
 
       <template #channel_name="scope">
@@ -72,6 +72,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { Recharge } from "@/api/interface";
 import { getRechargeList } from "@/api/modules/payment";
+import { currencyPrefix } from "@/utils";
 import RechargeDialog from "@/views/finance/components/RechargeDialog.vue";
 
 const proTable = ref<ProTableInstance>();

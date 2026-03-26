@@ -1,7 +1,23 @@
 import { isArray } from "@/utils/is";
 import { FieldNamesProps } from "@/components/ProTable/interface";
+import { CURRENCY_PREFIX, IMAGE_URL } from "@/config";
 
 const mode = import.meta.env.VITE_ROUTER_MODE;
+
+export const currencyPrefix = CURRENCY_PREFIX;
+
+export function formatCurrency(value: number | string) {
+  return `${currencyPrefix}${Number(value || 0).toFixed(2)}`;
+}
+
+export function getImageUrl(path?: string) {
+  const value = String(path || "").trim();
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+  const prefix = IMAGE_URL.replace(/\/$/, "");
+  const suffix = value.startsWith("/") ? value : `/${value}`;
+  return prefix ? `${prefix}${suffix}` : suffix;
+}
 
 /**
  * @description 获取localStorage

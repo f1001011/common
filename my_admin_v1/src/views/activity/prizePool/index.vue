@@ -3,7 +3,7 @@
     <div class="summary-grid">
       <div class="summary-card">
         <span class="summary-label">每日注入金额</span>
-        <strong>S/ {{ formatMoney(currentConfig?.daily_amount || 0) }}</strong>
+        <strong>{{ currencyPrefix }}{{ formatMoney(currentConfig?.daily_amount || 0) }}</strong>
       </div>
       <div class="summary-card success">
         <span class="summary-label">开奖时间</span>
@@ -11,7 +11,7 @@
       </div>
       <div class="summary-card primary">
         <span class="summary-label">一等奖</span>
-        <strong>S/ {{ formatMoney(currentConfig?.prize_1_amount || 0) }}</strong>
+        <strong>{{ currencyPrefix }}{{ formatMoney(currentConfig?.prize_1_amount || 0) }}</strong>
       </div>
       <div class="summary-card warning">
         <span class="summary-label">开奖记录</span>
@@ -31,16 +31,16 @@
       <el-table v-loading="configLoading" :data="configList" border>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="daily_amount" label="每日注入金额" min-width="150">
-          <template #default="{ row }">S/ {{ formatMoney(row.daily_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.daily_amount) }}</template>
         </el-table-column>
         <el-table-column prop="prize_1_amount" label="一等奖" min-width="120">
-          <template #default="{ row }">S/ {{ formatMoney(row.prize_1_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.prize_1_amount) }}</template>
         </el-table-column>
         <el-table-column prop="prize_2_amount" label="二等奖" min-width="120">
-          <template #default="{ row }">S/ {{ formatMoney(row.prize_2_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.prize_2_amount) }}</template>
         </el-table-column>
         <el-table-column prop="prize_3_amount" label="三等奖" min-width="120">
-          <template #default="{ row }">S/ {{ formatMoney(row.prize_3_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.prize_3_amount) }}</template>
         </el-table-column>
         <el-table-column prop="draw_time" label="开奖时间" min-width="100" />
       </el-table>
@@ -91,7 +91,7 @@
           <template #default="{ row }">{{ getPrizeLevelText(row.prize_level) }}</template>
         </el-table-column>
         <el-table-column prop="prize_amount" label="奖金" min-width="120">
-          <template #default="{ row }">S/ {{ formatMoney(row.prize_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.prize_amount) }}</template>
         </el-table-column>
         <el-table-column prop="status" label="状态" min-width="100">
           <template #default="{ row }">{{ getPrizeStatusText(row.status) }}</template>
@@ -143,6 +143,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { Activity } from "@/api/interface";
 import { addPrizePoolConfig, getPrizePoolConfigList, getPrizePoolLogList, updatePrizePoolConfig } from "@/api/modules/activity";
+import { currencyPrefix } from "@/utils";
 
 const configLoading = ref(false);
 const logLoading = ref(false);

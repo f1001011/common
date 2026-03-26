@@ -46,7 +46,7 @@
           <template #default="{ row }">{{ Number(row.type) === 1 ? "现金" : "实物" }}</template>
         </el-table-column>
         <el-table-column prop="amount" label="金额" min-width="120">
-          <template #default="{ row }">S/ {{ formatMoney(row.amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.amount) }}</template>
         </el-table-column>
         <el-table-column prop="probability" label="概率(%)" min-width="120" />
         <el-table-column prop="status" label="状态" min-width="100">
@@ -111,6 +111,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Activity } from "@/api/interface";
 import { addLotteryPrize, deleteLotteryPrize, getLotteryPrizeList, updateLotteryPrize } from "@/api/modules/activity";
+import { currencyPrefix } from "@/utils";
 
 const loading = ref(false);
 const dialogVisible = ref(false);

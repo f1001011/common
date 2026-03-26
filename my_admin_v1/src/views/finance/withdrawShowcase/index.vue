@@ -71,7 +71,7 @@
             </el-table-column>
             <el-table-column prop="withdraw_id" label="提现订单ID" min-width="120" />
             <el-table-column prop="amount" label="金额" min-width="120">
-              <template #default="{ row }">S/ {{ formatMoney(row.amount) }}</template>
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.amount) }}</template>
             </el-table-column>
             <el-table-column prop="like_count" label="点赞数" min-width="90" />
             <el-table-column prop="comment_count" label="评论数" min-width="90" />
@@ -322,6 +322,7 @@ import {
   updateWithdrawComment,
   updateWithdrawShowcase
 } from "@/api/modules/product";
+import { currencyPrefix } from "@/utils";
 
 const activeTab = ref("showcase");
 const showcaseLoading = ref(false);

@@ -52,7 +52,7 @@
             </el-table-column>
             <el-table-column prop="experience" label="所需经验" min-width="120" />
             <el-table-column prop="reward_money" label="每日奖励" min-width="120">
-              <template #default="{ row }">S/ {{ formatMoney(row.reward_money) }}</template>
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.reward_money) }}</template>
             </el-table-column>
             <el-table-column prop="buy_goods_id" label="产品 ID" min-width="120" />
             <el-table-column prop="buy_goods_num" label="购买数量" min-width="120" />
@@ -129,7 +129,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="reward_amount" label="一次性奖励" min-width="140">
-              <template #default="{ row }">S/ {{ formatMoney(row.reward_amount) }}</template>
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.reward_amount) }}</template>
             </el-table-column>
             <el-table-column label="操作" width="160" fixed="right">
               <template #default="{ row }">
@@ -273,7 +273,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="reward_amount" label="奖励金额" min-width="120">
-              <template #default="{ row }">S/ {{ formatMoney(row.reward_amount) }}</template>
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.reward_amount) }}</template>
             </el-table-column>
             <el-table-column prop="claim_date" label="领取日期" min-width="140" />
             <el-table-column prop="create_time" label="创建时间" min-width="180" />
@@ -388,6 +388,7 @@ import {
   updateAgentLevelConfig,
   updateVip
 } from "@/api/modules/vip";
+import { currencyPrefix } from "@/utils";
 
 const activeTab = ref("vip");
 

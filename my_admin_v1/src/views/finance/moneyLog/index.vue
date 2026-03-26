@@ -31,17 +31,17 @@
       </template>
 
       <template #money_before="scope">
-        <span>S/ {{ formatMoney(scope.row.money_before) }}</span>
+        <span>{{ currencyPrefix }}{{ formatMoney(scope.row.money_before) }}</span>
       </template>
 
       <template #money="scope">
         <span :class="Number(scope.row.type) === 1 ? 'amount-up' : 'amount-down'">
-          {{ Number(scope.row.type) === 1 ? "+" : "-" }}S/ {{ formatMoney(scope.row.money) }}
+          {{ Number(scope.row.type) === 1 ? "+" : "-" }}{{ currencyPrefix }}{{ formatMoney(scope.row.money) }}
         </span>
       </template>
 
       <template #money_end="scope">
-        <span>S/ {{ formatMoney(scope.row.money_end) }}</span>
+        <span>{{ currencyPrefix }}{{ formatMoney(scope.row.money_end) }}</span>
       </template>
     </ProTable>
   </div>
@@ -53,6 +53,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { PayMoneyLog } from "@/api/interface";
 import { getPayMoneyLogList } from "@/api/modules/payment";
+import { currencyPrefix } from "@/utils";
 
 const proTable = ref<ProTableInstance>();
 

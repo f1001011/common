@@ -35,7 +35,7 @@
         </div>
         <div class="summary-card success">
           <span class="summary-label">赠送金额</span>
-          <strong>S/ {{ formatMoney(stats.gift_amount || 0) }}</strong>
+          <strong>{{ currencyPrefix }}{{ formatMoney(stats.gift_amount || 0) }}</strong>
         </div>
         <div class="summary-card primary">
           <span class="summary-label">签到记录数</span>
@@ -49,7 +49,7 @@
           <div v-for="item in stats.reward_breakdown || []" :key="item.even_sign" class="breakdown-item">
             <span>连签 {{ item.even_sign }} 天</span>
             <span>{{ item.total_count }} 人次</span>
-            <strong>S/ {{ formatMoney(item.total_amount) }}</strong>
+            <strong>{{ currencyPrefix }}{{ formatMoney(item.total_amount) }}</strong>
           </div>
           <el-empty v-if="!(stats.reward_breakdown || []).length" description="暂无统计" />
         </div>
@@ -73,7 +73,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="reward_amount" label="奖励金额" min-width="120">
-          <template #default="{ row }">S/ {{ formatMoney(row.reward_amount) }}</template>
+          <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.reward_amount) }}</template>
         </el-table-column>
         <el-table-column prop="create_time" label="签到时间" min-width="180" />
       </el-table>
@@ -99,6 +99,7 @@ import dayjs from "dayjs";
 import { onMounted, reactive, ref } from "vue";
 import { Report } from "@/api/interface";
 import { getSignLogList, getSignStats } from "@/api/modules/report";
+import { currencyPrefix } from "@/utils";
 
 const loading = ref(false);
 const rangeType = ref("today");

@@ -24,7 +24,7 @@
       </template>
 
       <template #money="scope">
-        <span class="amount">S/ {{ formatMoney(scope.row.money) }}</span>
+        <span class="amount">{{ currencyPrefix }}{{ formatMoney(scope.row.money) }}</span>
       </template>
 
       <template #user_info="scope">
@@ -44,6 +44,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import { Coupon } from "@/api/interface";
 import { getCouponList } from "@/api/modules/payment";
+import { currencyPrefix } from "@/utils";
 
 const columns = reactive<ColumnProps<Coupon.ResListItem>[]>([
   { type: "index", label: "#", width: 70 },

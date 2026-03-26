@@ -16,6 +16,7 @@ Route::group('api', function(){
     // 用户列表
     Route::post('user/list', \app\controller\user\UserCon::class . '@GetUserList');
 
+
     // 用户基础信息修改
     Route::post('user/update/base', \app\controller\user\UserCon::class . '@UpdateBaseInfo');
 
@@ -123,6 +124,12 @@ Route::group('api', function(){
 
     // 兑换商品删除
     Route::post('wares/delete', \app\controller\product\WaresCon::class . '@DeleteWares');
+
+    // 通用图片上传
+    Route::post('file/upload/img', \app\controller\common\FileCon::class . '@UploadImg');
+
+    // 通用视频上传
+    Route::post('file/upload/video', \app\controller\common\FileCon::class . '@UploadVideo');
 
     // VIP配置列表
     Route::post('vip/list', \app\controller\vip\VipCon::class . '@GetVipList');

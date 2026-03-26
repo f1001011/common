@@ -5,8 +5,8 @@ import http from "@/api";
 /**
  * @name 商品管理模块
  */
-export const getGoodsList = (params: Goods.ReqParams) => {
-  return http.post<Goods.ResListData>(PORT1 + `/goods/list`, params);
+export const getGoodsList = (params: Goods.ReqParams, config = {}) => {
+  return http.post<Goods.ResListData>(PORT1 + `/goods/list`, params, config);
 };
 
 export const addGoods = (params: Goods.SaveParams) => {

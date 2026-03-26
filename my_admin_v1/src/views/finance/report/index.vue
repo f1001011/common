@@ -30,7 +30,7 @@
       <div class="summary-grid">
         <div class="summary-card">
           <span class="summary-label">充值成功金额</span>
-          <strong>S/ {{ formatMoney(summary.recharge_success_amount) }}</strong>
+          <strong>{{ currencyPrefix }}{{ formatMoney(summary.recharge_success_amount) }}</strong>
           <small>成功 {{ summary.recharge_success_count || 0 }} 笔 / 总 {{ summary.recharge_total_count || 0 }} 笔</small>
         </div>
         <div class="summary-card warning">
@@ -40,7 +40,7 @@
         </div>
         <div class="summary-card danger">
           <span class="summary-label">提现成功金额</span>
-          <strong>S/ {{ formatMoney(summary.withdraw_success_amount) }}</strong>
+          <strong>{{ currencyPrefix }}{{ formatMoney(summary.withdraw_success_amount) }}</strong>
           <small>成功 {{ summary.withdraw_success_count || 0 }} 笔 / 总 {{ summary.withdraw_total_count || 0 }} 笔</small>
         </div>
         <div class="summary-card primary">
@@ -50,14 +50,15 @@
         </div>
         <div class="summary-card success">
           <span class="summary-label">净流入金额</span>
-          <strong>S/ {{ formatMoney(summary.net_in_amount) }}</strong>
+          <strong>{{ currencyPrefix }}{{ formatMoney(summary.net_in_amount) }}</strong>
           <small>充值到账 - 提现到账</small>
         </div>
         <div class="summary-card info">
           <span class="summary-label">资金流水</span>
           <strong>{{ summary.money_total_count || 0 }} 条</strong>
           <small>
-            收入 S/ {{ formatMoney(summary.money_income_amount) }} / 支出 S/ {{ formatMoney(summary.money_expense_amount) }}
+            收入 {{ currencyPrefix }}{{ formatMoney(summary.money_income_amount) }} / 支出 {{ currencyPrefix
+            }}{{ formatMoney(summary.money_expense_amount) }}
           </small>
         </div>
       </div>
@@ -73,7 +74,7 @@
             >
               <span>{{ item.channel_name }}</span>
               <span>{{ item.total_count }} 笔</span>
-              <strong>S/ {{ formatMoney(item.total_amount) }}</strong>
+              <strong>{{ currencyPrefix }}{{ formatMoney(item.total_amount) }}</strong>
             </div>
             <el-empty v-if="!(summary.recharge_channel_breakdown || []).length" description="暂无数据" />
           </div>
@@ -89,7 +90,7 @@
             >
               <span>{{ item.channel_name }}</span>
               <span>{{ item.total_count }} 笔</span>
-              <strong>S/ {{ formatMoney(item.total_amount) }}</strong>
+              <strong>{{ currencyPrefix }}{{ formatMoney(item.total_amount) }}</strong>
             </div>
             <el-empty v-if="!(summary.withdraw_channel_breakdown || []).length" description="暂无数据" />
           </div>
@@ -102,11 +103,11 @@
           <div class="account-grid">
             <div class="account-card">
               <span>余额收入</span>
-              <strong>S/ {{ formatMoney(summary.balance_income_amount) }}</strong>
+              <strong>{{ currencyPrefix }}{{ formatMoney(summary.balance_income_amount) }}</strong>
             </div>
             <div class="account-card">
               <span>余额支出</span>
-              <strong>S/ {{ formatMoney(summary.balance_expense_amount) }}</strong>
+              <strong>{{ currencyPrefix }}{{ formatMoney(summary.balance_expense_amount) }}</strong>
             </div>
             <div class="account-card">
               <span>积分收入</span>
@@ -124,7 +125,7 @@
             <el-table-column prop="total_count" label="笔数" min-width="90" />
             <el-table-column prop="total_amount" label="金额" min-width="140">
               <template #default="{ row }">
-                <span v-if="row.money_type === 1">S/ {{ formatMoney(row.total_amount) }}</span>
+                <span v-if="row.money_type === 1">{{ currencyPrefix }}{{ formatMoney(row.total_amount) }}</span>
                 <span v-else>{{ formatMoney(row.total_amount) }}</span>
               </template>
             </el-table-column>
@@ -140,6 +141,7 @@ import dayjs from "dayjs";
 import { computed, onMounted, reactive, ref } from "vue";
 import { Report } from "@/api/interface";
 import { getFinanceSummary } from "@/api/modules/report";
+import { currencyPrefix } from "@/utils";
 
 const loading = ref(false);
 const rangeType = ref("today");

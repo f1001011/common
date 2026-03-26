@@ -1,12 +1,62 @@
-<template>
-  <div class="table-box">
+﻿<template>
+  <div class="goods-page">
+    <div class="page-header">
+      <div class="page-title">
+        <span>产品管理</span>
+        <el-tag type="info" effect="plain">真实接口：/goods/list</el-tag>
+      </div>
+      <div class="header-actions">
+        <el-button-group>
+          <el-button :type="viewMode === 'card' ? 'primary' : 'default'" @click="viewMode = 'card'">卡片</el-button>
+          <el-button :type="viewMode === 'table' ? 'primary' : 'default'" @click="viewMode = 'table'">表格</el-button>
+        </el-button-group>
+        <el-button type="primary" @click="openDialog()">新增产品</el-button>
+      </div>
+    </div>
+
+    <div class="filter-panel">
+      <el-form :inline="true" :model="searchForm" class="filter-form">
+        <el-form-item label="产品ID">
+          <el-input v-model.trim="searchForm.id" clearable placeholder="请输入" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="产品名称">
+          <el-input v-model.trim="searchForm.goods_name" clearable placeholder="请输入" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="分类ID">
+          <el-input v-model.trim="searchForm.goods_type_id" clearable placeholder="请输入" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="VIP等级">
+          <el-input v-model.trim="searchForm.level_vip" clearable placeholder="请输入" @keyup.enter="handleSearch" />
+        </el-form-item>
+        <el-form-item label="返利方式">
+          <el-select v-model="searchForm.red_way" clearable placeholder="全部" style="width: 180px">
+            <el-option label="到期还本还息" :value="1" />
+            <el-option label="每日返息到期还本" :value="2" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="searchForm.date_range"
+            type="datetimerange"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="resetSearch">重置</el-button>
+          <el-button type="primary" @click="handleSearch">查询</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
     <div class="summary-grid">
       <div class="summary-card">
-        <span class="summary-label">当前页产品数</span>
+        <span class="summary-label">产品总数</span>
         <strong>{{ summary.total }}</strong>
       </div>
       <div class="summary-card success">
-        <span class="summary-label">上架产品</span>
+        <span class="summary-label">上架</span>
         <strong>{{ summary.online }}</strong>
       </div>
       <div class="summary-card warning">
@@ -14,81 +64,174 @@
         <strong>{{ summary.coming }}</strong>
       </div>
       <div class="summary-card danger">
-        <span class="summary-label">下架产品</span>
+        <span class="summary-label">下架</span>
         <strong>{{ summary.offline }}</strong>
       </div>
     </div>
 
-    <ProTable
-      ref="proTable"
-      :columns="columns"
-      :request-api="requestGoodsList"
-      :data-callback="dataCallback"
-      :tool-button="['refresh', 'setting', 'search']"
-    >
-      <template #tableHeader>
-        <div class="table-header">
-          <div class="page-title">
-            <span>产品列表</span>
-            <el-tag type="info" effect="plain">真实接口：/goods/list</el-tag>
+    <div class="list-panel">
+      <div class="panel-toolbar">
+        <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+          <el-tab-pane :label="`全部 ${summary.total}`" name="all" />
+          <el-tab-pane :label="`上架 ${summary.online}`" name="online" />
+          <el-tab-pane :label="`即将推出 ${summary.coming}`" name="coming" />
+          <el-tab-pane :label="`下架 ${summary.offline}`" name="offline" />
+        </el-tabs>
+      </div>
+
+      <div v-loading="loading">
+        <div v-if="viewMode === 'card'" class="card-grid">
+          <div v-for="item in goodsList" :key="item.id" class="goods-card">
+            <div class="goods-card__body">
+              <div class="goods-card__image">
+                <UploadImg
+                  :image-url="getImageUrl(item.head_img)"
+                  :api="uploadGoodsImg"
+                  width="96px"
+                  height="96px"
+                  border-radius="12px"
+                  :drag="false"
+                  @update:image-url="value => updateGoodsImage(item, value)"
+                >
+                  <template #empty>
+                    <div class="image-placeholder image-placeholder--upload">
+                      <span>点击上传</span>
+                    </div>
+                  </template>
+                </UploadImg>
+              </div>
+
+              <div class="goods-card__content">
+                <div class="goods-card__title">{{ item.goods_name || `产品-${item.id}` }}</div>
+                <div class="goods-card__tags">
+                  <el-tag type="primary" effect="plain">VIP{{ item.level_vip || 0 }}</el-tag>
+                  <el-tag :type="getStatusTag(item.status)" effect="light">{{ getStatusText(item.status) }}</el-tag>
+                  <el-tag :type="Number(item.red_way) === 1 ? 'success' : 'warning'" effect="light">
+                    {{ getRedWayText(item.red_way) }}
+                  </el-tag>
+                </div>
+
+                <div class="goods-card__meta">价格：{{ currencyPrefix }}{{ formatMoney(item.goods_money) }}</div>
+                <div class="goods-card__meta">日收益：{{ currencyPrefix }}{{ formatMoney(item.day_red) }}</div>
+                <div class="goods-card__meta">总收益：{{ currencyPrefix }}{{ formatMoney(item.total_money) }}</div>
+                <div class="goods-card__meta">返利方式：{{ getRedWayText(item.red_way) }}</div>
+                <div class="goods-card__meta">周期：{{ item.period || 0 }} 天</div>
+                <div class="goods-card__meta">限购：{{ item.buy_num || 0 }} 份</div>
+              </div>
+            </div>
+
+            <div class="goods-card__footer">
+              <div class="goods-card__extra">
+                <span>产品ID：{{ item.id }}</span>
+                <span>创建：{{ item.create_time || "-" }}</span>
+              </div>
+              <div class="goods-card__actions">
+                <el-button size="small" @click="openDialog(item)">编辑</el-button>
+                <el-button
+                  size="small"
+                  :type="Number(item.status) === 1 ? 'warning' : 'success'"
+                  plain
+                  @click="toggleStatus(item)"
+                >
+                  {{ Number(item.status) === 1 ? "下架" : "上架" }}
+                </el-button>
+                <el-button size="small" type="danger" plain @click="handleDelete(item)">删除</el-button>
+              </div>
+            </div>
           </div>
-          <el-button type="primary" @click="openDialog()">新增产品</el-button>
+
+          <el-empty v-if="!goodsList.length" description="暂无产品数据" />
         </div>
-      </template>
 
-      <template #status="scope">
-        <el-tag :type="getStatusTag(scope.row.status)" effect="light">
-          {{ getStatusText(scope.row.status) }}
-        </el-tag>
-      </template>
-
-      <template #red_way="scope">
-        <el-tag :type="Number(scope.row.red_way) === 1 ? 'primary' : 'warning'" effect="plain">
-          {{ Number(scope.row.red_way) === 1 ? "到期还本还息" : "每日返息到期还本" }}
-        </el-tag>
-      </template>
-
-      <template #goods_money="scope">
-        <span class="amount">S/ {{ formatMoney(scope.row.goods_money) }}</span>
-      </template>
-
-      <template #day_red="scope">
-        <span>S/ {{ formatMoney(scope.row.day_red) }}</span>
-      </template>
-
-      <template #total_money="scope">
-        <span class="success-text">S/ {{ formatMoney(scope.row.total_money) }}</span>
-      </template>
-
-      <template #commission="scope">
-        <div class="commission-cell">
-          <span>L1: {{ formatMoney(scope.row.goods_agent_1) }}</span>
-          <span>L2: {{ formatMoney(scope.row.goods_agent_2) }}</span>
-          <span>L3: {{ formatMoney(scope.row.goods_agent_3) }}</span>
+        <div v-else class="table-wrap">
+          <el-table :data="goodsList" border>
+            <el-table-column prop="id" label="产品ID" width="90" />
+            <el-table-column prop="goods_name" label="产品名称" min-width="180" />
+            <el-table-column prop="goods_type_id" label="分类ID" width="100" />
+            <el-table-column prop="level_vip" label="VIP等级" width="100" />
+            <el-table-column prop="goods_money" label="价格" width="120">
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.goods_money) }}</template>
+            </el-table-column>
+            <el-table-column prop="day_red" label="日收益" width="120">
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.day_red) }}</template>
+            </el-table-column>
+            <el-table-column prop="total_money" label="总收益" width="120">
+              <template #default="{ row }">{{ currencyPrefix }}{{ formatMoney(row.total_money) }}</template>
+            </el-table-column>
+            <el-table-column prop="red_way" label="返利方式" min-width="170">
+              <template #default="{ row }">{{ getRedWayText(row.red_way) }}</template>
+            </el-table-column>
+            <el-table-column prop="status" label="状态" width="110">
+              <template #default="{ row }">
+                <el-tag :type="getStatusTag(row.status)" effect="light">{{ getStatusText(row.status) }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="create_time" label="创建时间" min-width="180" />
+            <el-table-column label="操作" width="220" fixed="right">
+              <template #default="{ row }">
+                <el-button type="primary" link @click="openDialog(row)">编辑</el-button>
+                <el-button type="warning" link @click="toggleStatus(row)">
+                  {{ Number(row.status) === 1 ? "下架" : "上架" }}
+                </el-button>
+                <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
-      </template>
+      </div>
 
-      <template #operation="scope">
-        <el-button type="primary" link @click="openDialog(scope.row)">编辑</el-button>
-        <el-button type="danger" link @click="handleDelete(scope.row)">删除</el-button>
-      </template>
-    </ProTable>
+      <div class="pagination-wrap">
+        <el-pagination
+          :current-page="pagination.page"
+          :page-size="pagination.limit"
+          :page-sizes="[12, 20, 40, 80]"
+          :total="pagination.total"
+          background
+          layout="total, sizes, prev, pager, next, jumper"
+          @current-change="handlePageChange"
+          @size-change="handleSizeChange"
+        />
+      </div>
+    </div>
 
     <GoodsDialog ref="dialogRef" />
   </div>
 </template>
 
 <script setup lang="ts" name="goodsList">
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import ProTable from "@/components/ProTable/index.vue";
-import type { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { Goods } from "@/api/interface";
-import { deleteGoods, getGoodsList } from "@/api/modules/goods";
+import { deleteGoods, getGoodsList, updateGoods } from "@/api/modules/goods";
+import { uploadImg } from "@/api/modules/upload";
+import { currencyPrefix, getImageUrl } from "@/utils";
+import UploadImg from "@/components/Upload/Img.vue";
 import GoodsDialog from "@/views/goods/components/GoodsDialog.vue";
 
-const proTable = ref<ProTableInstance>();
+type TabType = "all" | "online" | "coming" | "offline";
+type ViewMode = "card" | "table";
+
 const dialogRef = ref<InstanceType<typeof GoodsDialog> | null>(null);
+const loading = ref(false);
+const activeTab = ref<TabType>("all");
+const viewMode = ref<ViewMode>("card");
+const goodsList = ref<Goods.ResListItem[]>([]);
+const latestRequestId = ref(0);
+
+const searchForm = reactive({
+  id: "",
+  goods_name: "",
+  goods_type_id: "",
+  level_vip: "",
+  red_way: "" as "" | number,
+  date_range: [] as string[]
+});
+
+const pagination = reactive({
+  page: 1,
+  limit: 12,
+  total: 0
+});
 
 const summary = reactive({
   total: 0,
@@ -97,98 +240,179 @@ const summary = reactive({
   offline: 0
 });
 
-const statusOptions = [
-  { label: "全部", value: "" },
-  { label: "下架", value: 0 },
-  { label: "上架", value: 1 },
-  { label: "即将推出", value: 2 }
-];
-
-const redWayOptions = [
-  { label: "全部", value: "" },
-  { label: "到期还本还息", value: 1 },
-  { label: "每日返息到期还本", value: 2 }
-];
-
-const columns = reactive<ColumnProps<Goods.ResListItem>[]>([
-  { type: "index", label: "#", width: 70 },
-  { prop: "id", label: "产品ID", width: 90, search: { el: "input" } },
-  { prop: "goods_name", label: "产品名称", minWidth: 180, search: { el: "input" } },
-  { prop: "goods_type_id", label: "分类ID", width: 100, search: { el: "input" } },
-  {
-    prop: "status",
-    label: "状态",
-    width: 120,
-    enum: statusOptions,
-    search: { el: "select", props: { clearable: true } },
-    fieldNames: { label: "label", value: "value" }
-  },
-  {
-    prop: "red_way",
-    label: "返利方式",
-    minWidth: 160,
-    enum: redWayOptions,
-    search: { el: "select", props: { clearable: true } },
-    fieldNames: { label: "label", value: "value" }
-  },
-  { prop: "level_vip", label: "VIP等级", width: 100, search: { el: "input" } },
-  { prop: "goods_money", label: "价格", width: 120 },
-  { prop: "day_red", label: "日收益", width: 120 },
-  { prop: "total_money", label: "总收益", width: 120 },
-  { prop: "period", label: "周期(天)", width: 100 },
-  { prop: "buy_num", label: "限购次数", width: 100 },
-  { prop: "commission", label: "返佣", minWidth: 160, isSetting: false },
-  {
-    prop: "create_time",
-    label: "创建时间",
-    minWidth: 180,
-    search: {
-      el: "date-picker",
-      key: "date_range",
-      span: 2,
-      props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
-    }
-  },
-  { prop: "operation", label: "操作", fixed: "right", width: 140 }
-]);
-
-const requestGoodsList = (params: Record<string, any>) => {
-  const newParams: Goods.ReqParams = {
-    page: params.pageNum,
-    limit: params.pageSize,
-    id: params.id,
-    goods_name: params.goods_name,
-    goods_type_id: params.goods_type_id,
-    status: params.status,
-    red_way: params.red_way,
-    level_vip: params.level_vip
-  };
-
-  if (Array.isArray(params.date_range)) {
-    newParams.start_time = params.date_range[0];
-    newParams.end_time = params.date_range[1];
-  }
-
-  return getGoodsList(newParams);
+const uploadGoodsImg = (formData: FormData) => {
+  formData.append("type", "goods");
+  return uploadImg(formData);
 };
 
-const dataCallback = (res: Goods.ResListData) => {
-  const list = res.data || [];
-  summary.total = list.length;
-  summary.online = list.filter(item => Number(item.status) === 1).length;
-  summary.coming = list.filter(item => Number(item.status) === 2).length;
-  summary.offline = list.filter(item => Number(item.status) === 0).length;
-  return {
-    list,
-    total: res.total || 0
+const buildBaseParams = () => {
+  const params: Goods.ReqParams = {
+    page: pagination.page,
+    limit: pagination.limit
   };
+
+  if (searchForm.id) params.id = searchForm.id;
+  if (searchForm.goods_name) params.goods_name = searchForm.goods_name;
+  if (searchForm.goods_type_id) params.goods_type_id = searchForm.goods_type_id;
+  if (searchForm.level_vip) params.level_vip = searchForm.level_vip;
+  if (searchForm.red_way !== "") params.red_way = searchForm.red_way;
+
+  if (Array.isArray(searchForm.date_range) && searchForm.date_range.length === 2) {
+    params.start_time = searchForm.date_range[0];
+    params.end_time = searchForm.date_range[1];
+  }
+
+  return params;
+};
+
+const getTabStatus = () => {
+  if (activeTab.value === "online") return 1;
+  if (activeTab.value === "coming") return 2;
+  if (activeTab.value === "offline") return 0;
+  return "";
+};
+
+const buildParams = (status?: number | string) => {
+  const params = buildBaseParams();
+  const nextStatus = status !== undefined ? status : getTabStatus();
+
+  if (nextStatus !== "") {
+    params.status = nextStatus;
+  }
+
+  return params;
+};
+
+const isRequestCanceled = (error: unknown) => {
+  return error instanceof Error && (error.name === "CanceledError" || (error as { code?: string }).code === "ERR_CANCELED");
+};
+
+const fetchSummary = async (requestId: number) => {
+  const baseParams = buildBaseParams();
+  const [allRes, onlineRes, comingRes, offlineRes] = await Promise.all([
+    getGoodsList({ ...baseParams, page: 1, limit: 1 }, { cancel: false, loading: false }),
+    getGoodsList({ ...baseParams, page: 1, limit: 1, status: 1 }, { cancel: false, loading: false }),
+    getGoodsList({ ...baseParams, page: 1, limit: 1, status: 2 }, { cancel: false, loading: false }),
+    getGoodsList({ ...baseParams, page: 1, limit: 1, status: 0 }, { cancel: false, loading: false })
+  ]);
+
+  if (requestId !== latestRequestId.value) return;
+
+  summary.total = Number(allRes.data.total || 0);
+  summary.online = Number(onlineRes.data.total || 0);
+  summary.coming = Number(comingRes.data.total || 0);
+  summary.offline = Number(offlineRes.data.total || 0);
+};
+
+const fetchGoodsList = async () => {
+  const requestId = latestRequestId.value + 1;
+  latestRequestId.value = requestId;
+  loading.value = true;
+
+  try {
+    const { data } = await getGoodsList(buildParams());
+    if (requestId !== latestRequestId.value) return;
+
+    goodsList.value = data.data || [];
+    pagination.total = Number(data.total || 0);
+    await fetchSummary(requestId);
+  } catch (error) {
+    if (!isRequestCanceled(error)) {
+      throw error;
+    }
+  } finally {
+    if (requestId === latestRequestId.value) {
+      loading.value = false;
+    }
+  }
+};
+
+const handleSearch = async () => {
+  pagination.page = 1;
+  await fetchGoodsList();
+};
+
+const resetSearch = async () => {
+  searchForm.id = "";
+  searchForm.goods_name = "";
+  searchForm.goods_type_id = "";
+  searchForm.level_vip = "";
+  searchForm.red_way = "";
+  searchForm.date_range = [];
+  activeTab.value = "all";
+  pagination.page = 1;
+  await fetchGoodsList();
+};
+
+const handleTabChange = async (name: string | number) => {
+  activeTab.value = name as TabType;
+  pagination.page = 1;
+  await fetchGoodsList();
+};
+
+const handlePageChange = async (page: number) => {
+  pagination.page = page;
+  await fetchGoodsList();
+};
+
+const handleSizeChange = async (limit: number) => {
+  pagination.limit = limit;
+  pagination.page = 1;
+  await fetchGoodsList();
 };
 
 const openDialog = (row?: Goods.ResListItem) => {
   dialogRef.value?.acceptParams({
     row,
-    getTableList: () => proTable.value?.getTableList()
+    getTableList: fetchGoodsList
   });
+};
+
+const buildGoodsSavePayload = (row: Goods.ResListItem, overrides: Partial<Goods.SaveParams> = {}): Goods.SaveParams => {
+  return {
+    id: row.id,
+    goods_type_id: Number(row.goods_type_id || 1),
+    goods_name: row.goods_name || "",
+    goods_money: Number(row.goods_money || 0),
+    project_scale: Number(row.project_scale || 0),
+    day_red: Number(row.day_red || 0),
+    income_times_per_day: Number(row.income_times_per_day || 1),
+    income_per_time: Number(row.income_per_time || 0),
+    total_money: Number(row.total_money || 0),
+    revenue_lv: Number(row.revenue_lv || 0),
+    period: Number(row.period || 0),
+    status: Number(row.status || 0),
+    red_way: Number(row.red_way || 1),
+    warrant: row.warrant || "",
+    head_img: row.head_img || "",
+    bottom_img: row.bottom_img || "",
+    is_examine: Number(row.is_examine || 0),
+    sort: Number(row.sort || 0),
+    is_coupon: Number(row.is_coupon || 0),
+    progress_rate: Number(row.progress_rate || 0),
+    goods_agent_1: Number(row.goods_agent_1 || 0),
+    goods_agent_2: Number(row.goods_agent_2 || 0),
+    goods_agent_3: Number(row.goods_agent_3 || 0),
+    buy_num: Number(row.buy_num || 0),
+    level_vip: Number(row.level_vip || 0),
+    minute_claim: Number(row.minute_claim || 0),
+    ...overrides
+  };
+};
+
+const toggleStatus = async (row: Goods.ResListItem) => {
+  const nextStatus = Number(row.status) === 1 ? 0 : 1;
+
+  await updateGoods(buildGoodsSavePayload(row, { status: nextStatus }));
+
+  ElMessage.success(nextStatus === 1 ? "产品已上架" : "产品已下架");
+  await fetchGoodsList();
+};
+
+const updateGoodsImage = async (row: Goods.ResListItem, imageUrl: string) => {
+  await updateGoods(buildGoodsSavePayload(row, { head_img: imageUrl }));
+  row.head_img = imageUrl;
+  ElMessage.success(imageUrl ? "封面图已更新" : "封面图已清空");
 };
 
 const handleDelete = (row: Goods.ResListItem) => {
@@ -197,7 +421,7 @@ const handleDelete = (row: Goods.ResListItem) => {
   }).then(async () => {
     await deleteGoods({ id: row.id });
     ElMessage.success("产品已删除");
-    proTable.value?.getTableList();
+    await fetchGoodsList();
   });
 };
 
@@ -220,30 +444,64 @@ const getStatusTag = (value: number | string) => {
   };
   return map[Number(value)] || "info";
 };
+
+const getRedWayText = (value: number | string) => {
+  const map: Record<number, string> = {
+    1: "到期还本还息",
+    2: "每日返息到期还本"
+  };
+  return map[Number(value)] || "-";
+};
+
+onMounted(fetchGoodsList);
 </script>
 
 <style scoped lang="scss">
-.table-header {
+.goods-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header,
+.filter-panel,
+.list-panel {
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.page-header {
   display: flex;
   justify-content: space-between;
   gap: 16px;
   align-items: center;
 }
 
-.page-title {
+.page-title,
+.header-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
+}
+
+.page-title {
   font-size: 16px;
   font-weight: 600;
   color: #1f2937;
+}
+
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 0;
 }
 
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
-  margin-bottom: 16px;
 }
 
 .summary-card {
@@ -251,7 +509,7 @@ const getStatusTag = (value: number | string) => {
   flex-direction: column;
   gap: 8px;
   padding: 18px 20px;
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
 }
@@ -281,22 +539,131 @@ const getStatusTag = (value: number | string) => {
   color: #6b7280;
 }
 
-.amount {
+.panel-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 18px;
+}
+
+.goods-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 300px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.goods-card:hover {
+  border-color: #bfdbfe;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  transform: translateY(-2px);
+}
+
+.goods-card__body {
+  display: flex;
+  gap: 16px;
+  padding: 18px;
+}
+
+.goods-card__image {
+  width: 96px;
+  height: 96px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #f3f4f6;
+}
+
+.goods-card__image :deep(.el-image) {
+  width: 100%;
+  height: 100%;
+}
+
+.image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  color: #9ca3af;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+}
+
+.image-placeholder--upload {
+  cursor: pointer;
+}
+
+.goods-card__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.goods-card__title {
+  font-size: 16px;
   font-weight: 600;
   color: #111827;
 }
 
-.success-text {
-  font-weight: 600;
-  color: #16a34a;
+.goods-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.commission-cell {
+.goods-card__meta {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.goods-card__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 18px;
+  border-top: 1px solid #f1f5f9;
+  background: #fcfcfd;
+}
+
+.goods-card__extra {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   font-size: 12px;
-  color: #4b5563;
+  color: #6b7280;
+}
+
+.goods-card__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.table-wrap {
+  margin-top: 8px;
+}
+
+.pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
 }
 
 @media (max-width: 1200px) {
@@ -305,14 +672,24 @@ const getStatusTag = (value: number | string) => {
   }
 }
 
-@media (max-width: 768px) {
-  .table-header {
+@media (max-width: 900px) {
+  .page-header,
+  .panel-toolbar,
+  .goods-card__footer {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .summary-grid {
     grid-template-columns: 1fr;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .goods-card__body {
+    flex-direction: column;
   }
 }
 </style>

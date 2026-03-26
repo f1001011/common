@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="table-box">
     <ProTable
       ref="proTable"
@@ -31,7 +31,7 @@
       </template>
 
       <template #money_balance="scope">
-        <span class="money">S/ {{ formatMoney(scope.row.money_balance) }}</span>
+        <span class="money">{{ currencyPrefix }}{{ formatMoney(scope.row.money_balance) }}</span>
       </template>
 
       <template #level_vip="scope">
@@ -55,11 +55,11 @@
       </template>
 
       <template #total_recharge="scope">
-        <span>S/ {{ formatMoney(scope.row.total_recharge) }}</span>
+        <span>{{ currencyPrefix }}{{ formatMoney(scope.row.total_recharge) }}</span>
       </template>
 
       <template #total_withdraw="scope">
-        <span>S/ {{ formatMoney(scope.row.total_withdraw) }}</span>
+        <span>{{ currencyPrefix }}{{ formatMoney(scope.row.total_withdraw) }}</span>
       </template>
 
       <template #operation="scope">
@@ -81,6 +81,7 @@ import ProTable from "@/components/ProTable/index.vue";
 import type { ProTableInstance, ColumnProps } from "@/components/ProTable/interface";
 import { User } from "@/api/interface";
 import { getUserList } from "@/api/modules/user";
+import { currencyPrefix } from "@/utils";
 import UserBaseDialog from "@/views/user/components/UserBaseDialog.vue";
 import UserAmountDialog from "@/views/user/components/UserAmountDialog.vue";
 import UserStatusDialog from "@/views/user/components/UserStatusDialog.vue";
@@ -101,6 +102,8 @@ const stateOptions = [
   { label: "在线", value: 1 },
   { label: "离线", value: 0 }
 ];
+
+const vipSearchOptions = ref<{ label: string; value: number }[]>([]);
 
 const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "index", label: "#", width: 70 },
@@ -145,6 +148,16 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "operation", label: "操作", fixed: "right", width: 220 }
 ]);
 
+const vipColumn = columns.find(item => item.prop === "level_vip");
+if (vipColumn) {
+  vipColumn.enum = vipSearchOptions;
+  vipColumn.search = {
+    el: "select",
+    tooltip: "按所选 VIP 等级进行大于等于筛选",
+    props: { clearable: true, filterable: true }
+  };
+}
+
 const requestUserList = (params: Record<string, any>) => {
   const newParams: User.ReqUserParams = {
     page: params.pageNum,
@@ -166,6 +179,17 @@ const requestUserList = (params: Record<string, any>) => {
 };
 
 const dataCallback = (data: User.ResUserListData) => {
+  const nextVipOptions = Array.from(
+    new Set((data.data || []).map(item => Number(item.level_vip || 0)).filter(level => !Number.isNaN(level)))
+  )
+    .sort((first, second) => first - second)
+    .map(level => ({
+      label: `VIP${level}`,
+      value: level
+    }));
+
+  vipSearchOptions.value = nextVipOptions;
+
   return {
     list:
       (data.data || []).map(item => ({
