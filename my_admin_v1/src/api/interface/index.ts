@@ -1346,4 +1346,44 @@ export namespace Report {
     record_count: number;
     reward_breakdown: PeriodStatsItem[];
   }
+
+  export interface FinanceSummaryReqParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface FinanceChannelStatsItem {
+    channel_name: string;
+    total_count: number;
+    total_amount: number | string;
+  }
+
+  export interface FinanceMoneyTypeStatsItem {
+    money_type: number;
+    type: number;
+    total_count: number;
+    total_amount: number | string;
+  }
+
+  export interface FinanceSummaryData {
+    recharge_total_count: number;
+    recharge_success_count: number;
+    recharge_success_amount: number | string;
+    recharge_pending_count: number;
+    withdraw_total_count: number;
+    withdraw_success_count: number;
+    withdraw_success_amount: number | string;
+    withdraw_pending_count: number;
+    net_in_amount: number | string;
+    money_total_count: number;
+    money_income_amount: number | string;
+    money_expense_amount: number | string;
+    balance_income_amount: number | string;
+    balance_expense_amount: number | string;
+    integral_income_amount: number | string;
+    integral_expense_amount: number | string;
+    recharge_channel_breakdown: FinanceChannelStatsItem[];
+    withdraw_channel_breakdown: FinanceChannelStatsItem[];
+    money_type_breakdown: FinanceMoneyTypeStatsItem[];
+  }
 }

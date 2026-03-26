@@ -247,6 +247,9 @@ Route::group('api', function(){
     // 返佣统计
     Route::post('report/commission/stats', \app\controller\report\RecordCon::class . '@GetCommissionStats');
 
+    // 财务报表
+    Route::post('report/finance/summary', \app\controller\report\RecordCon::class . '@GetFinanceSummary');
+
 })->middleware([AuthMiddleware::class, AdminLogMiddleware::class]);
 
 Route::group('api', function(){

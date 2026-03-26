@@ -97,7 +97,11 @@ const dataCallback = (res: RechargeVoucher.ResListData) => ({
 
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
 const statusText = (value: number | string) => ({ 0: "待审核", 1: "通过", 2: "拒绝" })[Number(value)] || `状态${value}`;
-const statusType = (value: number | string) => ({ 0: "warning", 1: "success", 2: "danger" })[Number(value)] || "info";
+const statusType = (value: number | string): "success" | "warning" | "info" | "primary" | "danger" => {
+  return (
+    ({ 0: "warning", 1: "success", 2: "danger" } as Record<number, "success" | "warning" | "danger">)[Number(value)] || "info"
+  );
+};
 </script>
 
 <style scoped lang="scss">

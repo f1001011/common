@@ -31,7 +31,18 @@
 - 充值订单修改
 - 提现记录
 - 提现订单修改
+- 财务报表
 - 提现凭证展示
+- 优惠券列表
+- 充值凭证列表
+- 提现凭证详情
+- 提现凭证新增
+- 提现凭证修改
+- 提现凭证删除
+- 提现凭证评论列表
+- 提现凭证评论新增
+- 提现凭证评论修改
+- 提现凭证评论删除
 
 ### 3. 支付管理
 
@@ -117,6 +128,27 @@
 - 转盘开奖记录列表
 - 转盘次数数据列表
 
+### 9. 内容管理
+
+- 邮件列表
+- 邮件新增
+- 邮件修改
+- 邮件发送
+- 邮件删除
+- 通知列表
+- 通知新增
+- 通知修改
+- 通知删除
+
+### 10. 统计记录页
+
+- 签到记录列表
+- 签到统计卡片
+- 月薪记录列表
+- 月薪统计卡片
+- 返佣记录列表
+- 返佣统计卡片
+
 ## 三、已同步修改的菜单页面
 
 - VIP 等级管理
@@ -124,6 +156,14 @@
 - 奖池管理
 - 转盘管理
 - 转盘使用数据
+- 通知列表
+- 邮件列表
+- 签到记录
+- 月薪记录
+- 返佣记录
+- 优惠券列表
+- 充值凭证列表
+- 财务报表
 
 以上菜单已从占位页切换到真实页面。
 
@@ -132,6 +172,10 @@
 - `admin_api/app/controller/vip/VipCon.php`
 - `admin_api/app/controller/task/TaskCon.php`
 - `admin_api/app/controller/activity/ActivityCon.php`
+- `admin_api/app/controller/content/ContentCon.php`
+- `admin_api/app/controller/report/RecordCon.php`
+- `admin_api/app/controller/payment/FinanceRecordCon.php`
+- `admin_api/app/controller/payment/WithdrawShowcaseCon.php`
 - `admin_api/app/validate/VipValidate.php`
 - `admin_api/app/validate/TaskValidate.php`
 - `admin_api/app/validate/ActivityValidate.php`
@@ -144,28 +188,31 @@
 - `my_admin_v1/src/views/activity/prizePool/index.vue`
 - `my_admin_v1/src/views/activity/lottery/index.vue`
 - `my_admin_v1/src/views/activity/lotteryLog/index.vue`
+- `my_admin_v1/src/views/content/email/index.vue`
+- `my_admin_v1/src/views/content/notification/index.vue`
+- `my_admin_v1/src/views/activity/signRecord/index.vue`
+- `my_admin_v1/src/views/activity/monthlySalary/index.vue`
+- `my_admin_v1/src/views/activity/commission/index.vue`
+- `my_admin_v1/src/views/finance/coupon/index.vue`
+- `my_admin_v1/src/views/finance/rechargeVoucher/index.vue`
+- `my_admin_v1/src/views/finance/withdrawShowcase/index.vue`
+- `my_admin_v1/src/views/finance/report/index.vue`
 - `my_admin_v1/src/api/modules/vip.ts`
 - `my_admin_v1/src/api/modules/task.ts`
 - `my_admin_v1/src/api/modules/activity.ts`
+- `my_admin_v1/src/api/modules/content.ts`
+- `my_admin_v1/src/api/modules/report.ts`
 - `my_admin_v1/src/api/interface/index.ts`
 - `my_admin_v1/src/assets/json/authMenuList.json`
 
 ## 六、下一步可继续对接的方向
 
-- 活动管理字段细化
-- 各列表页搜索项继续补全
-- 表单校验提示细化
-- 图片上传字段改成上传组件
-- 统计类首页数据接口对接
-- 其它剩余后台业务页继续补齐
-
-邮件列表 邮件列表需要展示，需要能发送，修改，删除，
-通知列表  需要展示，需要能发送，修改，删除，
-签到记录  需要展示 ，给出一个卡片形式，选择 当日，昨日，7日，本周，本月 这种， 默认显示当日的，里面需要内容是 ，每日签到人数，每日赠送金额，每日奖品的列表统计(就几个，直接展示就行)
-月薪记录： 需要展示 给出一个卡片形式，选择 当日，昨日，7日，本周，本月 这种， 默认显示当日的，里面需要内容是 ，每日签到人数，每日赠送金额，每日奖品的列表统计(就几个，直接展示就行)
-优惠券列表：需要展示
-充值凭证列表： 需要展示
-返佣记录： 需要展示 给出一个卡片形式，选择 当日，昨日，7日，本周，本月 这种， 默认显示当日的，里面需要内容是 ，每日签到人数，每日赠送金额，每日奖品的列表统计(就几个，直接展示就行)
-展示详情 / 评论列表：需要展示,删除，修改，添加
-{"appid": "MD01", "api_url": "https://3nnt3311.com", "currency": "mxn", "game_url": "https://3nnt3311.com", "language": "es", "token_key": "P4kR7mL2Q9","callback_password": "P4kR7mL2Q9","callback_username": "MNDOMXN1", "report_url": "https://3nnt3311.com", "secret_key": "7676a4aa218ba38aff7dce7d5c84e37e047d8a021f29269f177ed1d845658e67", "token_username": "MNDOMXN1"}
-{"appid": "MD01", "api_url": "https://3nnt3311.com", "currency": "mxn", "game_url": "https://3nnt3311.com", "language": "es", "token_key": "P4kR7mL2Q9", "report_url": "https://3nnt3311.com", "secret_key": "7676a4aa218ba38aff7dce7d5c84e37e047d8a021f29269f177ed1d845658e67", "token_username": "MNDOMXN1"}
+- 剩余占位菜单：
+  - 用户标签
+  - 渠道链接
+  - 风控中心
+- 这 3 个页面当前 `admin_api` 还没有对应后台接口，不能硬接真实业务
+- 下一步可做：
+  - 继续补这 4 个模块的后台接口
+  - 或先把页面外观做出来，后续再接真实接口
+  - 或继续细化现有页面字段、搜索项、上传组件

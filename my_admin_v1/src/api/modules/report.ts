@@ -25,3 +25,7 @@ export const getCommissionLogList = (params: Report.CommissionReqParams) => {
 export const getCommissionStats = (params: Report.CommissionReqParams) => {
   return http.post<Report.CommissionStatsData>(PORT1 + `/report/commission/stats`, params);
 };
+
+export const getFinanceSummary = (params: Report.FinanceSummaryReqParams) => {
+  return http.post<Report.FinanceSummaryData>(PORT1 + `/report/finance/summary`, params);
+};

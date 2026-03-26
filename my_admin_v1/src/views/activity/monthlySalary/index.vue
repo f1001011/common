@@ -214,7 +214,9 @@ const handleSizeChange = (size: number) => {
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
 const salaryStatusText = (value?: number | string) =>
   ({ 0: "待领取", 1: "已领取", 2: "已过期" })[Number(value)] || `状态${value}`;
-const salaryStatusType = (value?: number | string) => ({ 0: "warning", 1: "success", 2: "info" })[Number(value)] || "info";
+const salaryStatusType = (value?: number | string): "success" | "warning" | "info" | "primary" | "danger" => {
+  return ({ 0: "warning", 1: "success", 2: "info" } as Record<number, "success" | "warning" | "info">)[Number(value)] || "info";
+};
 
 onMounted(fetchList);
 </script>

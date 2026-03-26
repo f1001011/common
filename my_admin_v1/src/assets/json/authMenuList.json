@@ -132,7 +132,7 @@
         {
           "path": "/finance/report",
           "name": "financeReport",
-          "component": "/admin/placeholder/index",
+          "component": "/finance/report/index",
           "meta": {
             "icon": "Menu",
             "title": "财务报表",

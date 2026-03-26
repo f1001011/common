@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace app\controller\report;
 
 use app\controller\BaseCon;
+use app\model\CommonPayCashModel;
+use app\model\CommonPayMoneyLogModel;
+use app\model\CommonPayRechargeModel;
 use think\facade\Db;
 
 class RecordCon extends BaseCon
@@ -199,6 +202,133 @@ class RecordCon extends BaseCon
         ]);
     }
 
+    public function GetFinanceSummary()
+    {
+        $postField = 'start_time,end_time';
+        $post = $this->request->only(explode(',', $postField), 'post', null);
+
+        $startTime = $this->normalizeSearchTime($post['start_time'] ?? null);
+        if (($post['start_time'] ?? '') !== '' && $startTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $endTime = $this->normalizeSearchTime($post['end_time'] ?? null, true);
+        if (($post['end_time'] ?? '') !== '' && $endTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $rechargeSummary = $this->buildRechargeReportQuery($startTime, $endTime)
+            ->fieldRaw(
+                'COUNT(*) as total_count,' .
+                'SUM(CASE WHEN status = ' . CommonPayRechargeModel::STATUS_PAY_SUCCESS . ' THEN 1 ELSE 0 END) as success_count,' .
+                'COALESCE(SUM(CASE WHEN status = ' . CommonPayRechargeModel::STATUS_PAY_SUCCESS . ' THEN CASE WHEN COALESCE(actual_amount, 0) > 0 THEN actual_amount ELSE money END ELSE 0 END), 0) as success_amount,' .
+                'SUM(CASE WHEN status IN (' . CommonPayRechargeModel::STATUS_CREATE . ',' . CommonPayRechargeModel::STATUS_WAIT_PAY . ') THEN 1 ELSE 0 END) as pending_count'
+            )
+            ->find();
+
+        $withdrawSummary = $this->buildCashReportQuery($startTime, $endTime)
+            ->fieldRaw(
+                'COUNT(*) as total_count,' .
+                'SUM(CASE WHEN status = ' . CommonPayCashModel::STATUS_SUCCESS . ' THEN 1 ELSE 0 END) as success_count,' .
+                'COALESCE(SUM(CASE WHEN status = ' . CommonPayCashModel::STATUS_SUCCESS . ' THEN CASE WHEN COALESCE(actual_amount, 0) > 0 THEN actual_amount WHEN COALESCE(money_actual, 0) > 0 THEN money_actual ELSE money END ELSE 0 END), 0) as success_amount,' .
+                'SUM(CASE WHEN status = ' . CommonPayCashModel::STATUS_APPLY . ' THEN 1 ELSE 0 END) as pending_count'
+            )
+            ->find();
+
+        $moneySummary = $this->buildMoneyLogReportQuery($startTime, $endTime)
+            ->fieldRaw(
+                'COUNT(*) as total_count,' .
+                'COALESCE(SUM(CASE WHEN type = ' . CommonPayMoneyLogModel::TYPE_INCOME . ' THEN money ELSE 0 END), 0) as income_amount,' .
+                'COALESCE(SUM(CASE WHEN type = ' . CommonPayMoneyLogModel::TYPE_EXPEND . ' THEN money ELSE 0 END), 0) as expense_amount'
+            )
+            ->find();
+
+        $rechargeChannelBreakdown = $this->buildRechargeReportQuery($startTime, $endTime)
+            ->where('status', CommonPayRechargeModel::STATUS_PAY_SUCCESS)
+            ->fieldRaw(
+                "CASE WHEN channel_name IS NULL OR channel_name = '' THEN '未配置渠道' ELSE channel_name END as channel_name," .
+                'COUNT(*) as total_count,' .
+                'COALESCE(SUM(CASE WHEN COALESCE(actual_amount, 0) > 0 THEN actual_amount ELSE money END), 0) as total_amount'
+            )
+            ->group("CASE WHEN channel_name IS NULL OR channel_name = '' THEN '未配置渠道' ELSE channel_name END")
+            ->order('total_amount desc,total_count desc')
+            ->limit(10)
+            ->select()
+            ->toArray();
+
+        $withdrawChannelBreakdown = $this->buildCashReportQuery($startTime, $endTime)
+            ->where('status', CommonPayCashModel::STATUS_SUCCESS)
+            ->fieldRaw(
+                "CASE WHEN channel_name IS NULL OR channel_name = '' THEN '未配置渠道' ELSE channel_name END as channel_name," .
+                'COUNT(*) as total_count,' .
+                'COALESCE(SUM(CASE WHEN COALESCE(actual_amount, 0) > 0 THEN actual_amount WHEN COALESCE(money_actual, 0) > 0 THEN money_actual ELSE money END), 0) as total_amount'
+            )
+            ->group("CASE WHEN channel_name IS NULL OR channel_name = '' THEN '未配置渠道' ELSE channel_name END")
+            ->order('total_amount desc,total_count desc')
+            ->limit(10)
+            ->select()
+            ->toArray();
+
+        $moneyTypeBreakdown = $this->buildMoneyLogReportQuery($startTime, $endTime)
+            ->fieldRaw('money_type,type,COUNT(*) as total_count,COALESCE(SUM(money), 0) as total_amount')
+            ->group('money_type,type')
+            ->order('money_type asc,type asc')
+            ->select()
+            ->toArray();
+
+        $balanceIncomeAmount = 0.0;
+        $balanceExpenseAmount = 0.0;
+        $integralIncomeAmount = 0.0;
+        $integralExpenseAmount = 0.0;
+
+        foreach ($moneyTypeBreakdown as $item) {
+            $moneyType = (int)($item['money_type'] ?? 0);
+            $type = (int)($item['type'] ?? 0);
+            $amount = (float)($item['total_amount'] ?? 0);
+
+            if ($moneyType === CommonPayMoneyLogModel::MONEY_TYPE_BALANCE && $type === CommonPayMoneyLogModel::TYPE_INCOME) {
+                $balanceIncomeAmount = $amount;
+            }
+
+            if ($moneyType === CommonPayMoneyLogModel::MONEY_TYPE_BALANCE && $type === CommonPayMoneyLogModel::TYPE_EXPEND) {
+                $balanceExpenseAmount = $amount;
+            }
+
+            if ($moneyType === CommonPayMoneyLogModel::MONEY_TYPE_INTEGRAL && $type === CommonPayMoneyLogModel::TYPE_INCOME) {
+                $integralIncomeAmount = $amount;
+            }
+
+            if ($moneyType === CommonPayMoneyLogModel::MONEY_TYPE_INTEGRAL && $type === CommonPayMoneyLogModel::TYPE_EXPEND) {
+                $integralExpenseAmount = $amount;
+            }
+        }
+
+        $rechargeSuccessAmount = (float)($rechargeSummary['success_amount'] ?? 0);
+        $withdrawSuccessAmount = (float)($withdrawSummary['success_amount'] ?? 0);
+
+        return Show(SUCCESS, [
+            'recharge_total_count' => (int)($rechargeSummary['total_count'] ?? 0),
+            'recharge_success_count' => (int)($rechargeSummary['success_count'] ?? 0),
+            'recharge_success_amount' => $rechargeSuccessAmount,
+            'recharge_pending_count' => (int)($rechargeSummary['pending_count'] ?? 0),
+            'withdraw_total_count' => (int)($withdrawSummary['total_count'] ?? 0),
+            'withdraw_success_count' => (int)($withdrawSummary['success_count'] ?? 0),
+            'withdraw_success_amount' => $withdrawSuccessAmount,
+            'withdraw_pending_count' => (int)($withdrawSummary['pending_count'] ?? 0),
+            'net_in_amount' => $rechargeSuccessAmount - $withdrawSuccessAmount,
+            'money_total_count' => (int)($moneySummary['total_count'] ?? 0),
+            'money_income_amount' => (float)($moneySummary['income_amount'] ?? 0),
+            'money_expense_amount' => (float)($moneySummary['expense_amount'] ?? 0),
+            'balance_income_amount' => $balanceIncomeAmount,
+            'balance_expense_amount' => $balanceExpenseAmount,
+            'integral_income_amount' => $integralIncomeAmount,
+            'integral_expense_amount' => $integralExpenseAmount,
+            'recharge_channel_breakdown' => $rechargeChannelBreakdown,
+            'withdraw_channel_breakdown' => $withdrawChannelBreakdown,
+            'money_type_breakdown' => $moneyTypeBreakdown,
+        ]);
+    }
+
     protected function buildSignLogQuery(array $post, ?string $startTime, ?string $endTime, bool $withField = true)
     {
         $prefix = (string)config('database.connections.mysql.prefix');
@@ -304,5 +434,40 @@ class RecordCon extends BaseCon
         }
 
         return $query;
+    }
+
+    protected function buildRechargeReportQuery(?string $startTime, ?string $endTime)
+    {
+        $query = Db::name('common_pay_recharge');
+        $this->applyTimeRange($query, 'create_time', $startTime, $endTime);
+
+        return $query;
+    }
+
+    protected function buildCashReportQuery(?string $startTime, ?string $endTime)
+    {
+        $query = Db::name('common_pay_cash');
+        $this->applyTimeRange($query, 'create_time', $startTime, $endTime);
+
+        return $query;
+    }
+
+    protected function buildMoneyLogReportQuery(?string $startTime, ?string $endTime)
+    {
+        $query = Db::name('common_pay_money_log');
+        $this->applyTimeRange($query, 'create_time', $startTime, $endTime);
+
+        return $query;
+    }
+
+    protected function applyTimeRange($query, string $field, ?string $startTime, ?string $endTime)
+    {
+        if (!empty($startTime)) {
+            $query->where($field, '>=', $startTime);
+        }
+
+        if (!empty($endTime)) {
+            $query->where($field, '<=', $endTime);
+        }
     }
 }
