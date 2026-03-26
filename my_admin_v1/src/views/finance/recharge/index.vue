@@ -1,5 +1,5 @@
 <template>
-  <div class="table-box">
+  <div class="table-box finance-list-page">
     <div class="summary-grid">
       <div class="summary-card">
         <span class="summary-label">当前页订单数</span>

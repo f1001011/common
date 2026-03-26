@@ -1,5 +1,5 @@
 <template>
-  <div class="table-box">
+  <div class="table-box finance-list-page">
     <div class="summary-grid">
       <div class="summary-card danger">
         <span class="summary-label">申请中</span>

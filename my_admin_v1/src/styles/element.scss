@@ -83,13 +83,8 @@
 /* proTable */
 .table-box,
 .table-main {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
   width: 100%;
-  height: 100%;
   min-width: 0;
-  min-height: 0;
 
   // table-search 琛ㄦ牸鎼滅储鏍峰紡
   .table-search {
@@ -194,6 +189,10 @@
     justify-content: flex-end;
     margin-top: 20px;
   }
+}
+
+.finance-list-page {
+  min-height: auto;
 }
 
 /* el-table 缁勪欢澶у皬 */

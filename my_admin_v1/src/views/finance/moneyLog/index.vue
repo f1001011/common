@@ -1,10 +1,11 @@
 <template>
-  <div class="table-box">
+  <div class="table-box finance-list-page">
     <ProTable
       ref="proTable"
       :columns="columns"
       :request-api="requestMoneyLogList"
       :data-callback="dataCallback"
+      :search-col="{ xs: 1, sm: 2, md: 3, lg: 4, xl: 6 }"
       :tool-button="['refresh', 'setting', 'search']"
     >
       <template #tableHeader>
@@ -83,13 +84,13 @@ const statusOptions = [
 const columns = reactive<ColumnProps<PayMoneyLog.ResListItem>[]>([
   { type: "index", label: "#", width: 70 },
   { prop: "id", label: "流水ID", width: 90 },
-  { prop: "uid", label: "用户ID", width: 100, search: { el: "input" } },
+  { prop: "uid", label: "用户ID", width: 100, search: { el: "input", order: 1 } },
   {
     prop: "type",
     label: "收支类型",
     width: 120,
     enum: typeOptions,
-    search: { el: "select", props: { clearable: true } },
+    search: { el: "select", order: 3, props: { clearable: true } },
     fieldNames: { label: "label", value: "value" }
   },
   {
@@ -97,7 +98,7 @@ const columns = reactive<ColumnProps<PayMoneyLog.ResListItem>[]>([
     label: "账户类型",
     width: 120,
     enum: moneyTypeOptions,
-    search: { el: "select", props: { clearable: true } },
+    search: { el: "select", order: 2, props: { clearable: true } },
     fieldNames: { label: "label", value: "value" }
   },
   {
@@ -105,7 +106,7 @@ const columns = reactive<ColumnProps<PayMoneyLog.ResListItem>[]>([
     label: "业务状态",
     minWidth: 150,
     enum: statusOptions,
-    search: { el: "select", props: { clearable: true } },
+    search: { el: "select", order: 4, props: { clearable: true } },
     fieldNames: { label: "label", value: "value" }
   },
   { prop: "money_before", label: "变更前", width: 120 },
@@ -119,6 +120,7 @@ const columns = reactive<ColumnProps<PayMoneyLog.ResListItem>[]>([
     minWidth: 180,
     search: {
       el: "date-picker",
+      order: 5,
       key: "date_range",
       span: 2,
       props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }

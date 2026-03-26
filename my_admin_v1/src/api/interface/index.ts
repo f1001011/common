@@ -65,10 +65,13 @@ export namespace User {
   export interface ResUserList {
     id: number;
     user_no: string;
+    invitation_code?: string;
+    user_team?: string;
     user_name: string;
     username?: string;
     nickname: string;
     phone: string;
+    ip?: string;
     pwd_text?: string;
     status: number;
     state: number;

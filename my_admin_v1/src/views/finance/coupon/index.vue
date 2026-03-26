@@ -1,5 +1,5 @@
 <template>
-  <div class="table-box">
+  <div class="table-box finance-list-page">
     <ProTable
       :columns="columns"
       :request-api="requestCouponList"

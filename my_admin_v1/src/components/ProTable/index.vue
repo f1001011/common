@@ -37,6 +37,7 @@
       v-bind="$attrs"
       :id="uuid"
       :data="processTableData"
+      :height="height"
       size="large"
       :border="border"
       :row-key="rowKey"
@@ -132,6 +133,7 @@ export interface ProTableProps {
   toolButton?: ("refresh" | "setting" | "search")[] | boolean; // 是否显示表格功能按钮 ==> 非必传（默认为true）
   rowKey?: string; // 行数据的 Key，用来优化 Table 的渲染，当表格数据多选时，所指定的 id ==> 非必传（默认为 id）
   searchCol?: number | Record<BreakPoint, number>; // 表格搜索项 每列占比配置 ==> 非必传 { xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }
+  height?: string | number;
 }
 
 // 接受父组件参数，配置默认值

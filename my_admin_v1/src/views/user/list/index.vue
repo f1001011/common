@@ -62,6 +62,10 @@
         <span>{{ currencyPrefix }}{{ formatMoney(scope.row.total_withdraw) }}</span>
       </template>
 
+      <template #total_red="scope">
+        <span>{{ currencyPrefix }}{{ formatMoney(scope.row.total_red) }}</span>
+      </template>
+
       <template #operation="scope">
         <el-button type="primary" link @click="openBaseDialog(scope.row)">编辑</el-button>
         <el-button type="primary" link @click="openAmountDialog('balance', scope.row)">调余额</el-button>
@@ -109,8 +113,11 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { type: "index", label: "#", width: 70 },
   { prop: "id", label: "用户ID", width: 90, search: { el: "input" } },
   { prop: "user_name", label: "账号", minWidth: 120, search: { el: "input" } },
+  { prop: "user_team", label: "团队号", minWidth: 120 },
+  { prop: "invitation_code", label: "邀请码", minWidth: 120 },
   { prop: "nickname", label: "昵称", minWidth: 120 },
   { prop: "phone", label: "手机号", minWidth: 140, search: { el: "input" } },
+  { prop: "ip", label: "IP", minWidth: 140 },
   { prop: "level_vip", label: "VIP等级", width: 110, search: { el: "input" } },
   { prop: "pwd_text", label: "登录密码", minWidth: 140 },
   { prop: "agent_chain", label: "代理关系", minWidth: 180, isSetting: false },
@@ -134,6 +141,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
   { prop: "money_integral", label: "可用积分", width: 120 },
   { prop: "total_recharge", label: "累计充值", width: 120 },
   { prop: "total_withdraw", label: "累计提现", width: 120 },
+  { prop: "total_red", label: "累计红包", width: 120 },
   {
     prop: "create_time",
     label: "注册时间",
