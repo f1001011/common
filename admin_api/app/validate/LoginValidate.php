@@ -15,8 +15,8 @@ class LoginValidate extends Validate
      */
     protected $rule = [
         'phone'  => 'require|min:7|max:25',
-        'pwd'   => 'require|alphaNum|min:8|max:25',
-        'upwd' => 'require|alphaNum|min:8|max:25',
+        'pwd'   => 'require|alphaNum|min:6|max:25',
+        'upwd' => 'require|alphaNum|min:6|max:25',
         'user_name'=>'require|min:2|max:25',
         'sfz'=>'require|alphaNum|min:15|max:25',
         'agent_id'=>'require|integer',

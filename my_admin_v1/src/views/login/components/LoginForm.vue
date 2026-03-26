@@ -88,9 +88,9 @@ const login = (formEl: FormInstance | undefined) => {
       //   duration: 3000
       // });
       ElNotification({
-        title: "React 付费版本 🔥🔥🔥",
+        title: "登录成功",
         dangerouslyUseHTMLString: true,
-        message: "预览地址：<a href='https://pro.spicyboy.cn'>https://pro.spicyboy.cn</a>",
+        message: "欢迎光临",
         type: "success",
         duration: 8000
       });
