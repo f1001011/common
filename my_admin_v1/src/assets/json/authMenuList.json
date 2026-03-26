@@ -62,7 +62,7 @@
     {
       "path": "/gift/product",
       "name": "giftProduct",
-      "component": "/admin/placeholder/index",
+      "component": "/gift/product/index",
       "meta": {
         "icon": "Present",
         "title": "赠送产品管理",
@@ -90,7 +90,7 @@
         {
           "path": "/finance/recharge",
           "name": "financeRecharge",
-          "component": "/admin/placeholder/index",
+          "component": "/finance/recharge/index",
           "meta": {
             "icon": "Menu",
             "title": "充值页面",
@@ -104,7 +104,7 @@
         {
           "path": "/finance/withdraw",
           "name": "financeWithdraw",
-          "component": "/admin/placeholder/index",
+          "component": "/finance/withdraw/index",
           "meta": {
             "icon": "Menu",
             "title": "提现管理",
@@ -142,6 +142,20 @@
             "isAffix": false,
             "isKeepAlive": true
           }
+        },
+        {
+          "path": "/finance/withdraw-showcase",
+          "name": "withdrawShowcase",
+          "component": "/finance/withdrawShowcase/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "提现凭证",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
         }
       ]
     },
@@ -162,10 +176,52 @@
         {
           "path": "/goods/list",
           "name": "goodsList",
-          "component": "/admin/placeholder/index",
+          "component": "/goods/list/index",
           "meta": {
             "icon": "Menu",
             "title": "产品列表",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/goods/order",
+          "name": "goodsOrder",
+          "component": "/goods/order/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "商品订单",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/goods/income-claim",
+          "name": "incomeClaimLog",
+          "component": "/goods/incomeClaim/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "收益领取",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/goods/wares-order",
+          "name": "waresOrder",
+          "component": "/goods/waresOrder/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "兑换订单",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -178,7 +234,7 @@
     {
       "path": "/vip/level",
       "name": "vipLevelManage",
-      "component": "/admin/placeholder/index",
+      "component": "/vip/level/index",
       "meta": {
         "icon": "Medal",
         "title": "VIP 等级管理",
@@ -192,7 +248,7 @@
     {
       "path": "/task/weekly",
       "name": "weeklyTaskManage",
-      "component": "/admin/placeholder/index",
+      "component": "/task/weekly/index",
       "meta": {
         "icon": "Calendar",
         "title": "周任务管理",
@@ -220,7 +276,7 @@
         {
           "path": "/activity/prize-pool",
           "name": "prizePoolManage",
-          "component": "/admin/placeholder/index",
+          "component": "/activity/prizePool/index",
           "meta": {
             "icon": "Menu",
             "title": "奖池管理",
@@ -234,7 +290,7 @@
         {
           "path": "/activity/lottery",
           "name": "lotteryManage",
-          "component": "/admin/placeholder/index",
+          "component": "/activity/lottery/index",
           "meta": {
             "icon": "Menu",
             "title": "转盘管理",
@@ -248,7 +304,7 @@
         {
           "path": "/activity/lottery-log",
           "name": "lotteryLogManage",
-          "component": "/admin/placeholder/index",
+          "component": "/activity/lotteryLog/index",
           "meta": {
             "icon": "Menu",
             "title": "转盘使用数据",
@@ -292,7 +348,7 @@
         {
           "path": "/payment/pay-channel",
           "name": "payChannel",
-          "component": "/admin/placeholder/index",
+          "component": "/payment/payChannel/index",
           "meta": {
             "icon": "Menu",
             "title": "支付渠道",
@@ -306,7 +362,7 @@
         {
           "path": "/payment/channel-manage",
           "name": "channelManage",
-          "component": "/admin/placeholder/index",
+          "component": "/payment/channelManage/index",
           "meta": {
             "icon": "Menu",
             "title": "渠道管理",

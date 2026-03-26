@@ -94,6 +94,84 @@ Route::group('api', function(){
     // 兑换商品删除
     Route::post('wares/delete', \app\controller\product\WaresCon::class . '@DeleteWares');
 
+    // VIP配置列表
+    Route::post('vip/list', \app\controller\vip\VipCon::class . '@GetVipList');
+
+    // VIP配置新增
+    Route::post('vip/add', \app\controller\vip\VipCon::class . '@AddVip');
+
+    // VIP配置修改
+    Route::post('vip/update', \app\controller\vip\VipCon::class . '@UpdateVip');
+
+    // VIP配置删除
+    Route::post('vip/delete', \app\controller\vip\VipCon::class . '@DeleteVip');
+
+    // VIP变更日志
+    Route::post('vip/log/list', \app\controller\vip\VipCon::class . '@GetVipLogList');
+
+    // VIP每日奖励日志
+    Route::post('vip/daily/reward/log/list', \app\controller\vip\VipCon::class . '@GetVipDailyRewardLogList');
+
+    // 代理等级配置列表
+    Route::post('agent/level/config/list', \app\controller\vip\VipCon::class . '@GetAgentLevelConfigList');
+
+    // 代理等级配置新增
+    Route::post('agent/level/config/add', \app\controller\vip\VipCon::class . '@AddAgentLevelConfig');
+
+    // 代理等级配置修改
+    Route::post('agent/level/config/update', \app\controller\vip\VipCon::class . '@UpdateAgentLevelConfig');
+
+    // 代理等级配置删除
+    Route::post('agent/level/config/delete', \app\controller\vip\VipCon::class . '@DeleteAgentLevelConfig');
+
+    // 周任务配置列表
+    Route::post('task/config/list', \app\controller\task\TaskCon::class . '@GetTaskConfigList');
+
+    // 周任务配置新增
+    Route::post('task/config/add', \app\controller\task\TaskCon::class . '@AddTaskConfig');
+
+    // 周任务配置修改
+    Route::post('task/config/update', \app\controller\task\TaskCon::class . '@UpdateTaskConfig');
+
+    // 周任务配置删除
+    Route::post('task/config/delete', \app\controller\task\TaskCon::class . '@DeleteTaskConfig');
+
+    // 周任务进度列表
+    Route::post('task/progress/list', \app\controller\task\TaskCon::class . '@GetTaskProgressList');
+
+    // 周任务奖励记录
+    Route::post('task/reward/log/list', \app\controller\task\TaskCon::class . '@GetTaskRewardLogList');
+
+    // 奖池配置列表
+    Route::post('prize/pool/config/list', \app\controller\activity\ActivityCon::class . '@GetPrizePoolConfigList');
+
+    // 奖池配置新增
+    Route::post('prize/pool/config/add', \app\controller\activity\ActivityCon::class . '@AddPrizePoolConfig');
+
+    // 奖池配置修改
+    Route::post('prize/pool/config/update', \app\controller\activity\ActivityCon::class . '@UpdatePrizePoolConfig');
+
+    // 奖池开奖记录
+    Route::post('prize/pool/log/list', \app\controller\activity\ActivityCon::class . '@GetPrizePoolLogList');
+
+    // 转盘奖品列表
+    Route::post('lottery/prize/list', \app\controller\activity\ActivityCon::class . '@GetLotteryPrizeList');
+
+    // 转盘奖品新增
+    Route::post('lottery/prize/add', \app\controller\activity\ActivityCon::class . '@AddLotteryPrize');
+
+    // 转盘奖品修改
+    Route::post('lottery/prize/update', \app\controller\activity\ActivityCon::class . '@UpdateLotteryPrize');
+
+    // 转盘奖品删除
+    Route::post('lottery/prize/delete', \app\controller\activity\ActivityCon::class . '@DeleteLotteryPrize');
+
+    // 转盘开奖记录
+    Route::post('lottery/log/list', \app\controller\activity\ActivityCon::class . '@GetLotteryLogList');
+
+    // 转盘次数列表
+    Route::post('lottery/chance/list', \app\controller\activity\ActivityCon::class . '@GetLotteryChanceList');
+
 })->middleware([AuthMiddleware::class, AdminLogMiddleware::class]);
 
 Route::group('api', function(){

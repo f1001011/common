@@ -1,0 +1,10325 @@
+--- PAGE 1 ---
+API Integration Document
+
+V.2.2.6
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 2 ---
+2
+
+Versioning Control
+
+Date
+
+Version
+
+Update by
+
+Notes
+
+-
+
+1.0
+
+Freyard
+
+Initial documentation.
+
+4 Apr 2025
+
+1.1
+
+Arthur
+
+Formatting layout & Minor description update.
+
+8 Apr 2025
+
+1.2
+
+Freyard
+
+Update seamless, get balance & auth API.
+
+8 Apr 2025
+
+1.3
+
+Arthur
+
+Minor update flow & add authentication tokens section.
+
+15 Apr 2025
+
+1.4
+
+Freyard
+
+Add transfer status documentation, terminate season
+
+documentation, and some minor layout updates.
+
+18 May 2025
+
+1.5
+
+Freyard
+
+Change GetBetRecordList link and output, Add Bouncy
+
+game data
+
+9 June 2025
+
+1.6
+
+Freyard
+
+Update GetBetRecordList url and Date format.
+
+11 June 2025
+
+1.7
+
+Freyard
+
+Update Seamless request input example, update
+
+GetBetRecordList and GetGameRecordList missing
+
+response parameter, add several seamless get token
+
+request parameter
+
+12 June 2025
+
+1.8
+
+Freyard
+
+Fix type parameter on Monopoly and Bouncy example
+
+body response for seamless.
+
+14 June 2025
+
+1.9
+
+Freyard
+
+Add new parameters for flagging bonus round state on
+
+seamless, add currency info and adding new error code.
+
+16 June 2025
+
+1.9.1
+
+Freyard
+
+Add new supported currency and language.
+
+17 June 2025
+
+2.0
+
+Freyard &
+
+Arthur
+
+Add get replay url documentation and get record by
+
+transaction id
+
+28 June 2025
+
+2.1
+
+Freyard
+
+Add Hashing signature for seamless, and adding table of
+
+content
+
+1 July 2025
+
+2.1.1
+
+Freyard
+
+Fix several typo on season_id
+
+4 July 2025
+
+2.1.2
+
+Freyard
+
+Add new example for hashing signature
+
+8 July 2025
+
+2.1.3
+
+Freyard
+
+Fix several typo on JWT token usage
+
+28 July 2025
+
+2.1.4
+
+Rose
+
+Updated game list.
+
+31 July 2025
+
+2.1.5
+
+James
+
+Update game report bouncy olympus and crossing game
+
+07 Aug 2025
+
+2.2
+
+James & Rose
+
+Add seamless bouncy olympus and crossing game
+
+13 Aug 2025
+
+2.2.1
+
+Rose
+
+Update seamless expected games treatment
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 3 ---
+3
+
+Date
+
+Version
+
+Update by
+
+Notes
+
+10 Sept 2025
+
+2.2.2
+
+James
+
+Update fix to several game log s example and supported
+
+currencies
+
+10 Sept 2025
+
+2.2.3
+
+James
+
+Update fix to several game log s example mismatch data
+
+type.
+
+11 Sept 2025
+
+2.2.4
+
+James
+
+Update fix to several game log s example mismatch data
+
+type.
+
+11 Sept 2025
+
+2.2.5
+
+James
+
+Update fix to several game log s example mismatch data
+
+type.
+
+22 Sept 2025
+
+2.2.6
+
+James
+
+Update Game List
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 4 ---
+4
+
+Table of Content
+
+Versioning Control
+
+2
+
+Table of Content
+
+4
+
+Integration Api
+
+5
+
+1. Process Diagram
+
+5
+
+a. Flow diagram of opening game API.
+
+5
+
+b. Flow diagram of seamless wallet API
+
+6
+
+c. Flow diagram of transfer wallet API
+
+7
+
+2. Authentication & Token Usage
+
+8
+
+3. Basic Docking
+
+9
+
+a. Currencies setting
+
+9
+
+b. Authorization for Operator
+
+9
+
+c. Authorization for Player
+
+10
+
+4. Game List
+
+13
+
+a. Get Game List
+
+13
+
+b. Get Game URL
+
+16
+
+5. Seamless Wallet API
+
+18
+
+a. Signature Algorithm
+
+18
+
+b. Get Merchant s Token
+
+21
+
+c. Get Player Balance
+
+22
+
+d. Change Player Balance
+
+24
+
+6. Transfer Wallet
+
+43
+
+a. Transfer Player Balance
+
+43
+
+b. Get Player Balance
+
+45
+
+c. Get Transfer Status
+
+47
+
+7. Report API
+
+50
+
+a. Bet Records
+
+50
+
+b. Game Records
+
+53
+
+c. Game Record Services - Log Description
+
+57
+
+d. Get Player Record By Transaction ID
+
+70
+
+8. Replay Player Transaction
+
+78
+
+a. Generate Transaction Replay URL
+
+78
+
+9. Terminating Season
+
+80
+
+10. Appendix
+
+82
+
+a. Error codes
+
+82
+
+b. Supported Language
+
+82
+
+c. Supported Currencies
+
+83
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 5 ---
+5
+
+Integration Api
+
+1.
+
+Process Diagram
+
+a.
+
+Flow diagram of opening game API.
+
+Flow Details
+
+1.
+
+The player login to the merchant platform.
+
+2.
+
+Merchant s server will get an Auth token with credentials provided by us.
+
+3.
+
+Our server will return the merchant s Auth Token.
+
+4.
+
+Merchant server will request our server to get a list of our games with
+
+their token.
+
+5.
+
+GGSoft API server will return the game list.
+
+6.
+
+Merchant server will show the list to the player.
+
+7.
+
+The player then chooses our games from the list.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 6 ---
+6
+
+8.
+
+Merchants need to get a token for the player before entering the game.
+
+9.
+
+GGSoft API server will return the player s Auth Token.
+
+10.
+
+Merchant server will call our API to get the URL for the selected games.
+
+11.
+
+GGSoft API server will return the redirect link to our games.
+
+12.
+
+Merchant platform will redirect the player to our game platform.
+
+13.
+
+Our game platform will validate player authentication to our server.
+
+14.
+
+Our server will process and the player can enjoy our game.
+
+b.
+
+Flow diagram of seamless wallet API
+
+Flow Details
+
+1.
+
+Players click the start bet button inside our game platform.
+
+2.
+
+Our game platform sends requests to our server to process the bet.
+
+3.
+
+Our server will call the Merchant server to validate the bet amount if the
+
+player has enough balance or not.
+
+4.
+
+Merchant server will process it and return the player s balance after
+
+Merchant server reduces the player s balance with the bet amount.
+
+5.
+
+Our server will process the spin.
+
+6.
+
+Our server will return the winning result of the player.
+
+7.
+
+Merchant server will process and save the winning result, then return the
+
+Player s balance back to our server.
+
+8.
+
+Our server will return the result to the game platform.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 7 ---
+7
+
+c.
+
+Flow diagram of transfer wallet API
+
+Flow Details
+
+1.
+
+Players exchanging merchant credit to ours, this will be done on the
+
+Merchant server and platform.
+
+2.
+
+Merchant will request credits transfer to us.
+
+3.
+
+We will return the transfer result back to the Merchant.
+
+4.
+
+Merchant server will process it and return the player s balance.
+
+Notes:
+
+Before calling the transfer API, players need to be registered on the GGSoft
+
+system. This process can be done when requesting player Auth (step No.8 on
+
+Opening Game diagram), by calling
+
+memberLogin service.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 8 ---
+8
+
+2.
+
+Authentication & Token Usage
+
+There are 2 kinds of authorization tokens that are used in the GGSoft
+
+system.
+
+%Ï
+
+First, merchant token, which is used for accessing list games,
+
+requesting game / bet records and required for player login / get
+
+session. This merchant token credential is provided by GGSoft for any
+
+merchant as a partner. This token is received by calling service in
+
+section 3.b.
+
+%Ï
+
+Second, player token, which is used to get balance, transfer wallet,
+
+enter game and any in-game session. This token also registers the
+
+player automatically to the GGSoft system when called, if
+
+uname
+
+input does not exist on our data. This token is
+
+not
+
+required
+
+if the
+
+player is not accessing GGSoft games/transfer process. Please check
+
+section 3.c for requesting this token authentication.
+
+Check the table matrix below that shows the services list requiring each
+
+token. Both merchant and player tokens are used as Bearer Token in API Service.
+
+Token used
+
+Service
+
+Description
+
+Merchant token
+
+/auth/memberLogin
+
+To register and get player token & session.
+
+Merchant token
+
+/central/getListGame
+
+To get a list of games from the GGSoft
+
+system.
+
+Merchant token
+
+/report/GetBetRecordList
+
+To get a Bet record report.
+
+Merchant token
+
+/report/GetGameRecordList
+
+To get a Game record report.
+
+Merchant token
+
+/auth/v1/terminateSeasonOp
+
+erator
+
+To terminate operator token season.
+
+Player token
+
+/central/game/enterGame
+
+To get the Game URL selected by the player.
+
+Player token
+
+/central/transfer
+
+To deposit or withdraw to GGSoft wallet.
+
+Player token
+
+/central/getBalance
+
+To get Player current balance.
+
+Player token
+
+/auth/v1/terminateSeasonMe
+
+mber
+
+To terminate member token season.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 9 ---
+9
+
+3.
+
+Basic Docking
+
+a.
+
+Currencies setting
+
+All supported currencies will be displayed and stored in the database using a
+
+standardized 1:1 ratio, preserving their original nominal values, for example, a value
+
+of 1.000 will be displayed and recorded exactly as 1.000, without any conversion or
+
+scaling.
+
+Please refer to the end of this documentation for the full list of supported currencies.
+
+b.
+
+Authorization for Operator
+
+Brief descriptions:
+
+%Ï
+
+Operator identity verification.
+
+%Ï
+
+This API interface is provided by our side, to be called by the
+
+integrating party.
+
+%Ï
+
+It will be used to get player reports and game reports.
+
+Request URL:
+
+%Ï
+
+/MasterService/auth/v1/getToken
+
+Request Method:
+
+%Ï
+
+POST
+
+Request Body Example
+
+{
+
+"username"
+
+:
+
+"testing"
+
+,
+
+"key"
+
+:
+
+"1234"
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+username
+
+String
+
+Username that will be given by us.
+
+Required
+
+key
+
+String
+
+Key that will be given by us.
+
+Required
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 10 ---
+10
+
+Successful Response Example
+
+{
+
+"tokenData"
+
+:
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IpXVCJ9.eyJhcHBpZCI6IkdHMDEiLCJpYXQiOjE3NDQwO
+
+TQxMzMsImV4cCI6MTc0NDEwNDkzM30.Gt5L4THZ1_MSpAzbGB6DenFokLOk3SU8JW6cvQ0Q3fE
+
+"
+
+}
+
+Response Parameters
+
+Name
+
+Type
+
+Description
+
+tokenData
+
+String
+
+Token that filled with Operator Credential
+
+c.
+
+Authorization for Player
+
+Brief descriptions:
+
+%Ï
+
+Player identity verification.
+
+%Ï
+
+This API interface is provided by our side, to be called by the
+
+integrating party.
+
+%Ï
+
+It will be used for players to use all our services.
+
+Request URL:
+
+%Ï
+
+For register: /MasterService/player/auth/memberLogin?trace_id=xxx
+
+Request Method:
+
+%Ï
+
+POST
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.b
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 11 ---
+11
+
+URL Params
+
+Header
+
+Required
+
+Type
+
+Description
+
+trace_id
+
+No
+
+String
+
+Unique trace_id for each request
+
+Request Parameters
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier for the merchant, obtained from
+
+the merchant backend.
+
+Required
+
+username
+
+String(255)
+
+Player s nickname.
+
+Required
+
+uname
+
+String(255)
+
+Unique player ID.
+
+Required
+
+cid
+
+String(255)
+
+Currency ID, if it doesn t have value, we will
+
+register it as an idr currency.
+
+Optional
+
+phone
+
+String(255)
+
+Player s phone number.
+
+Optional
+
+email
+
+String(255)
+
+Player s email.
+
+Optional
+
+seamless
+
+Boolean
+
+An indicator if the user will be using a seamless
+
+feature or not. If it isn't declared, it will be
+
+considered as false.
+
+Optional
+
+Request Body Example
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+,
+
+"username"
+
+:
+
+"testprod_idr1"
+
+,
+
+"email"
+
+:
+
+"test@gmail.com",
+
+"phone"
+
+:
+
+"0908080",
+
+"uname"
+
+:
+
+"gg2"
+
+,
+
+"cid"
+
+:
+
+"idr",
+
+"seamless"
+
+:
+
+false
+
+}
+
+Response Parameters
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Data object containing player s detail.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 12 ---
+12
+
+Name
+
+Type
+
+Description
+
+token
+
+String(255)
+
+It will be used as an authorization token to use all of
+
+our services and it will determine the player s season.
+
+balance
+
+Float(20,9)
+
+Player s balance.
+
+app_id
+
+String(255)
+
+The player s ID.
+
+code
+
+Integer(20)
+
+Status code indicating the service API call s success or
+
+not.
+
+msg
+
+String(255)
+
+Informational message.
+
+Successful Response Example
+
+{
+
+"dataResponse"
+
+: {
+
+"data"
+
+: {
+
+"token"
+
+:
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmFtZSI6ImdnMiIsImFwcGlkIjoiR0cw
+
+MSIsIm5pY2tuYW1lIjoidGVzdByb2RfaWRyMSIsImNpZCI6ImlkciIsIm91dCI6dHJ1ZSwiaWF
+
+0IjoxNzQ0MDk0MjQwLCJleHAiOjE3NDQxMDUwNDB9.tPY1Mt493OLyR9JkZuHAC5UJvKDtvAWh
+
+q70lXO9nRFo"
+
+,
+
+"balance"
+
+:
+
+10027044
+
+,
+
+"app_id"
+
+:
+
+2
+
+},
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+:
+
+"success"
+
+}
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 13 ---
+13
+
+4.
+
+Game List
+
+a.
+
+Get Game List
+
+Brief descriptions:
+
+%Ï
+
+Merchant will call this to get our game list
+
+%Ï
+
+API will be provided by us for integration parties to utilize.
+
+Request URL:
+
+%Ï
+
+/MasterService/central/getListGame
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.b
+
+Request Body Example
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier for the merchant, obtained
+
+from the merchant backend
+
+Required
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 14 ---
+14
+
+Successful Response Example
+
+{
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+:
+
+"success"
+
+,
+
+"data"
+
+: {
+
+"glist"
+
+: [
+
+{
+
+"gameid"
+
+:
+
+1
+
+,
+
+"name"
+
+:
+
+"Plinko Classic"
+
+,
+
+"platform"
+
+:
+
+1
+
+,
+
+"gametype"
+
+:
+
+"1ps"
+
+,
+
+"status"
+
+:
+
+1
+
+,
+
+"icon_url"
+
+:
+
+"https://xxx.com/GameIcon/IconPlinkoSimple.png"
+
+},
+
+{
+
+"gameid"
+
+:
+
+2
+
+,
+
+"name"
+
+:
+
+"Plinko Liong"
+
+,
+
+"platform"
+
+:
+
+1
+
+,
+
+"gametype"
+
+:
+
+"1ps"
+
+,
+
+"status"
+
+:
+
+1
+
+,
+
+"icon_url"
+
+:
+
+"https://xxx.com/GameIcon/IconPlinkoLiong.png"
+
+}
+
+]
+
+}
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Token that filled with Operator Credential
+
+glist
+
+Array
+
+List of games.
+
+gameid
+
+Integer(20)
+
+Game ID
+
+name
+
+String(255)
+
+Game Name.
+
+platform
+
+String(255)
+
+Platform where the game belongs.
+
+gametype
+
+Integer(20)
+
+Game type code.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 15 ---
+15
+
+Name
+
+Type
+
+Description
+
+status
+
+Integer
+
+Game status: 0: closed, 1: open.
+
+icon_url
+
+String
+
+URL for our game s icon.
+
+code
+
+Integer
+
+Status code.
+
+msg
+
+String
+
+Information message.
+
+Platform list
+
+Type
+
+Description
+
+1
+
+GGSOFT
+
+Game Type
+
+Type
+
+Description
+
+1ps
+
+Plinko
+
+2cs
+
+Crash
+
+3mi
+
+Mines
+
+4mo
+
+Monopoly
+
+5he
+
+Heist
+
+6bo
+
+Bouncy
+
+7cc
+
+Crossing
+
+Game list
+
+gameID
+
+Game Name
+
+Game Type
+
+1
+
+Plinko Classic
+
+1ps
+
+2
+
+Plinko Liong
+
+1ps
+
+3
+
+Crash Classic
+
+2cs
+
+4
+
+Wukong Adventure
+
+2cs
+
+5
+
+Mines Classic
+
+3mi
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 16 ---
+16
+
+gameID
+
+Game Name
+
+Game Type
+
+6
+
+Heist Classic
+
+5he
+
+7
+
+Monopoly Classic
+
+4mo
+
+8
+
+Plinko Olympus
+
+1ps
+
+9
+
+Ironwar
+
+2cs
+
+10
+
+Fossils Digger
+
+3mi
+
+11
+
+Heist Royale
+
+5he
+
+12
+
+Snake & Ladder Jungle
+
+4mo
+
+13
+
+Monopoly City
+
+4mo
+
+14
+
+Bouncy Classic
+
+6bo
+
+15
+
+Bouncy Aztec
+
+6bo
+
+16
+
+Bouncy Space
+
+6bo
+
+17
+
+Crossing Classic
+
+7cc
+
+18
+
+Bounceball Olympus
+
+6bo
+
+19
+
+Mission Uncatchable
+
+7cc
+
+20
+
+Bounceball Sweet
+
+6bo
+
+21
+
+Mermaid Princess
+
+6bo
+
+Note
+
+%Ï
+
+For more error code, please refer to the end of the documentation.
+
+b.
+
+Get Game URL
+
+Brief descriptions:
+
+%Ï
+
+Merchant will call this to get our game URL.
+
+%Ï
+
+API will be provided by us for integration parties to utilize.
+
+Request URL:
+
+%Ï
+
+https://{Our game link URL}/MasterService/central/game/enterGame
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 17 ---
+17
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.c
+
+Request Body Example
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+,
+
+"timestamp"
+
+:
+
+1739873132
+
+,
+
+"currency"
+
+:
+
+"idr"
+
+,
+
+"game_id"
+
+:
+
+13
+
+,
+
+"lang"
+
+:
+
+"id"
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier of the merchant, obtained
+
+from the backend
+
+Required
+
+timestamp
+
+Integer(20)
+
+Timestamp of the request
+
+Required
+
+currency
+
+String(255)
+
+Currency code, please refer to the end of the
+
+documentation to see supported currency.
+
+Required
+
+game_id
+
+Integer(20)
+
+ID of the game
+
+Required
+
+lang
+
+String(255)
+
+Language preference
+
+Optional
+
+Successful Response Example
+
+{
+
+"data"
+
+: {
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 18 ---
+18
+
+"gameurl"
+
+:
+
+"https://xxxx.com/games/MonopolyCity/?currency=idr&operator=GG01&lang=id&u
+
+ser=gg2&nickname=testprod_idr1&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+
+eyJ1bmFtZSI6ImdnMiIsImFwcGlkIjoiR0cwMSIsIm5pY2tuYW1lIjoidGVzdHByb2RfaWRyMS
+
+IsImNpZCI6ImlkciIsImlhdCI6MTc0NDA5NDc3MCwiZXhwIjoxNzQ0MDk1NjcwfQ.wYlhszNKX
+
+FhcTLnJ1mpGhlhFByhUgccmm7Ahq3ykraY"
+
+},
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+:
+
+"success"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+gameurl
+
+Text
+
+Game URL link
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+5.
+
+Seamless Wallet API
+
+This seamless API sample needs to be created / provided by the merchant.
+
+This list API is an
+
+example*
+
+format for the merchant s
+
+reference.
+
+*If the merchant already has its own seamless API (REST POST, GET,
+
+webhook, websocket format), please let us know.
+
+a.
+
+Signature Algorithm
+
+We use an MD5-based hashing mechanism to ensure the integrity and
+
+authenticity of the request content. The signature is generated using the
+
+following format:
+
+md5(key1=value1&key2=value2&...&keyN=valueN + secret key)
+
+Merchants are expected to use this method to verify that the request
+
+content has not been tampered with.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 19 ---
+19
+
+Note
+
+%Ï
+
+The first layer of key order must be sorted alphabetically, Note: the
+
+inside award_order_ids does not need to be sorted.
+
+%Ï
+
+Each key-value pair must be separated using the &  character.
+
+%Ï
+
+The values must be converted to string exactly as in the example.
+
+%Ï
+
+Do not use raw JSON or JSON.stringify() for generating the signature.
+
+%Ï
+
+Please return code: 10002, msg: Signature verification failed if the
+
+hashing verification failed.
+
+%Ï
+
+The signing key provided in this documentation is intended for use in
+
+our staging environment. A new signing key will be issued upon
+
+transition to the production environment.
+
+Example for how we hashing our data
+
+1.
+
+Normal case
+
+Type
+
+Value
+
+JSON data in
+
+request body
+
+"appid": "GG01",
+
+"timestamp": 1751079335,
+
+"currency": "idr",
+
+"uname": gg1 ,
+
+"money": 2400,
+
+"game_id": 1 ,
+
+"season_id": 1ps1-132190_1751079335 ,
+
+"order_id": 1ps1-132190 ,
+
+"bet": 200,
+
+"type": 1,
+
+"bonus_round_type": 0,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null,
+
+"hash": 76c9e672d7e900c661ae3f5efafd4106 ,
+
+Signing key
+
+7676a4aa218ba38aff7dce7d5c84e37e047d8a021f29269f177ed1d845
+
+658e67
+
+String to md5
+
+encrypt
+
+Note: sort by
+
+alphabetically
+
+appid=GG01&award_order_ids=null&bet=200&bonus_round_type=0&
+
+cancel_order_id=&currency=idr&end_round=true&game_id=1&money
+
+=2400&order_id=1ps1-132190&season_id=1ps1-132190_1751079335
+
+&timestamp=1751079335&type=5&uname=gg17676a4aa218ba38aff7
+
+dce7d5c84e37e047d8a021f29269f177ed1d845658e67
+
+md5 result
+
+76c9e672d7e900c661ae3f5efafd4106
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 20 ---
+20
+
+2.
+
+Scatter s case
+
+Type
+
+Value
+
+JSON data in
+
+request body
+
+appid : 'GG01',
+
+timestamp : 1751613761,
+
+uname : 'gg1',
+
+currency : 'idr',
+
+game_id : '8',
+
+money : 1200,
+
+season_id : '1ps3-55507_1751613761',
+
+order_id : '1ps3-55505',
+
+bet : 0,
+
+bonus_round_type : 3,
+
+type : 3,
+
+end_round : false,
+
+cancel_order_id : '',
+
+award_order_ids : [
+
+{ order_id : '1ps3-55506', money : '280' },
+
+{ order_id : '1ps3-55507', money : '1200' }
+
+]
+
+Signing key
+
+7676a4aa218ba38aff7dce7d5c84e37e047d8a021f29269f177ed1d845
+
+658e67
+
+String to md5
+
+encrypt
+
+Note: please
+
+notice the
+
+order_id and
+
+money still in
+
+same order
+
+appid=GG01&award_order_ids=[{"order_id":"1ps3-55506","money":"28
+
+0"},{"order_id":"1ps3-55507","money":"1200"}]&bet=0&bonus_round_ty
+
+pe=3&cancel_order_id=&currency=idr&end_round=false&game_id=8&
+
+money=1200&order_id=1ps3-55505&season_id=1ps3-55507_175161
+
+3761&timestamp=1751613761&type=3&uname=gg17676a4aa218ba3
+
+8aff7dce7d5c84e37e047d8a021f29269f177ed1d845658e67
+
+md5 result
+
+ba329ad14af8ef0c805f3a5e52915078
+
+Note: for Bouncy s new mechanism, it will be type: 4 for scatter s phase,
+
+not type: 3
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 21 ---
+21
+
+b.
+
+Get Merchant s Token
+
+Brief descriptions:
+
+%Ï
+
+Identity verification, used as Bearer authentication in every service
+
+call.
+
+%Ï
+
+This API interface is provided by the merchant, to be called by our
+
+service.
+
+%Ï
+
+It will be used to access merchant s API, for the seamless system.
+
+Request URL Example:
+
+%Ï
+
+/getToken
+
+Request Method:
+
+%Ï
+
+POST
+
+Request Body Example
+
+{
+
+username : Testing,
+
+password : 11111,
+
+uname  : 124345,
+
+hash : xxxxxx
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+username
+
+String(255)
+
+Username that Merchant given/registered for
+
+us
+
+Required
+
+password
+
+String(255)
+
+Password that merchant given/registered for
+
+us
+
+Required
+
+uname
+
+String(255)
+
+Unique player ID assigned by the merchant
+
+Optional
+
+hash
+
+String(255)
+
+Hashing feature for merchant to verify
+
+Optional
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 22 ---
+22
+
+Successful Response Example
+
+{
+
+tokenData :
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjIsImNsaWVudF9p
+
+ZCI6IklOMDEiLCJuYW1lIjoidGVzdGluZ19taWF3IiwiaWF0IjoxNzQwND
+
+U2MDIyLCJleHAiOjE3NDA0NTY5MjJ9.vA6EGDNijVEFck_8hh1iAGw5e
+
+3kfOGnstWlhwwJ3ubQ 
+
+}
+
+Response Parameters
+
+Name
+
+Type
+
+Description
+
+tokenData
+
+Text
+
+Token that filled with Our Credential
+
+c.
+
+Get Player Balance
+
+Brief descriptions:
+
+%Ï
+
+Our service will call this to Merchant service to get the player's
+
+balance.
+
+%Ï
+
+The service API should be provided by Merchant.
+
+%Ï
+
+We will use it right at the start when the player opens the game.
+
+Request URL example:
+
+%Ï
+
+https://{merchant link URL}/getBalance
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 5.a
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 23 ---
+23
+
+Our Request Body Example
+
+{
+
+"appid": "GG01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": gg2 ,
+
+hash : xxxxxx
+
+}
+
+Our Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier of the merchant, obtained
+
+from the backend
+
+Required
+
+timestamp
+
+Integer(20)
+
+Timestamp of the request
+
+Required
+
+currency
+
+String(255)
+
+Currency code, please refer to the end of the
+
+documentation to see supported currency.
+
+Required
+
+game_id
+
+Integer(20)
+
+ID of the game
+
+Optional
+
+uname
+
+String(255)
+
+Unique player ID assigned by the merchant
+
+Required
+
+hash
+
+String(255)
+
+Hashing feature for merchant to verify
+
+Optional
+
+Successful Response From Merchant Example
+
+{
+
+"data": {
+
+"balance": 18086300,
+
+"symbol": Rp ,
+
+},
+
+"code": 1,
+
+"msg": "success"
+
+}
+
+Response Parameters From Merchant Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+balance
+
+Float(20,9)
+
+Player s Balance, we only support up to 4 digits decimal.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 24 ---
+24
+
+Name
+
+Type
+
+Description
+
+symbol
+
+String(255)
+
+Currency code
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+d.
+
+Change Player Balance
+
+Brief descriptions:
+
+%Ï
+
+Our service will call this to the Merchant service to change the
+
+player's balance.
+
+%Ï
+
+The service API should be provided by Merchant.
+
+%Ï
+
+We will use it when the player plays the game, either from start
+
+betting or get the reward.
+
+Request URL example:
+
+%Ï
+
+https://{merchant link URL}/verifyUserBalance
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 5.a
+
+Our Request Body Example
+
+{
+
+"appid": "GG01",
+
+"timestamp": 1751079335,
+
+"currency": "idr",
+
+"uname": gg1 ,
+
+"money": 2400,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 25 ---
+25
+
+"game_id": 1 ,
+
+"season_id": 1ps1-132190_1751079335 ,
+
+"order_id": 1ps1-132190 ,
+
+"bet": 200,
+
+"type": 1,
+
+"bonus_round_type": 0,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null,
+
+"hash": 76c9e672d7e900c661ae3f5efafd4106 ,
+
+}
+
+Our Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier of the merchant,
+
+obtained from the backend
+
+Required
+
+timestamp
+
+Integer(20)
+
+Timestamp of the request
+
+Required
+
+currency
+
+String(255)
+
+Currency code, please refer to the end of
+
+the documentation to see supported
+
+currency.
+
+Required
+
+game_id
+
+String(255)
+
+ID of the game
+
+Optional
+
+uname
+
+String(255)
+
+Unique player ID assigned by the
+
+merchant
+
+Required
+
+money
+
+Float(20,9)
+
+Amount that the player s balance need to
+
+be changed
+
+Required
+
+season_id
+
+String(255)
+
+Unique session ID for each game round
+
+Required
+
+order_id
+
+String(255)
+
+Unique order ID, it represented our
+
+transaction ID for that current bet round.
+
+We will send the same order as long as we
+
+don t declare it as an end round.
+
+Required
+
+bet
+
+Float
+
+(20,9)
+
+The amount of the bet players make, we
+
+will always send it in the positive number.
+
+Required
+
+type
+
+Integer(20)
+
+1: Game bet without result; 2: Cancel bet;
+
+3: Special/Multiple rounds; 4: Verify
+
+round end;
+
+Required
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 26 ---
+26
+
+Name
+
+Type
+
+Description
+
+Status
+
+bonus_round_typ
+
+e
+
+Integer(20)
+
+Indicating bonus round transaction, if the
+
+game has bonus round,(e.g., Plinko s
+
+scatter). 0: Normal round, 1: Bonus
+
+round, 2:Buy bonus round, 3: Ongoing
+
+bonus round.
+
+Optional
+
+end_round
+
+Boolean
+
+Indicates if the current round/game is
+
+ending
+
+Required
+
+cancel_order_id
+
+String(255)
+
+Only provided when type=2, indicates
+
+which order is being canceled.
+
+Optional
+
+award_order_ids
+
+Array
+
+Currently, this array is present only for
+
+Plinko s scatter feature. It includes all
+
+associated scatter ball transaction IDs.
+
+Support for additional games may be
+
+added in future updates.
+
+Optional
+
+hash
+
+String(255)
+
+Hashing feature for merchant to verify
+
+Required
+
+award_order_ids
+
+award_order_ids is an array type, containing an object with the following
+
+fields, below is a game payout  example.
+
+Parameter Name
+
+Required
+
+Type
+
+Description
+
+order_id
+
+Yes
+
+String
+
+The bet transaction ID.
+
+money
+
+yes
+
+decimal
+
+Payout amount.
+
+NOTE:
+
+award_order_ids
+
+is a summary or history that includes
+
+all child entries of
+
+a Scatter Ball under a single Scatter parent.
+
+Do not
+
+add
+
+it to the user's
+
+total winnings
+
+.
+
+Successful Response From Merchant Example
+
+{
+
+"data": {
+
+"balance": 18086300
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 27 ---
+27
+
+},
+
+"code": 1,
+
+"msg": "success"
+
+}
+
+Response Parameters From Merchant Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+balance
+
+Float(20,9)
+
+Player s Balance, we only support up to 4 digits
+
+decimal.
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+Error Response From Merchant Example
+
+{
+
+"code": 10001,
+
+"msg": "balance is not enough"
+
+}
+
+Error responses do not include a data field.
+
+*Type Explanation
+
+%Ï
+
+Each type corresponds to an unique HTTP call. We will try to make
+
+each player action onto single call for seamless transaction
+
+%Ï
+
+As for now, there are no cancel bet rounds.
+
+%Ï
+
+Example Scenarios:
+
+1.
+
+Verify round end (type 4):
+
+This is used when the user has only one action, to place a bet, it
+
+applies to games like
+
+Plinko
+
+,
+
+Monopoly
+
+and
+
+Bounceball
+
+games.
+
+2.
+
+Game bet ! Verify round end (type 1 ! 4):
+
+This applies when the user has an additional action besides
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 28 ---
+28
+
+betting to determine the result. It is used in
+
+Crash
+
+,
+
+Mines
+
+and
+
+Heist
+
+games
+
+% 
+
+In
+
+Mines
+
+and
+
+Heist
+
+, the user must pick which card
+
+to
+
+reveal.
+
+% 
+
+In
+
+Crash
+
+, the user must choose when to withdraw their
+
+bet.
+
+3.
+
+Game bet ! Game award ! Game award ! & ! Verify
+
+round end (type 1 ! 3 ! 3 ! & ! 4):
+
+This sequence is used when the user receives special free round
+
+rewards(e.g., scatter in
+
+Plinko
+
+)
+
+Each user action that triggers a free ball (or similar event)
+
+shares the same round ID. However, each free ball will have a
+
+unique award_order_id within the request.
+
+4.
+
+Insufficient balance scenario:
+
+If the player doesn't have enough balance, the merchant must
+
+not process the transaction. Instead, the merchant should return
+
+an appropriate error code. The merchant should check the
+
+player s bet amount (as sent by us) against the player balance in
+
+their database before validating the transaction.
+
+Expected Games Treatment
+
+1.
+
+Plinko Games
+
+Type
+
+Flow
+
+Description
+
+1
+
+4
+
+When players click the bet button, they will receive the result,
+
+and we will input their type as
+
+4
+
+.
+
+2
+
+1
+
+!
+
+3
+
+!
+
+4
+
+Players either buy scatter balls or receive them, and we will input
+
+their type as
+
+1
+
+.
+
+Players will be granted multiple rounds of free balls. Whenever a
+
+player triggers scatter/free balls, we will input their type as
+
+3
+
+. For
+
+the final round of scatter/free balls, we will input their type as
+
+4
+
+.
+
+Bonus round type description.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 29 ---
+29
+
+Type
+
+Description
+
+0
+
+Normal round/ball.
+
+1
+
+Get scatter s ball/phase with low chance(not from buying scatter)
+
+2
+
+Buy scatter s ball/phase with 100x of bet value s
+
+3
+
+Scatter phase.
+
+Type 1 Our Request Body Example
+
+In this case, the player win 3.000 coins with 10.000 bet(LOSE)
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -7000,
+
+"game_id": 1,
+
+"season_id": 1ps1-10006_1739873132_4 ,
+
+"order_id": 1ps1-10004 ,
+
+"bet": 10000,
+
+"type": 4,
+
+"bonus_round_type": 0,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+In this case, the player win 15.000 coins with 10.000 bet (WIN)
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 5000,
+
+"game_id": 1,
+
+"season_id": 1ps1-10006_1739873132_4 ,
+
+"order_id": 1ps1-10005 ,
+
+"bet": 10000,
+
+"type": 4,
+
+"bonus_round_type": 0,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 30 ---
+30
+
+"award_order_ids": null
+
+}
+
+Type 2 Our Request Body Example, Normal Scatter Ball
+
+In this case, initially the player wins 5.000 coins with 10.000 bet with normal scatter
+
+balls, pay attention to bonus round type, it will be flagged as 1.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -5000,
+
+"game_id": 1,
+
+"season_id": 1ps1-10006_1739873132_1 ,
+
+"order_id": 1ps1-10006 ,
+
+"bet": 10000,
+
+"type": 1,
+
+"bonus_round_type": 1,
+
+"end_round": false,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+Type 2 Our Request Body Example, Buy Scatter Ball
+
+In this case, the player will pay 100 times of the player's bet as price to initiate scatter
+
+balls. Since players buy a scatter bonus round type, it will be flagged as 2.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -1000000,
+
+"game_id": 1,
+
+"season_id": 1ps1-10006_1739873132_1 ,
+
+"order_id": 1ps1-10006 ,
+
+"bet": 10000,
+
+"type": 1,
+
+"bonus_round_type": 2,
+
+"end_round": false,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 31 ---
+31
+
+Type 2 Our Request Body Example, Free Balls Rounds
+
+But after that, the money will be imputed for currently call scatter ball result, while
+
+for award_order_ids will be sent with all order_id of one free scatter rounds
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 420 ,
+
+"game_id": 1,
+
+"season_id": 1ps1-10006_1739873132_3 ,
+
+"order_id": 1ps1-10006 ,
+
+"bet": 0,
+
+"type": 3,
+
+"bonus_round_type": 3,
+
+"end_round": false,
+
+"cancel_order_id":  ,
+
+"award_order_ids": [
+
+{ order_id: '1ps1-10007', money: '160' },
+
+{ order_id: '1ps1-10008', money: '560' },
+
+{ order_id: '1ps1-10009', money: '280' },
+
+{ order_id: '1ps1-10010', money: '420' },
+
+]
+
+}
+
+Type 2 Our Request Body Example, Free Balls Ends
+
+After scatter rounds end, we will set type 4, bonus round type will be imputed as 3
+
+and end_round boolean as true to indicate the scatter round is finished.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 520,
+
+"game_id": 1,
+
+"season_id": 1ps1-10006_1739873132_4 ,
+
+"order_id": 1ps1-10006 ,
+
+"bet": 0,
+
+"type": 4,
+
+"bonus_round_type": 3,
+
+"end_round": true,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 32 ---
+32
+
+"cancel_order_id":  ,
+
+"award_order_ids": [
+
+{ order_id: '1ps1-10007', money: '160' },
+
+{ order_id: '1ps1-10008', money: '560' },
+
+{ order_id: '1ps1-10009', money: '280' },
+
+{ order_id: '1ps1-10010', money: '420' },
+
+{ order_id: '1ps1-10011', money: '520' },
+
+]
+
+}
+
+2.
+
+Crash Games
+
+Type
+
+Flow
+
+Description
+
+1
+
+1
+
+! 3!
+
+3! 3 !
+
+4
+
+The player begins by placing a bet, at which point we send
+
+type
+
+1
+
+. The player will then wait for the optimal time
+
+to withdraw
+
+their bet. We will not send any further data until the round ends,
+
+at which point we will send
+
+type 4
+
+.
+
+Type 3
+
+will be used if the player performs a
+
+partial,
+
+full
+
+withdrawal, or bonus reward
+
+, indicating that the
+
+round is still
+
+ongoing and has not yet ended.
+
+Type 1 Our Request Body Example
+
+In this case, the player place 10.000 bet
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -10000,
+
+"game_id": 3,
+
+"season_id": 2cs1-10001_1739873132_1 ,
+
+"order_id": 2cs1-10001 ,
+
+"bet": 10000,
+
+"type": 1,
+
+"end_round": false,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 33 ---
+33
+
+Type 1 Our Request Body Example, Player Half Withdraws
+
+In this case, the player safely withdraws their 50% of bets and win 5000
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 5000,
+
+"game_id": 3,
+
+"season_id": 2cs1-10001_1739873132_3 ,
+
+"order_id": 2cs1-10001 ,
+
+"bet": 0,
+
+"type": 3,
+
+"end_round": false,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+Type 1 Our Request Body Example, Player Full Withdraws
+
+In this case, the player safely withdraws their 100% of bets and win 20000
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money":
+
+20000
+
+,
+
+"game_id": 3,
+
+"season_id": 2cs1-10001_1739873132_3 ,
+
+"order_id": 2cs1-10001 ,
+
+"bet": 0,
+
+"type": 3,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+Type 1 Our Request Body Example, Rounds End
+
+In this case, our system will send a response to inform the merchant the round has
+
+ended.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 34 ---
+34
+
+"currency": "idr",
+
+"uname": 22,
+
+"money":
+
+0
+
+,
+
+"game_id": 4,
+
+"season_id": 2cs1-10001_1739873132_4 ,
+
+"order_id": 2cs1-10001 ,
+
+"bet": 0,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+3.
+
+Mines Games
+
+Type
+
+Flow
+
+Description
+
+1
+
+1
+
+! 4
+
+The player starts by placing a bet, and we send
+
+type
+
+1
+
+. The
+
+player then picks a card. We will not send any further data until
+
+the player either withdraws their bet or the bomb explodes (game
+
+over), at which point we will send
+
+type 4
+
+.
+
+Type 1 Our Request Body Example
+
+In this case, the player place 10.000 bet
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -10000,
+
+"game_id": 5,
+
+"season_id": 3mi1-10001_1739873132_1 ,
+
+"order_id": 3mi1-10001 ,
+
+"bet": 10000,
+
+"type": 1,
+
+"end_round": false,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+Type 1 Our Request Body Example, Player Withdraws
+
+In this case, the player safely withdraws their bet and win 13000
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 35 ---
+35
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 13000,
+
+"game_id": 1,
+
+"season_id": 3mi1-10001_1739873132_4 ,
+
+"order_id": 3mi1-10001 ,
+
+"bet": 0,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+Type 1 Our Request Body Example, Player Game Over
+
+In this case, the player gets mines and explodes, hence 0 result for money.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 0,
+
+"game_id": 1,
+
+"season_id": 3mi1-10001_1739873132_4 ,
+
+"order_id": 3mi1-10001 ,
+
+"bet": 0,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+4.
+
+Monopoly Games
+
+Type
+
+Flow
+
+Description
+
+1
+
+4
+
+When the player rolls the dice, we will send
+
+type
+
+4
+
+.
+
+Type 1 Our Request Body Example
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 36 ---
+36
+
+In this case, the player places 10.000 bets and gets 0 money.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -10000,
+
+"game_id": 5,
+
+"season_id": 4mo1-10002_1739873132_4 ,
+
+"order_id": 4mo1-10001 ,
+
+"bet": 10000,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+In this case, the player places 10.000 bets and gets 25.000 money.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 15000,
+
+"game_id": 5,
+
+"season_id": 4mo1-10002_1739873132_4 ,
+
+"order_id": 4mo1-10002 ,
+
+"bet": 10000,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+5.
+
+Heist Games
+
+Type
+
+Flow
+
+Description
+
+1
+
+1
+
+! 4
+
+The player starts by placing a bet, and we send
+
+type
+
+1
+
+. The
+
+player then picks a card. We will not send any further data until
+
+the player successfully matches 3 cards, at which point we will
+
+send
+
+type 4
+
+.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 37 ---
+37
+
+Type 1 Our Request Body Example
+
+In this case, the player place 10.000 bet
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -10000,
+
+"game_id": 5,
+
+"season_id": 5he1-10001_1739873132_1 ,
+
+"order_id": 5he1-10001 ,
+
+"bet": 10000,
+
+"type": 1,
+
+"end_round": false,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+Type 1 Our Request Body Example, Player Match 3 Cards
+
+In this case, the player safely withdraws their bet and win 5000
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 5000,
+
+"game_id": 1,
+
+"season_id": 5he1-10001_1739873132_4 ,
+
+"order_id": 5he1-10001 ,
+
+"bet": 0,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 38 ---
+38
+
+6.
+
+Bouncy Games
+
+Type
+
+Flow
+
+Description
+
+1
+
+4
+
+When the player calls a bouncing ball, we will send
+
+type 4
+
+.
+
+2
+
+4
+
+New and unique mechanics on Bouncy Olympus.
+
+Type 1 Our Request Body Example
+
+In this case, the player places 10.000 bets and gets 0 money.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -10000,
+
+"game_id": 5,
+
+"season_id": 6bo1-10002_1739873132_4 ,
+
+"order_id": 6bo1-10001 ,
+
+"bet": 10000,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+In this case, the player places 10.000 bets and gets 13.000 money.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 3000,
+
+"game_id": 5,
+
+"season_id": 6bo1-10002_1739873132_4 ,
+
+"order_id": 6bo1-10002 ,
+
+"bet": 10000,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 39 ---
+39
+
+Type 2 Our Request Body Example for Some Bouncy Type
+
+In
+
+Bouncy Olympus
+
+and
+
+Mermaid Princess
+
+there are several
+
+new features, including
+
+Scatter and Special Balls. The treatment of the Scatter is similar to that of Plinko s
+
+Scatter, with a slight difference, we will mark it with bonus_round_type parameter.
+
+Bonus round type description.
+
+Type
+
+Description
+
+0
+
+Normal round/ball.
+
+1
+
+Get scatter s ball/phase with low chance(not from buying scatter)
+
+2
+
+Buy scatter s ball/phase with 100x of bet value s (15 rounds)
+
+3
+
+Scatter phase.
+
+Get scatter s case,
+
+{
+
+"appid": "IN01",
+
+"timestamp : 1754539472,
+
+"uname : 'gg1',
+
+"currency : 'idr',
+
+"game_id : '14',
+
+"money : -800,
+
+"season_id : '6bo18-96_1754539472_4',
+
+"order_id : '6bo18-96',
+
+"bet : 1000,
+
+"type : 4,
+
+bonus_round_type : 1,
+
+"end_round : true,
+
+"cancel_order_id : '',
+
+"award_order_ids : null,
+
+}
+
+Buying scatter s case,
+
+{
+
+"appid": "IN01",
+
+"timestamp : 1754539472,
+
+"uname : 'gg1',
+
+"currency : 'idr',
+
+"game_id : '14',
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 40 ---
+40
+
+"money : -19828,
+
+"season_id : '6bo18-96_1754539472_4',
+
+"order_id : '6bo18-96',
+
+"bet : 20000,
+
+"type : 4,
+
+bonus_round_type : 2,
+
+"end_round : true,
+
+"cancel_order_id : '',
+
+"award_order_ids : null,
+
+}
+
+Scatter s phase case,
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1754540661,
+
+"uname": 'gg1',
+
+"currency": 'idr',
+
+"game_id": '14',
+
+"money": 0,
+
+"season_id": '6bo18-103_1754540661_4',
+
+"order_id : '6bo18-103',
+
+"bet : 0,
+
+"type : 4,
+
+"bonus_round_type : 3,
+
+"end_round : true,
+
+"cancel_order_id : '',
+
+"award_order_ids : [ { order_id: '6bo18-103', money: '0' } ],
+
+}
+
+Example on award_order_ids behavior
+
+FreeBall s order
+
+Example Output
+
+First freeball
+
+"season_id": '6bo18-103_1754540661',
+
+"order_id : '6bo18-103',
+
+"money": 0,
+
+"award_order_ids : [ { order_id: '6bo18-103', money:
+
+'0' } ],
+
+Second freeball
+
+"season_id": '6bo18-104_1754540662',
+
+"order_id : '6bo18-104',
+
+"money": 100,
+
+"award_order_ids : [ { order_id: '6bo18-103', money:
+
+'0' }, { order_id: '6bo18-104', money: '100' } ],
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 41 ---
+41
+
+FreeBall s order
+
+Example Output
+
+Third freeball
+
+"season_id": '6bo18-105_1754540663',
+
+"order_id : '6bo18-105',
+
+"money": 250,
+
+"award_order_ids : [ { order_id: '6bo18-103', money:
+
+'0' }, { order_id: '6bo18-104', money: '100' }, {
+
+order_id: '6bo18-105', money: '250' } ],
+
+7.
+
+Crossing Games
+
+Type
+
+Flow
+
+Description
+
+1
+
+1
+
+! 4
+
+When the player places a bet, we send
+
+type 1
+
+to
+
+deduct
+
+their
+
+balance
+
+and start the round.
+
+If the player crashes (gets hit by a car), we send
+
+type 4
+
+with
+
+0
+
+winnings(money)
+
+to complete the session.
+
+If the player withdraws safely, we send
+
+type 4
+
+with
+
+their
+
+total
+
+winnings(money)
+
+to complete the session.
+
+Type 1 Our Request Body Example
+
+When the player places a bet.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": -10000,
+
+"game_id": 5,
+
+"season_id": 7cc17-10001_1739873132_1 ,
+
+"order_id": 7cc17-10001 ,
+
+"bet": 10000,
+
+"type": 1,
+
+"end_round": false,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+If the player crashes.
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 42 ---
+42
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 0,
+
+"game_id": 1,
+
+"season_id": 7cc17-10001_1739873132_4 ,
+
+"order_id": 7cc17-10001 ,
+
+"bet": 0,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+If the player withdraws safely,
+
+{
+
+"appid": "IN01",
+
+"timestamp": 1739873132,
+
+"currency": "idr",
+
+"uname": 22,
+
+"money": 15000,
+
+"game_id": 1,
+
+"season_id": 7cc17-10001_1739873132_4 ,
+
+"order_id": 7cc17-10001 ,
+
+"bet": 0,
+
+"type": 4,
+
+"end_round": true,
+
+"cancel_order_id":  ,
+
+"award_order_ids": null
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 43 ---
+43
+
+6.
+
+Transfer Wallet
+
+a.
+
+Transfer Player Balance
+
+Brief descriptions:
+
+%Ï
+
+Merchant service will call this to change the player's balance.
+
+%Ï
+
+The service API should be provided by Merchant.
+
+%Ï
+
+Merchants should use it on their platform.
+
+Request URL example:
+
+%Ï
+
+/MasterService/central/transfer?trace_id=xxx
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.c
+
+URL Params
+
+Header
+
+Required
+
+Type
+
+Description
+
+trace_id
+
+No
+
+String
+
+Unique trace_id for each request
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 44 ---
+44
+
+Request Body
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+,
+
+"timestamp"
+
+:
+
+1739873132
+
+,
+
+"currency"
+
+:
+
+"idr"
+
+,
+
+"amount"
+
+:
+
+10000
+
+,
+
+"tx_id"
+
+:
+
+"29252121"
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier of the merchant,
+
+obtained from the backend
+
+Required
+
+timestamp
+
+Integer(20)
+
+Timestamp of the request
+
+Required
+
+currency
+
+String(255)
+
+Currency code, please refer to the end of
+
+the documentation to see supported
+
+currency.
+
+Required
+
+amount
+
+Float(20,9)
+
+Amount that the player s balance need to
+
+be changed
+
+Required
+
+tx_id
+
+String(255)
+
+Transaction ID that is generated by the
+
+merchant's side. It should be unique.
+
+Required
+
+Successful Response From Merchant Example
+
+{
+
+"data"
+
+: {
+
+"tx_id"
+
+:
+
+"29252121"
+
+,
+
+"ptx_id"
+
+:
+
+39
+
+,
+
+"balance"
+
+:
+
+1002487044
+
+,
+
+"code"
+
+:
+
+"Rp"
+
+},
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+:
+
+"success"
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 45 ---
+45
+
+Response Parameters From Merchant Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+tx_id
+
+String(255)
+
+Transaction ID that is generated by the merchant's side.
+
+ptx_id
+
+String(255)
+
+Transaction ID that is generated by us.
+
+balance
+
+Float(20,9)
+
+Player s Balance, we only support up to 4 digits
+
+decimal.
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+b.
+
+Get Player Balance
+
+Brief descriptions:
+
+%Ï
+
+Merchant service will call this to get the player's balance on our
+
+database.
+
+%Ï
+
+The service API will be provided by us.
+
+Request URL example:
+
+%Ï
+
+https://{Our link
+
+URL}/MasterService/central/getBalance?trace_id=xxx
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 46 ---
+46
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.c
+
+URL Params
+
+Header
+
+Required
+
+Type
+
+Description
+
+trace_id
+
+No
+
+String
+
+Unique trace_id for each request
+
+Request Body Example
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+,
+
+"timestamp"
+
+:
+
+1739873132
+
+,
+
+"currency"
+
+:
+
+"idr"
+
+,
+
+"uname"
+
+:
+
+"gg2"
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier of the merchant, obtained
+
+from the backend
+
+Required
+
+timestamp
+
+Integer(20)
+
+Timestamp of the request
+
+Required
+
+currency
+
+String(255)
+
+Currency code, please refer to the end of the
+
+documentation to see supported currency.
+
+Required
+
+game_id
+
+Integer(20)
+
+ID of the game
+
+Optional
+
+uname
+
+String(255)
+
+Unique player ID assigned by the merchant
+
+Required
+
+Successful Response Example
+
+{
+
+"data"
+
+: {
+
+"balance"
+
+:
+
+10027044
+
+,
+
+"symbol"
+
+:
+
+"Rp"
+
+},
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 47 ---
+47
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+:
+
+"success"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+balance
+
+Float(20,9)
+
+Player s Balance, we only support up to 4 digits
+
+decimal.
+
+symbol
+
+string(255)
+
+Currency code
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+c.
+
+Get Transfer Status
+
+Brief descriptions:
+
+%Ï
+
+Merchant service will call this to get the player's transaction status on
+
+our database.
+
+%Ï
+
+The service API will be provided by us.
+
+Request URL example:
+
+%Ï
+
+https://{Our link
+
+URL}/MasterService/central/transferStatus?trace_id=xxx
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 48 ---
+48
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.c
+
+URL Params
+
+Header
+
+Required
+
+Type
+
+Description
+
+trace_id
+
+No
+
+String
+
+Unique trace_id for each request
+
+Request Body Example
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+,
+
+"timestamp"
+
+:
+
+1739873132
+
+,
+
+"currency"
+
+:
+
+"idr"
+
+,
+
+"uname"
+
+:
+
+"gg2",
+
+"tx_id"
+
+:
+
+"21232124521",
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier of the merchant, obtained
+
+from the backend
+
+Required
+
+timestamp
+
+Integer(20)
+
+Timestamp of the request
+
+Required
+
+currency
+
+String(255)
+
+Currency code, please refer to the end of the
+
+documentation to see supported currency.
+
+Required
+
+uname
+
+String(255)
+
+Unique player ID assigned by the merchant
+
+Required
+
+tx_id
+
+String(255)
+
+Transaction ID that is generated by the
+
+merchant's side
+
+Required
+
+Successful Result Response Example
+
+{
+
+"data"
+
+: {
+
+"currency"
+
+: "idr",
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 49 ---
+49
+
+"amount"
+
+:
+
+568964273.92
+
+,
+
+"state"
+
+:
+
+1
+
+},
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+: "success"
+
+}
+
+Failed Result Response Example
+
+{
+
+"data"
+
+: {
+
+"failed_note"
+
+: "Insufficient balance, withdrawal
+
+failed",
+
+"state"
+
+:
+
+2
+
+},
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+: "success"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+failed_note
+
+String(255)
+
+Contain the reason why the transaction failed, it will
+
+only appear when the state = 2.
+
+amount
+
+Float(20,9)
+
+Amount transferred .
+
+currency
+
+String(255)
+
+Currency code.
+
+state
+
+Integer(20)
+
+Player s transaction status, 1: success, 2: failed.
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 50 ---
+50
+
+7.
+
+Report API
+
+a.
+
+Bet Records
+
+Brief descriptions:
+
+%Ï
+
+This API is mainly used by Merchant to query game records of
+
+players' games.
+
+%Ï
+
+The API is not related to the public description above.
+
+%Ï
+
+API will be provided by us.
+
+%Ï
+
+Our time zone: UTC +0, the access party needs to pay attention to the
+
+time zone calculation of data statistics.
+
+Request URL:
+
+%Ï
+
+https://{Our game link URL}/ReportService/report/GetBetRecordList
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.b
+
+Request Body Example
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+,
+
+"uname"
+
+:
+
+"gg2"
+
+,
+
+"game_id"
+
+:
+
+"2"
+
+,
+
+"page"
+
+:
+
+1
+
+,
+
+"size"
+
+:
+
+5
+
+,
+
+"start_time"
+
+:
+
+"2025-03-17"
+
+,
+
+"end_time"
+
+:
+
+"2025-03-21"
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 51 ---
+51
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier for the merchant, obtained
+
+from the merchant backend.
+
+Required
+
+uname
+
+String(255)
+
+Unique player ID assigned by the merchant
+
+Optional
+
+game_id
+
+Integer(20)
+
+Unique identifier of the game.
+
+Optional
+
+page
+
+Integer(20)
+
+Current page
+
+Required
+
+size
+
+Integer(20)
+
+Number of records to query
+
+Required
+
+start_time
+
+String(255)
+
+Start time for query (timestamp) with
+
+YYYY-MM-DD HH:mm:ss format.
+
+Optional
+
+end_time
+
+String(255)
+
+End time for query (timestamp) with
+
+YYYY-MM-DD HH:mm:ss format.
+
+Optional
+
+Successful Response Example
+
+{
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+:
+
+"success"
+
+,
+
+"total_max_count"
+
+:
+
+1932
+
+,
+
+"total_max_pagination"
+
+:
+
+966
+
+,
+
+"total_current"
+
+:
+
+2
+
+,
+
+"current_page"
+
+:
+
+1
+
+,
+
+"data"
+
+: [
+
+{
+
+"round_id"
+
+:
+
+"6bo1-160080"
+
+,
+
+"bet"
+
+:
+
+400
+
+,
+
+"enter_money"
+
+:
+
+4277795764.599999
+
+,
+
+"after_settlement_money"
+
+:
+
+4277795364.599999
+
+,
+
+"win"
+
+:
+
+0
+
+,
+
+"create_time"
+
+:
+
+1757497012
+
+,
+
+"multiplier"
+
+:
+
+0
+
+,
+
+"account"
+
+:
+
+"ikarluz"
+
+,
+
+"account_id"
+
+:
+
+"gg1"
+
+,
+
+"currency"
+
+:
+
+"idr"
+
+,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 52 ---
+52
+
+"game_id"
+
+:
+
+14
+
+,
+
+"source_game"
+
+:
+
+"Bounceball Classic"
+
+},
+
+{
+
+"round_id"
+
+:
+
+"6bo1-160079"
+
+,
+
+"bet"
+
+:
+
+400
+
+,
+
+"enter_money"
+
+:
+
+4277796164.599999
+
+,
+
+"after_settlement_money"
+
+:
+
+4277795764.599999
+
+,
+
+"win"
+
+:
+
+0
+
+,
+
+"create_time"
+
+:
+
+1757497002
+
+,
+
+"multiplier"
+
+:
+
+0
+
+,
+
+"account"
+
+:
+
+"ikarluz"
+
+,
+
+"account_id"
+
+:
+
+"gg1"
+
+,
+
+"currency"
+
+:
+
+"idr"
+
+,
+
+"game_id"
+
+:
+
+14
+
+,
+
+"source_game"
+
+:
+
+"Bounceball Classic"
+
+}
+
+]
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+total_max_count
+
+Integer(20)
+
+How many maximum rows of data with the current
+
+query result.
+
+total_max_pagina
+
+tion
+
+Integer(20)
+
+How much maximum page for currently sizing
+
+merchant input.
+
+total_current
+
+Integer(20)
+
+Currently how many rows.
+
+current_page
+
+Integer(20)
+
+Currently view/query page.
+
+round_id
+
+String(255)
+
+Transaction ID, unique for each game.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 53 ---
+53
+
+Name
+
+Type
+
+Description
+
+create_time
+
+Integer(20)
+
+Timestamp
+
+bet
+
+Float(20,9)
+
+Indicating bet amount.
+
+enter_money
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+after_settlement_
+
+money
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+win
+
+Float(20,9)
+
+Indicating the amount of player s winning.
+
+account
+
+String(255)
+
+Player s nickname
+
+multiplier
+
+Float(20,9)
+
+The reward multiplier
+
+account_id
+
+String(255)
+
+Player s ID on merchant platform.
+
+currency
+
+String(255)
+
+Currency code, please refer to the appendix table at the
+
+end of this documentation.
+
+game_id
+
+Integer(20)
+
+Game s ID.
+
+source_game
+
+String(255)
+
+Game s name.
+
+b.
+
+Game Records
+
+Brief descriptions:
+
+%Ï
+
+This API is mainly used by Merchant to query game records of
+
+players' games.
+
+%Ï
+
+The API is not related to the public description above.
+
+%Ï
+
+API will be provided by us.
+
+%Ï
+
+Our time zone: UTC +0, the access party needs to pay attention to the
+
+time zone calculation of data statistics.
+
+Request URL:
+
+%Ï
+
+https://{Our game link
+
+URL}/ReportService/report/GetGameRecordList
+
+Request Method:
+
+%Ï
+
+POST
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 54 ---
+54
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.b
+
+Request Body Example
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+,
+
+"uname"
+
+: "gg2",
+
+"game_id"
+
+: "gg2",
+
+"page"
+
+:
+
+5
+
+,
+
+"size"
+
+:
+
+5
+
+,
+
+"start_time"
+
+:
+
+"2025-03-17"
+
+,
+
+"end_time"
+
+:
+
+"2025-03-21"
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier for the merchant, obtained
+
+from the merchant backend.
+
+Required
+
+uname
+
+String(255)
+
+Unique player ID assigned by the merchant
+
+Optional
+
+game_id
+
+Integer(20)
+
+Unique identifier of the game.
+
+Optional
+
+page
+
+Integer(20)
+
+Current page
+
+Required
+
+size
+
+Integer(20)
+
+Number of records to query
+
+Required
+
+start_time
+
+Timestamp
+
+Start time for query (timestamp) with
+
+YYYY-MM-DD HH:mm:ss format.
+
+Optional
+
+end_time
+
+Timestamp
+
+End time for query (timestamp) with
+
+YYYY-MM-DD HH:mm:ss format.
+
+Optional
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 55 ---
+55
+
+Successful Response Example
+
+{
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+:
+
+"success"
+
+,
+
+"total_max_count"
+
+:
+
+175
+
+,
+
+"total_max_pagination"
+
+:
+
+1
+
+,
+
+"total_current"
+
+:
+
+175
+
+,
+
+"current_page"
+
+:
+
+1
+
+,
+
+"data"
+
+: [
+
+{
+
+"round_id"
+
+:
+
+"1ps1-256196"
+
+,
+
+"create_time"
+
+:
+
+1757397923
+
+,
+
+"bet"
+
+:
+
+400
+
+,
+
+"enter_money"
+
+:
+
+2942757019.7999997
+
+,
+
+"after_settlement_money"
+
+:
+
+2942756899.7999997
+
+,
+
+"win"
+
+:
+
+280
+
+,
+
+"ip"
+
+:
+
+"xxx.xxx.xxx.xxx"
+
+,
+
+"account"
+
+:
+
+"gg1"
+
+,
+
+"account_id"
+
+:
+
+"gg1"
+
+,
+
+"usd_exchange_rates"
+
+:
+
+0.0000607427
+
+,
+
+"idr_exchange_rates"
+
+:
+
+1
+
+,
+
+"currency"
+
+:
+
+"idr"
+
+,
+
+"uid"
+
+:
+
+1
+
+,
+
+"game_id"
+
+:
+
+1
+
+,
+
+"source_game"
+
+:
+
+"Plinko Classic"
+
+,
+
+"game_log"
+
+: [
+
+{
+
+"id"
+
+:
+
+"1ps1-256196"
+
+,
+
+"individual_id"
+
+:
+
+1
+
+,
+
+"coin_result"
+
+:
+
+280
+
+,
+
+"coin_bet"
+
+:
+
+400
+
+,
+
+"coin_after"
+
+:
+
+2942756899.7999997
+
+,
+
+"coin_before"
+
+:
+
+2942757019.7999997
+
+,
+
+"collection_id"
+
+:
+
+1
+
+,
+
+"cycle"
+
+:
+
+0
+
+,
+
+"multiplier"
+
+:
+
+0.7
+
+,
+
+"type"
+
+:
+
+"normal"
+
+,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 56 ---
+56
+
+"current_bucket"
+
+:
+
+0
+
+,
+
+"total_shared"
+
+:
+
+0
+
+,
+
+"create_date"
+
+:
+
+"2025-09-09T06:05:23.777Z"
+
+,
+
+"update_date"
+
+:
+
+"2025-09-09T06:05:23.777Z"
+
+,
+
+"ip_address"
+
+:
+
+"xxx.xxx.xxx.xxx"
+
+}
+
+]
+
+},
+
+}
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+total_max_count
+
+Integer(20)
+
+How many maximum rows of data with the current
+
+query result.
+
+total_max_pagina
+
+tion
+
+Integer(20)
+
+How much maximum page for currently sizing
+
+merchant input.
+
+total_current
+
+Integer(20)
+
+Currently how many rows.
+
+current_page
+
+Integer(20)
+
+Currently view/query page.
+
+round_id
+
+String(255)
+
+Transaction ID, unique for each game.
+
+create_time
+
+Integer(20)
+
+Timestamp
+
+bet
+
+Float(20,9)
+
+Indicating bet amount.
+
+enter_money
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+after_settlement_
+
+money
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+win
+
+Float(20,9)
+
+Indicating the amount of player s winning.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 57 ---
+57
+
+Name
+
+Type
+
+Description
+
+ip
+
+String(255)
+
+Player s IP address.
+
+account
+
+String(255)
+
+Player s nickname
+
+account_id
+
+String(255)
+
+Player s ID on merchant platform.
+
+usd_exchange_ra
+
+tes
+
+Float(20,9)
+
+The USD exchange rate to IDR for the currency used at
+
+the time of recording
+
+idr_exchange_rat
+
+es
+
+Float(20,9)
+
+The IDR exchange rate to USD for the currency used at
+
+the time of recording
+
+currency
+
+String(255)
+
+Currency code, please refer to the appendix table at the
+
+end of this documentation.
+
+uid
+
+Integer(20)
+
+Player s ID on our platform.
+
+game_id
+
+Integer(20)
+
+Game s ID.
+
+source_game
+
+String(255)
+
+Game s name.
+
+game_log
+
+Object
+
+An internal game object, with different meanings in
+
+different games.
+
+c.
+
+Game Record Services - Log Description
+
+1.
+
+Plinko
+
+Example returned data to the Merchant Operator.
+
+{
+
+"id"
+
+:
+
+"1ps1-256193"
+
+,
+
+"individual_id"
+
+:
+
+1
+
+,
+
+"coin_result"
+
+:
+
+280
+
+,
+
+"coin_bet"
+
+:
+
+400
+
+,
+
+"coin_after"
+
+:
+
+2942794619.7999997
+
+,
+
+"coin_before"
+
+:
+
+2942794739.7999997
+
+,
+
+"collection_id"
+
+:
+
+1
+
+,
+
+"cycle"
+
+:
+
+0
+
+,
+
+"multiplier"
+
+:
+
+0.7
+
+,
+
+"type"
+
+:
+
+"normal"
+
+,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 58 ---
+58
+
+"current_bucket"
+
+:
+
+0
+
+,
+
+"total_shared"
+
+:
+
+0
+
+,
+
+"create_date"
+
+:
+
+"2025-09-09T05:57:24.041Z"
+
+,
+
+"update_date"
+
+:
+
+"2025-09-09T05:57:24.041Z"
+
+,
+
+"ip_address"
+
+:
+
+"xxx.xxx.xxx.xxx"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+id
+
+String(255)
+
+Transaction ID unique to different game
+
+individual_id
+
+Integer(20)
+
+Our player bucket s Id
+
+coin_result
+
+Float(20,9)
+
+The amount of players winning.
+
+coin_bet
+
+Float(20,9)
+
+Amount of player s bet.
+
+coin_after
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+coin_before
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+collection_id
+
+Integer(20)
+
+Our platform collection bucket ID.
+
+cycle
+
+Integer(20)
+
+Current jackpot cycle.
+
+type
+
+String(255)
+
+The ball type
+
+multiplier
+
+Float(20,9)
+
+The reward multiplier
+
+current_bucket
+
+Float(20,9)
+
+Currently bucket values.
+
+total_shared
+
+Float(20,9)
+
+Currently total jackpot shared on our collection bucket
+
+create_date
+
+Timestamp
+
+Timestamp of creating transaction
+
+update_date
+
+Timestamp
+
+Timestamp of last updated transaction
+
+ip_address
+
+String(255)
+
+Player s ID address
+
+2.
+
+Crash
+
+Example returned data to the Merchant Operator.
+
+{
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 59 ---
+59
+
+"id"
+
+:
+
+"2cs3-242629"
+
+,
+
+"individual_id"
+
+:
+
+1
+
+,
+
+"coin_result"
+
+:
+
+0
+
+,
+
+"coin_bet"
+
+:
+
+200
+
+,
+
+"coin_after"
+
+:
+
+248253722.2
+
+,
+
+"coin_before"
+
+:
+
+248253922.2
+
+,
+
+"collection_id"
+
+:
+
+10
+
+,
+
+"cycle"
+
+:
+
+0
+
+,
+
+"crash_id"
+
+:
+
+12714
+
+,
+
+"auto_50"
+
+:
+
+"false"
+
+,
+
+"auto_100"
+
+:
+
+"false"
+
+,
+
+"result_50"
+
+:
+
+"0"
+
+,
+
+"result_100"
+
+:
+
+"0"
+
+,
+
+"multiply_50"
+
+:
+
+"1.5"
+
+,
+
+"multiply_100"
+
+:
+
+"3"
+
+,
+
+"is_crash"
+
+:
+
+"true"
+
+,
+
+"is_bonus_claimed"
+
+:
+
+false
+
+,
+
+"status"
+
+:
+
+"DONE"
+
+,
+
+"current_bucket"
+
+:
+
+0
+
+,
+
+"total_shared"
+
+:
+
+0
+
+,
+
+"create_date"
+
+:
+
+"2025-08-29T03:52:54.291Z"
+
+,
+
+"update_date"
+
+:
+
+"2025-08-29T03:52:54.291Z"
+
+,
+
+"ip_address"
+
+:
+
+"xxx.xxx.xxx.xxx"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+id
+
+String(255)
+
+Transaction ID unique to different game
+
+individual_id
+
+Integer(20)
+
+Our player bucket s Id
+
+coin_result
+
+Float(20,9)
+
+Amount of player s winning.
+
+coin_bet
+
+Float(20,9)
+
+Amount of player s bet.
+
+coin_after
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+coin_before
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 60 ---
+60
+
+Name
+
+Type
+
+Description
+
+crash_id
+
+Integer(20)
+
+Game s rounds ID.
+
+collection_id
+
+Integer(20)
+
+Our platform collection bucket ID.
+
+cycle
+
+Integer(20)
+
+Current jackpot cycle.
+
+auto_50
+
+String(255)
+
+Indicating if the player is using auto for 50% of their
+
+bet or not.
+
+auto_100
+
+String(255)
+
+Indicating if the player is using auto for 100% of their
+
+bet or not.
+
+result_50
+
+String(255)
+
+Indicating of the player s winning with 50% of their bet
+
+amount
+
+result_100
+
+String(255)
+
+Indicating of the player s winning with 100% of their
+
+bet amount
+
+multiply_50
+
+String(255)
+
+Multiplier of player s winning with 50% of their bet
+
+amount
+
+multiply_100
+
+String(255)
+
+Multiplier of the player s winning with 100% of their
+
+bet amount
+
+is_crash
+
+String(255)
+
+Indicating if the player managed to safely withdraw
+
+their bet in time or not.
+
+is_bonus_claime
+
+d
+
+Boolean
+
+Indicating if the player managed to get a bonus round.
+
+status
+
+String(255)
+
+Indicating if the transaction is still on going or not,
+
+usually it is finished already.
+
+current_bucket
+
+Float(20,9)
+
+Currently bucket values.
+
+total_shared
+
+Float(20,9)
+
+Currently total jackpot shared on our collection bucket
+
+create_date
+
+Timestamp
+
+Timestamp of creating transaction
+
+update_date
+
+Timestamp
+
+Timestamp of last updated transaction
+
+ip_address
+
+String(255)
+
+Player s ID address
+
+3.
+
+Mines
+
+Example returned data to the Merchant Operator.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 61 ---
+61
+
+{
+
+"id"
+
+:
+
+"3mi1-5762"
+
+,
+
+"individual_id"
+
+:
+
+1
+
+,
+
+"coin_result"
+
+:
+
+0
+
+,
+
+"coin_bet"
+
+:
+
+200
+
+,
+
+"coin_after"
+
+:
+
+248253322.2
+
+,
+
+"coin_before"
+
+:
+
+248253522.2
+
+,
+
+"collection_id"
+
+:
+
+10
+
+,
+
+"cycle"
+
+:
+
+0
+
+,
+
+"status"
+
+:
+
+"DONE"
+
+,
+
+"multiplier"
+
+:
+
+0
+
+,
+
+"next_multiplier"
+
+:
+
+0
+
+,
+
+"bomb_value"
+
+:
+
+3
+
+,
+
+"current_streaks"
+
+:
+
+1
+
+,
+
+"create_date"
+
+:
+
+"2025-08-29T04:35:08.119Z"
+
+,
+
+"update_date"
+
+:
+
+"2025-08-29T04:35:08.119Z"
+
+,
+
+"opened_plate"
+
+:
+
+"12_BOMB"
+
+,
+
+"unopened_plate"
+
+:
+
+"20_A;22_B;6_C;23_BOMB;8_BOMB;1;0;2;14;3;17;4;24;7;21;16;13;11;5;10
+
+;15;19;9;18;"
+
+,
+
+"bonus_item"
+
+:
+
+"-"
+
+,
+
+"bonus_item_slot"
+
+:
+
+3
+
+,
+
+"current_bucket"
+
+:
+
+0
+
+,
+
+"total_shared"
+
+:
+
+0
+
+,
+
+"ip_address"
+
+:
+
+"xxx.xxx.xxx.xxx"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+id
+
+String(255)
+
+Transaction ID unique to different game
+
+individual_id
+
+Integer(20)
+
+Our player bucket s Id
+
+coin_result
+
+Float(20,9)
+
+Amount of player s winning.
+
+coin_bet
+
+Float(20,9)
+
+Amount of player s bet.
+
+coin_after
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 62 ---
+62
+
+Name
+
+Type
+
+Description
+
+coin_before
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+collection_id
+
+Integer(20)
+
+Our platform collection bucket ID.
+
+cycle
+
+Integer(20)
+
+Current jackpot cycle.
+
+status
+
+String(255)
+
+Indicating if the player s round is ending or not.
+
+multiplier
+
+Float(20,9)
+
+Current multiplier for potential reward.
+
+next_multiplier
+
+Float(20,9)
+
+Next multiplier value if the player s managed to open
+
+the plate without a bomb inside it.
+
+bomb_value
+
+Integer(20)
+
+How many bomb players set.
+
+current_streaks
+
+Integer(20)
+
+How many streaks opening plates without bombs inside
+
+it.
+
+opened_plate
+
+String(255)
+
+An array of string about which and what type plate that
+
+player s managed to open.
+
+unopened_plate
+
+String(255)
+
+An array of string of unopened plate for record
+
+purposes, it won t be revealed unless the game round is
+
+done.
+
+bonus_item
+
+String(255)
+
+The bonus item that the player currently has.
+
+bonus_item_slot
+
+Integer(20)
+
+The number of bonus item slots that are currently
+
+unfilled by the player.
+
+create_date
+
+Timestamp
+
+Timestamp of creating transaction
+
+update_date
+
+Timestamp
+
+Timestamp of last updated transaction
+
+current_bucket
+
+Float(20,9)
+
+Currently bucket values.
+
+total_shared
+
+Float(20,9)
+
+Currently total jackpot shared on our collection bucket
+
+ip_address
+
+String(255)
+
+Player s ID address
+
+4.
+
+Monopoly
+
+Example returned data to the Merchant Operator.
+
+{
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 63 ---
+63
+
+"id"
+
+:
+
+"4mo1-5807"
+
+,
+
+"individual_id"
+
+:
+
+1
+
+,
+
+"coin_result"
+
+:
+
+0
+
+,
+
+"coin_bet"
+
+:
+
+200
+
+,
+
+"coin_after"
+
+:
+
+26046350.8
+
+,
+
+"coin_before"
+
+:
+
+26046550.8
+
+,
+
+"collection_id"
+
+:
+
+10
+
+,
+
+"cycle"
+
+:
+
+0
+
+,
+
+"plate_code_reward"
+
+:
+
+"Blank"
+
+,
+
+"dice_value"
+
+:
+
+6
+
+,
+
+"multiplier"
+
+:
+
+0
+
+,
+
+"current_bucket"
+
+:
+
+0
+
+,
+
+"total_shared"
+
+:
+
+0
+
+,
+
+"create_date"
+
+:
+
+"2025-08-23T02:13:06.205Z"
+
+,
+
+"update_date"
+
+:
+
+"2025-08-23T02:13:06.205Z"
+
+,
+
+"ip_address"
+
+:
+
+"xxx.xxx.xxx.xxx"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+id
+
+String(255)
+
+Transaction ID unique to different game
+
+individual_id
+
+Integer(20)
+
+Our player bucket s Id
+
+coin_result
+
+Float(20,9)
+
+Amount of player s winning.
+
+coin_bet
+
+Float(20,9)
+
+Amount of player s bet.
+
+coin_after
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+coin_before
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+collection_id
+
+Integer(20)
+
+Our platform collection bucket ID.
+
+cycle
+
+Integer(20)
+
+Current jackpot cycle.
+
+plate_code_rewar
+
+d
+
+String(255)
+
+The reward code for current player position.
+
+dice_value
+
+Integer(20)
+
+How many step players have to go.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 64 ---
+64
+
+Name
+
+Type
+
+Description
+
+multiplier
+
+Float(20,9)
+
+Multiplier reward.
+
+create_date
+
+Timestamp
+
+Timestamp of creating transaction
+
+update_date
+
+Timestamp
+
+Timestamp of last updated transaction
+
+current_bucket
+
+Float(20,9)
+
+Currently bucket values.
+
+total_shared
+
+Float(20,9)
+
+Currently total jackpot shared on our collection bucket
+
+ip_address
+
+String(255)
+
+Player s ID address
+
+5.
+
+Heist
+
+Example returned data to the Merchant Operator.
+
+{
+
+"id"
+
+:
+
+"5he1-1390"
+
+,
+
+"individual_id"
+
+:
+
+1
+
+,
+
+"coin_result"
+
+:
+
+400
+
+,
+
+"coin_bet"
+
+:
+
+200
+
+,
+
+"coin_after"
+
+:
+
+8400102.4
+
+,
+
+"coin_before"
+
+:
+
+8399902.4
+
+,
+
+"collection_id"
+
+:
+
+10
+
+,
+
+"cycle"
+
+:
+
+0
+
+,
+
+"status"
+
+:
+
+"DONE"
+
+,
+
+"opened_plate"
+
+:
+
+"12_B;7_A;8_A_10;13_B;9_C;4_A_2;3_A;2_A"
+
+,
+
+"multiplier_1"
+
+:
+
+2
+
+,
+
+"multiplier_2"
+
+:
+
+4
+
+,
+
+"multiplier_3"
+
+:
+
+10
+
+,
+
+"base_multiplier_1"
+
+:
+
+0.1
+
+,
+
+"base_multiplier_2"
+
+:
+
+0.27
+
+,
+
+"base_multiplier_3"
+
+:
+
+0.93
+
+,
+
+"multiplier_grant_1"
+
+:
+
+"A"
+
+,
+
+"multiplier_grant_2"
+
+:
+
+"B"
+
+,
+
+"multiplier_grant_3"
+
+:
+
+"A"
+
+,
+
+"current_item_1"
+
+:
+
+3
+
+,
+
+"current_item_2"
+
+:
+
+2
+
+,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 65 ---
+65
+
+"current_item_3"
+
+:
+
+1
+
+,
+
+"item_slot_1"
+
+:
+
+2
+
+,
+
+"item_slot_2"
+
+:
+
+2
+
+,
+
+"item_slot_3"
+
+:
+
+2
+
+,
+
+"multiplier_slot"
+
+:
+
+0
+
+,
+
+"result"
+
+:
+
+"A"
+
+,
+
+"result_multiplier"
+
+:
+
+2
+
+,
+
+"is_jackpot"
+
+:
+
+false
+
+,
+
+"unopened_plate"
+
+:
+
+"-"
+
+,
+
+"current_bucket"
+
+:
+
+0
+
+,
+
+"total_shared"
+
+:
+
+0
+
+,
+
+"create_date"
+
+:
+
+"2025-08-15T04:29:04.334Z"
+
+,
+
+"update_date"
+
+:
+
+"2025-08-15T04:29:04.334Z"
+
+,
+
+"ip_address"
+
+:
+
+"xxx.xxx.xxx.xxx"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+id
+
+String(255)
+
+Transaction ID unique to different game
+
+individual_id
+
+Integer(20)
+
+Our player bucket s Id
+
+coin_result
+
+Float(20,9)
+
+Amount of player s winning.
+
+coin_bet
+
+Float(20,9)
+
+Amount of player s bet.
+
+coin_after
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+coin_before
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+collection_id
+
+Integer(20)
+
+Our platform collection bucket ID.
+
+cycle
+
+Integer(20)
+
+Current jackpot cycle.
+
+status
+
+String(255)
+
+Indicating if the player s round is ending or not.
+
+multiplier_1,
+
+multiplier_2,
+
+multiplier_3
+
+Float(20,9)
+
+Potential multiplier that player can have.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 66 ---
+66
+
+Name
+
+Type
+
+Description
+
+base_multiplier_1,
+
+base_multiplier_2,
+
+base_multiplier_3
+
+Float(20,9)
+
+Currently multiplier players have for each item.
+
+multiplier_grant_1,
+
+multiplier_grant_2,
+
+multiplier_grant_3
+
+String(255)
+
+Indicator to see which item will be applied the
+
+multiplier on.
+
+current_item_1,
+
+current_item_2,
+
+current_item_3
+
+Integer(20)
+
+How many items for each type player currently has.
+
+item_slot_1,
+
+item_slot_2,
+
+item_slot_3
+
+Integer(20)
+
+How many items for each type player can get.
+
+multiplier_slot
+
+Integer(20)
+
+How many multiplier type player s can get.
+
+is_jackpot
+
+Boolean
+
+Indicating whether the current player is on the jackpot
+
+or not.
+
+opened_plate
+
+String(255)
+
+An array of string about which and what type plate that
+
+player s managed to open.
+
+unopened_plate
+
+String(255)
+
+An array of string of unopened plate for record
+
+purposes, it won t be revealed unless the game round is
+
+done.
+
+result
+
+String(255)
+
+The final result indicating the type of reward the player
+
+received.
+
+result_multiplier
+
+Float(20,9)
+
+The final result showing the reward multiplier the
+
+player received.
+
+create_date
+
+Timestamp
+
+Timestamp of creating transaction
+
+update_date
+
+Timestamp
+
+Timestamp of last updated transaction
+
+current_bucket
+
+Float(20,9)
+
+Currently bucket values.
+
+total_shared
+
+Float(20,9)
+
+Currently total jackpot shared on our collection bucket
+
+ip_address
+
+String(255)
+
+Player s ID address
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 67 ---
+67
+
+6.
+
+Bouncy
+
+Example returned data to the Merchant Operator.
+
+{
+
+"id":
+
+"6bo18-19"
+
+,
+
+"individual_id":
+
+1
+
+,
+
+"coin_result":
+
+100
+
+,
+
+"coin_bet":
+
+0
+
+,
+
+"coin_after":
+
+8400492
+
+,
+
+"coin_before":
+
+8400392
+
+,
+
+"collection_id":
+
+10
+
+,
+
+"cycle":
+
+0
+
+,
+
+"formation_code":
+
+"1"
+
+,
+
+"reward_box_multiplier":
+
+"2"
+
+,
+
+"reward_multiplier":
+
+0.25
+
+,
+
+"bounce_id":
+
+2392
+
+,
+
+"multiplier":
+
+0.5
+
+,
+
+"current_bucket":
+
+0
+
+,
+
+"total_shared":
+
+0
+
+,
+
+"create_date":
+
+"2025-08-14T22:45:12.053Z"
+
+,
+
+"update_date":
+
+"2025-08-14T22:45:12.053Z"
+
+,
+
+"ip_address":
+
+"0.0.0.0"
+
+,
+
+"ball_type":
+
+"scatter_2"
+
+,
+
+"sp_ball_target":
+
+"-"
+
+,
+
+"sp_ball_multiplier":
+
+0
+
+,
+
+"scatter_parent_id":
+
+"-"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+id
+
+String(255)
+
+Transaction ID unique to different game
+
+individual_id
+
+Integer(20)
+
+Our player bucket s Id
+
+coin_result
+
+Float(20,9)
+
+Amount of player s winning.
+
+coin_bet
+
+Float(20,9)
+
+Amount of player s bet.
+
+coin_after
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 68 ---
+68
+
+Name
+
+Type
+
+Description
+
+coin_before
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+collection_id
+
+Integer(20)
+
+Our platform collection bucket ID.
+
+cycle
+
+Integer(20)
+
+Current jackpot cycle.
+
+formation_code
+
+String(255)
+
+Which formation player s choose.
+
+reward_box_multip
+
+lier
+
+String(255)
+
+Identifier of which hole, multiplier box or out of bound
+
+the ball will go.
+
+reward_multiplier
+
+Float(20,9)
+
+How much multiplier bouncing between pins.
+
+bounce_id
+
+Integer(20)
+
+Identifier for bouncing animation player will get.
+
+multiplier
+
+Float(20,9)
+
+Final multiplier result.
+
+current_bucket
+
+Float(20,9)
+
+Currently bucket values.
+
+total_shared
+
+Float(20,9)
+
+Currently total jackpot shared on our collection bucket
+
+create_date
+
+Timestamp
+
+Timestamp of creating transaction
+
+update_date
+
+Timestamp
+
+Timestamp of last updated transaction
+
+ip_address
+
+String(255)
+
+Player s ID address
+
+ball_type
+
+String(255)
+
+Specifies the type or category of the ball.
+
+sp_ball_target
+
+String(255)
+
+Specifies which box the special ball will hit. This
+
+determines the destination or impact target for the
+
+special ball
+
+sp_ball_multiplier
+
+Float(20,9)
+
+Indicates the multiplier applied to the special ball.
+
+scatter_parent_id
+
+String(255)
+
+The order ID of the parent scatter. This will be assigned
+
+if the current ball is a child of a scatter.
+
+7.
+
+Crossing
+
+Example returned data to the Merchant Operator.
+
+{
+
+"id":
+
+"7cc17-50842"
+
+,
+
+"individual_id":
+
+1
+
+,
+
+"coin_result":
+
+0
+
+,
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 69 ---
+69
+
+"coin_bet":
+
+1000
+
+,
+
+"coin_after":
+
+2600137
+
+,
+
+"coin_before":
+
+2601137
+
+,
+
+"collection_id":
+
+10
+
+,
+
+"cycle":
+
+0
+
+,
+
+"multiplier":
+
+1
+
+,
+
+"next_multiplier":
+
+1.09
+
+,
+
+"current_streaks":
+
+0
+
+,
+
+"risk_code":
+
+"Medium"
+
+,
+
+"create_date":
+
+"2025-07-30T10:11:29.085Z"
+
+,
+
+"update_date":
+
+"2025-07-30T10:13:58.264Z"
+
+,
+
+"ip_address":
+
+"0:0:0:0"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+id
+
+String(255)
+
+Transaction ID unique to different game
+
+individual_id
+
+Integer(20)
+
+Our player bucket s Id
+
+coin_result
+
+Float(20,9)
+
+Amount of player s winning.
+
+coin_bet
+
+Float(20,9)
+
+Amount of player s bet.
+
+coin_after
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+coin_before
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+collection_id
+
+Integer(20)
+
+Our platform collection bucket ID.
+
+cycle
+
+Integer(20)
+
+Current jackpot cycle.
+
+multiplier
+
+Float(20,9)
+
+The player's current reward multiplier.
+
+next_multiplier
+
+Float(20,9)
+
+The upcoming reward multiplier for the player.
+
+current_streaks
+
+Integer(20)
+
+The number of successful rounds the player has
+
+survived.
+
+risk_code
+
+String(255)
+
+Represents the difficulty level associated with earning a
+
+reward.
+
+create_date
+
+Timestamp
+
+Timestamp of creating transaction
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 70 ---
+70
+
+Name
+
+Type
+
+Description
+
+update_date
+
+Timestamp
+
+Timestamp of last updated transaction
+
+ip_address
+
+String(255)
+
+Player s ID address
+
+d.
+
+Get Player Record By Transaction ID
+
+Brief descriptions:
+
+%Ï
+
+This API is mainly used by Merchant to query game records of
+
+players' games by their transaction Id.
+
+%Ï
+
+The API is not related to the public description above.
+
+%Ï
+
+API will be provided by us.
+
+%Ï
+
+Our time zone: UTC +0, the access party needs to pay attention to the
+
+time zone calculation of data statistics.
+
+Request URL:
+
+%Ï
+
+https://{Our game link
+
+URL}/GameService/service/GetTransactionByRoundId
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.b
+
+Request Body Example
+
+{
+
+"app_id"
+
+: "GG01",
+
+"round_id"
+
+: "6bo1-99"
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 71 ---
+71
+
+}
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+app_id
+
+String
+
+Unique identifier for the merchant, obtained
+
+from the merchant backend.
+
+Required
+
+round_id
+
+String
+
+Unique player s transaction ID assigned by us
+
+Optional
+
+General Successful Response Example
+
+{
+
+"code"
+
+:
+
+1
+
+,
+
+"msg"
+
+:
+
+"success"
+
+,
+
+"account"
+
+:
+
+"gg1"
+
+,
+
+"account_id"
+
+:
+
+"gg1"
+
+,
+
+"currency"
+
+:
+
+"idr"
+
+,
+
+"language"
+
+:
+
+"id"
+
+,
+
+"create_time"
+
+:
+
+"2025-09-09T06:05:23.777Z"
+
+,
+
+"enter_money"
+
+:
+
+2942757019.7999997
+
+,
+
+"after_settlement_money"
+
+:
+
+2942756899.7999997
+
+,
+
+"bet"
+
+:
+
+400
+
+,
+
+"win"
+
+:
+
+280
+
+,
+
+...
+
+General Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+data
+
+Object
+
+Returned data object
+
+code
+
+Integer(20)
+
+Status code.
+
+msg
+
+String(255)
+
+Information message.
+
+create_time
+
+Integer(20)
+
+Timestamp
+
+bet
+
+Float(20,9)
+
+Indicating bet amount.
+
+Enter_money
+
+Float(20,9)
+
+Indicating the initial player s balance.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 72 ---
+72
+
+Name
+
+Type
+
+Description
+
+after_settlement_
+
+money
+
+Float(20,9)
+
+Indicating the balance player has after settlement.
+
+win
+
+Float(20,9)
+
+Indicating the amount of player s winning.
+
+account
+
+String(255)
+
+Player s nickname
+
+account_id
+
+String(255)
+
+Player s ID on merchant platform.
+
+currency
+
+String(255)
+
+Currency code, please refer to the appendix table at the
+
+end of this documentation.
+
+Note:
+
+The section above provides an example of common parameters shared
+
+across games. For instance, if both Game A and Game B have a 'result'
+
+parameter in common, it will be included in this section. However, since
+
+some parameters are unique to individual games, these game-specific
+
+parameters will be displayed separately in the section below.
+
+1.
+
+Plinko
+
+Example returned part of data to the Merchant Operator.
+
+..
+
+"formation"
+
+:
+
+"multiplier_8"
+
+,
+
+"risk"
+
+:
+
+"medium"
+
+,
+
+"multiplier"
+
+:
+
+"0.7"
+
+,
+
+"type"
+
+:
+
+"normal"
+
+..
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+formation
+
+String(255)
+
+Player s formation, as in how many rows of multiplier
+
+risk
+
+String(255)
+
+Player s chosen risk, 1. low, 2. medium, 3. high
+
+multiplier
+
+String(255)
+
+The multiplier of reward.
+
+type
+
+String(255)
+
+The ball s type.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 73 ---
+73
+
+2.
+
+Crash
+
+Example returned part of data to the Merchant Operator.
+
+..
+
+"multiply_50"
+
+: "0",
+
+"multiply_100"
+
+: "0",
+
+"result_50"
+
+: "0",
+
+"result_100"
+
+: "0"
+
+..
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+result_50
+
+String(255)
+
+Indicating of the player s winning with 50% of their bet
+
+amount
+
+result_100
+
+String(255)
+
+Indicating of the player s winning with 100% of their
+
+bet amount
+
+multiply_50
+
+String(255)
+
+Multiplier of player s winning with 50% of their bet
+
+amount
+
+multiply_100
+
+String(255)
+
+Multiplier of the player s winning with 100% of their
+
+bet amount
+
+3.
+
+Mines
+
+Example returned part of data to the Merchant Operator.
+
+..
+
+"multiplier"
+
+:
+
+1.1
+
+,
+
+"opened_plate"
+
+:
+
+"15;1_BOMB"
+
+,
+
+"unopened_plate"
+
+:
+
+"21_A;13_B;12_C;6_BOMB;11_BOMB;5;17;19;3;24;8;9;16;14;18
+
+;23;7;22;2;0;4;20;10;"
+
+,
+
+"current_streaks"
+
+:
+
+2
+
+,
+
+"bomb_value"
+
+:
+
+3
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 74 ---
+74
+
+..
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+multiplier
+
+String(255)
+
+Current multiplier for potential reward.
+
+bomb_value
+
+Integer(20)
+
+How many bomb players set.
+
+current_streaks
+
+Integer(20)
+
+How many streaks opening plates without bombs inside
+
+it.
+
+opened_plate
+
+String(255)
+
+An array of string about which and what type plate that
+
+player s managed to open.
+
+unopened_plate
+
+String(255)
+
+An array of string of unopened plate for record
+
+purposes, it won t be revealed unless the game round is
+
+done.
+
+4.
+
+Monopoly
+
+Example returned part of data to the Merchant Operator.
+
+..
+
+"multiplier"
+
+:
+
+0
+
+,
+
+"player_position_before"
+
+:
+
+"11"
+
+,
+
+"player_position_after"
+
+:
+
+"16"
+
+,
+
+"plate_code_reward"
+
+:
+
+"Blank"
+
+,
+
+"dice_value"
+
+:
+
+5
+
+..
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+player_position_
+
+before
+
+String(255)
+
+Player position before game rounds started.
+
+player_position_a
+
+fter
+
+String(255)
+
+Player position after game rounds finished
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 75 ---
+75
+
+Name
+
+Type
+
+Description
+
+plate_code_rewar
+
+d
+
+String(255)
+
+The reward code for current player position.
+
+dice_value
+
+Integer(20)
+
+How many step players have to go.
+
+multiplier
+
+Float(20,9)
+
+Multiplier reward.
+
+5.
+
+Heist
+
+Example returned part of data to the Merchant Operator.
+
+..
+
+"opened_plate"
+
+:
+
+"11_A_4;8_A;2_B;3_A;6_C;10_A"
+
+,
+
+"unopened_plate"
+
+:
+
+"-"
+
+..
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+opened_plate
+
+String(255)
+
+An array of string about which and what type plate that
+
+player s managed to open.
+
+unopened_plate
+
+String(255)
+
+An array of string of unopened plate for record
+
+purposes, it won t be revealed unless the game round is
+
+done.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 76 ---
+76
+
+6.
+
+Bouncy
+
+Example returned part of data to the Merchant Operator.
+
+..
+
+"bounce_id"
+
+:
+
+52
+
+,
+
+"multiplier_result"
+
+:
+
+0
+
+,
+
+"formation_code"
+
+:
+
+"0"
+
+,
+
+"reward_box_multiplier"
+
+:
+
+"1"
+
+,
+
+"reward_multiplier"
+
+:
+
+0
+
+,
+
+..
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+bounce_id
+
+Integer(20)
+
+Identifier for bouncing animation player will get.
+
+multiplier_result
+
+Float(20,9)
+
+Final multiplier result.
+
+formation_code
+
+String(255)
+
+Which formation player s choose.
+
+reward_box_multip
+
+lier
+
+String(255)
+
+Identifier of which hole, multiplier box or out of bound
+
+the ball will go.
+
+reward_multiplier
+
+Float(20,9)
+
+How much multiplier bouncing between pins.
+
+An additional example returned part of data to the Merchant Operator on
+
+new bouncy feature.
+
+..
+
+"bounce_id"
+
+:
+
+52
+
+,
+
+"multiplier_result"
+
+:
+
+0
+
+,
+
+"formation_code"
+
+:
+
+"0"
+
+,
+
+"reward_box_multiplier"
+
+:
+
+"1"
+
+,
+
+"reward_multiplier"
+
+:
+
+0
+
+,
+
+..
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 77 ---
+77
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+bounce_id
+
+Integer(20)
+
+Identifier for bouncing animation player will get.
+
+multiplier_result
+
+Float(20,9)
+
+Final multiplier result.
+
+formation_code
+
+String(255)
+
+Which formation player s choose.
+
+reward_box_multip
+
+lier
+
+String(255)
+
+Identifier of which hole, multiplier box or out of bound
+
+the ball will go.
+
+reward_multiplier
+
+Float(20,9)
+
+How much multiplier bouncing between pins.
+
+7.
+
+Crossing
+
+Example returned part of data to the Merchant Operator.
+
+..
+
+"risk"
+
+:
+
+"Easy"
+
+,
+
+"multiplier_result"
+
+:
+
+1
+
+,
+
+"current_streaks"
+
+:
+
+1
+
+..
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+risk
+
+String(255)
+
+Which risk formation player s choose.
+
+multiplier_result
+
+Float(20,9)
+
+Final multiplier result.
+
+current_streaks
+
+String(255)
+
+How many streaks cross the road without crashing
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 78 ---
+78
+
+8.
+
+Replay Player Transaction
+
+a.
+
+Generate Transaction Replay URL
+
+Brief descriptions:
+
+%Ï
+
+This API is mainly used by the merchant to generate for URL the
+
+replay of a user's winning.
+
+%Ï
+
+API will be provided by us.
+
+%Ï
+
+Our time zone: UTC +0, the access party needs to pay attention to the
+
+time zone calculation of data statistics.
+
+%Ï
+
+The replay URL response will not include a session time.
+
+%Ï
+
+Real-time betting games, such as Crash-type games, do not have a
+
+replay feature.
+
+Request URL:
+
+%Ï
+
+/GameService/service/simulatingTransaction
+
+Request Method:
+
+%Ï
+
+POST
+
+Content-Type when Requesting
+
+%Ï
+
+application/json;charset=UTF-8 
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String
+
+JWT Token, Please refer to 3.b
+
+Request Body Example
+
+{
+
+"app_id"
+
+:
+
+"GG01"
+
+,
+
+"round_id"
+
+:
+
+"6bo1-5"
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 79 ---
+79
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+app_id
+
+String(255)
+
+Unique identifier for the merchant, obtained
+
+from the merchant backend.
+
+Required
+
+round_id
+
+String(255)
+
+Unique transaction ID that merchant want to
+
+generate
+
+Required
+
+Successful Response Example
+
+{
+
+"code"
+
+:
+
+1
+
+,
+
+"url"
+
+:
+
+"https://www.google.com/?round_id=4a7f3261a4fa9bf845dc902298e9c
+
+aa9%3A484dfb0f01c42c69e4d41aaaa1fbbb6ceb86159eaf43dac573e2dfa66
+
+4ac9759dc0ff7dac9707745538605bc669e03d46b47443fff97c794866bfeed
+
+52bd5ecacca6575dcaa7f9e1e17bcde1cbad1af1408c6d47ba17de8d13c3e5c
+
+744a4b281"
+
+}
+
+"msg"
+
+:
+
+"success"
+
+}
+
+Response Parameters Description
+
+Name
+
+Type
+
+Description
+
+code
+
+Object
+
+Returned data object
+
+url
+
+Text
+
+URL for simulating the replay mechanism
+
+msg
+
+String(255)
+
+Informational message.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 80 ---
+80
+
+9.
+
+Terminating Season
+
+Brief descriptions:
+
+%Ï
+
+Terminate an active operator token
+
+%Ï
+
+This API interface is provided by our side, to be called by the integrating
+
+party.
+
+Request URL:
+
+%Ï
+
+For operator token(3.b)
+
+: /MasterService/auth/v1/terminateSeasonOperator
+
+%Ï
+
+For member token(3.c)
+
+: /MasterService/auth/v1/terminateSeasonMember
+
+Request Method:
+
+%Ï
+
+POST
+
+Headers
+
+Header
+
+Required
+
+Type
+
+Description
+
+Authorization
+
+Yes
+
+String(255)
+
+JWT Token,
+
+Use
+
+3.b token
+
+with
+
+/
+
+MasterService/auth/v1/terminateSeaso
+
+nOperator link for terminating operator
+
+token
+
+Use
+
+3.c token
+
+with
+
+/MasterService/auth/v1/terminateSeaso
+
+nMember link for terminating member
+
+token
+
+Request Body Example
+
+{
+
+"appid"
+
+:
+
+"GG01"
+
+}
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 81 ---
+81
+
+Request Parameters Description
+
+Name
+
+Type
+
+Description
+
+Status
+
+appid
+
+String(255)
+
+Unique identifier for the merchant,
+
+obtained from the merchant backend.
+
+Required for terminating
+
+operator token
+
+Successful Response Example
+
+{
+
+"msg"
+
+:
+
+"success"
+
+,
+
+"code"
+
+:
+
+1
+
+}
+
+Response Parameters
+
+Name
+
+Type
+
+Description
+
+msg
+
+String(255)
+
+Informational message.
+
+code
+
+Integer(20)
+
+Status code indicating the service API call s success or
+
+not.
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 82 ---
+82
+
+10.
+
+Appendix
+
+a.
+
+Error codes
+
+Code
+
+Description
+
+1
+
+Success
+
+10001
+
+Insufficient balance, withdrawal failed
+
+10002
+
+Signature verification failed
+
+10008
+
+Game is closed
+
+10009
+
+Invalid Parameter
+
+10011
+
+Player login token verification failed
+
+10012
+
+Invalid app_id
+
+10013
+
+Player does not exist
+
+10014
+
+Player banned
+
+10015
+
+Internal server error
+
+10016
+
+Token Error
+
+10017
+
+Duplicate Account
+
+10018
+
+Multiple request error
+
+10019
+
+Transaction does not exist.
+
+b.
+
+Supported Language
+
+Code
+
+Description
+
+en
+
+English
+
+id
+
+Indonesian
+
+th
+
+Thai
+
+vn
+
+Vietnamese
+
+hi
+
+Hindi
+
+ms
+
+Malaysian
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 83 ---
+83
+
+Code
+
+Description
+
+zn-cn
+
+mandarin (simplified)
+
+zh-hant
+
+mandarin (traditional)
+
+ja
+
+Japanese
+
+ko
+
+Korean
+
+pt-br
+
+Portuguese-Brazil
+
+c.
+
+Supported Currencies
+
+Code
+
+Symbol
+
+usd
+
+$
+
+idr
+
+Rp.
+
+thb
+
+?
+
+inr
+
+¹
+
+vnd
+
+«
+
+eur
+
+¬
+
+gbp
+
+£
+
+usdt
+
+®
+
+btc
+
+¿
+
+eth
+
+
+
+xrp
+
+XRP
+
+busd
+
+BUSD
+
+ngn
+
+¦
+
+sgd
+
+S$
+
+pkr
+
+¨
+
+npr
+
+¨
+
+GGSOFT© Copyright (GREAT GAMING SOFT)
+
+--- PAGE 84 ---
+84
+
+Code
+
+Symbol
+
+hkd
+
+HK$
+
+aud
+
+A$
+
+bdt
+
+ó
+
+mmk
+
+Ks
+
+php
+
+±
+
+myr
+
+RM
+
+cny
+
+CN¥
+
+krw
+
+©
+
+jpy
+
+¥
+
+khr
+
+Û
+
+lak
+
+­
+
+brl
+
+R$
+
+mxn
+
+Mex$
+
+ntd
+
+NT$
+
+GGSOFT© Copyright (GREAT GAMING SOFT)

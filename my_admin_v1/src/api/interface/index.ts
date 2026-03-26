@@ -450,3 +450,581 @@ export namespace Goods {
     data: ResListItem[];
   }
 }
+
+// 兑换商品管理模块
+export namespace Wares {
+  export interface ReqParams extends ReqPage {
+    id?: number | string;
+    wares_name?: string;
+    status?: number | string;
+    wares_type_id?: number | string;
+    is_type?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    wares_type_id: number;
+    wares_name: string;
+    wares_money: number | string;
+    wares_spec: string;
+    head_img?: string;
+    content: string;
+    status: number;
+    sort: number;
+    is_type: number;
+    create_time: string;
+  }
+
+  export interface SaveParams {
+    id?: number;
+    wares_type_id: number;
+    wares_name: string;
+    wares_money: number;
+    wares_spec: string;
+    head_img?: string;
+    content: string;
+    status: number;
+    sort: number;
+    is_type: number;
+  }
+
+  export interface DeleteParams {
+    id: number;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
+}
+
+// 商品订单记录
+export namespace GoodsOrder {
+  export interface ReqParams extends ReqPage {
+    user_id?: number | string;
+    start_time?: string;
+    end_time?: string;
+    status?: number | string;
+    goods_id?: number | string;
+    order_no?: string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    user_id: number;
+    user_name: string;
+    goods_name: string;
+    goods_id: number;
+    goods_type_id: number;
+    goods_money: number | string;
+    goods_type_name: string;
+    total_red_money: number | string;
+    already_red_money: number | string;
+    surplus_red_money: number | string;
+    red_day: number;
+    already_red_day: number;
+    surplus_red_day: number;
+    next_red_date: string;
+    last_red_date: string;
+    order_money: number | string;
+    order_number: number;
+    create_time: string;
+    update_time: string;
+    is_coupon: number;
+    coupon_money: number | string;
+    status: number;
+    order_no: string;
+    one_money: number | string;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
+}
+
+// 收益领取记录
+export namespace IncomeClaimLog {
+  export interface ReqParams extends ReqPage {
+    user_id?: number | string;
+    start_time?: string;
+    end_time?: string;
+    status?: number | string;
+    order_id?: number | string;
+    goods_id?: number | string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    user_id: number;
+    order_id: number;
+    claim_amount: number | string;
+    claim_time?: string;
+    expire_time: string;
+    status: number;
+    create_time: string;
+    goods_id: number;
+    date_time: string;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
+}
+
+// 兑换商品订单
+export namespace WaresOrder {
+  export interface ReqParams extends ReqPage {
+    user_id?: number | string;
+    start_time?: string;
+    end_time?: string;
+    status?: number | string;
+    wares_id?: number | string;
+    wares_no?: string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    wares_id: number;
+    wares_type_id: number;
+    wares_spec: string;
+    head_img?: string;
+    uid: number;
+    address_id: number;
+    address: string;
+    wares_money: number | string;
+    create_time: string;
+    wares_no: string;
+    success_time?: string;
+    status: number;
+    phone: string;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
+}
+
+// 提现凭证展示
+export namespace WithdrawShowcase {
+  export interface ReqParams extends ReqPage {
+    user_id?: number | string;
+    withdraw_id?: number | string;
+    status?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    user_id: number;
+    withdraw_id: number;
+    voucher_image: string;
+    amount: number | string;
+    like_count: number;
+    comment_count: number;
+    status: number;
+    create_time: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
+}
+
+// VIP等级管理
+export namespace Vip {
+  export interface ReqVipParams extends ReqPage {
+    id?: number | string;
+    vip?: number | string;
+  }
+
+  export interface ResVipListItem {
+    id: number;
+    vip: number;
+    experience: number;
+    reward_money: number | string;
+    buy_goods_id: number;
+    buy_goods_num: number;
+  }
+
+  export interface SaveVipParams {
+    id?: number;
+    vip: number;
+    experience: number;
+    reward_money: number;
+    buy_goods_id: number;
+    buy_goods_num: number;
+  }
+
+  export interface DeleteParams {
+    id: number;
+  }
+
+  export interface ResVipListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResVipListItem[];
+  }
+
+  export interface ReqVipLogParams extends ReqPage {
+    start_level?: number | string;
+    end_level?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResVipLogItem {
+    id: number;
+    start_exp: number;
+    end_exp: number;
+    start_level: number;
+    end_level: number;
+    create_time: string;
+    update_time: string;
+    remarks?: string;
+  }
+
+  export interface ResVipLogListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResVipLogItem[];
+  }
+
+  export interface ReqVipDailyRewardLogParams extends ReqPage {
+    user_id?: number | string;
+    vip_level?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResVipDailyRewardLogItem {
+    id: number;
+    user_id: number;
+    vip_level: number;
+    reward_amount: number | string;
+    claim_date: string;
+    create_time: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface ResVipDailyRewardLogListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResVipDailyRewardLogItem[];
+  }
+
+  export interface ReqAgentLevelConfigParams extends ReqPage {
+    id?: number | string;
+    level?: number | string;
+    member_type?: string;
+  }
+
+  export interface ResAgentLevelConfigItem {
+    id: number;
+    level: number;
+    level_name: string;
+    required_members: number;
+    member_type: string;
+    reward_amount: number | string;
+  }
+
+  export interface SaveAgentLevelConfigParams {
+    id?: number;
+    level: number;
+    level_name: string;
+    required_members: number;
+    member_type: string;
+    reward_amount: number;
+  }
+
+  export interface ResAgentLevelConfigListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResAgentLevelConfigItem[];
+  }
+}
+
+// 周任务管理
+export namespace Task {
+  export interface ReqConfigParams extends ReqPage {
+    id?: number | string;
+    task_group?: number | string;
+    invite_level?: string;
+    status?: number | string;
+  }
+
+  export interface ResConfigItem {
+    id: number;
+    task_group: number;
+    task_name: string;
+    required_invites: number;
+    invite_level: string;
+    reward_amount: number | string;
+    sort: number;
+    status: number;
+  }
+
+  export interface SaveConfigParams {
+    id?: number;
+    task_group: number;
+    task_name: string;
+    required_invites: number;
+    invite_level: string;
+    reward_amount: number;
+    sort: number;
+    status: number;
+  }
+
+  export interface DeleteParams {
+    id: number;
+  }
+
+  export interface ResConfigListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResConfigItem[];
+  }
+
+  export interface ReqProgressParams extends ReqPage {
+    user_id?: number | string;
+    task_id?: number | string;
+    task_group?: number | string;
+    is_completed?: number | string;
+    is_claimed?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResProgressItem {
+    id: number;
+    user_id: number;
+    task_id: number;
+    current_progress: number;
+    is_completed: number;
+    is_claimed: number;
+    completed_time?: string;
+    claimed_time?: string;
+    week_start_date: string;
+    update_time: string;
+    task_group?: number;
+    task_name?: string;
+    invite_level?: string;
+    reward_amount?: number | string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface ResProgressListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResProgressItem[];
+  }
+
+  export interface ReqRewardLogParams extends ReqPage {
+    user_id?: number | string;
+    task_id?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResRewardLogItem {
+    id: number;
+    user_id: number;
+    task_id: number;
+    reward_amount: number | string;
+    week_start_date: string;
+    create_time: string;
+    task_name?: string;
+    task_group?: number;
+    invite_level?: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface ResRewardLogListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResRewardLogItem[];
+  }
+}
+
+// 活动管理
+export namespace Activity {
+  export interface ReqPrizePoolConfigParams extends ReqPage {}
+
+  export interface PrizePoolConfigItem {
+    id: number;
+    daily_amount: number | string;
+    prize_1_amount: number | string;
+    prize_2_amount: number | string;
+    prize_3_amount: number | string;
+    draw_time: string;
+  }
+
+  export interface SavePrizePoolConfigParams {
+    id?: number;
+    daily_amount: number;
+    prize_1_amount: number;
+    prize_2_amount: number;
+    prize_3_amount: number;
+    draw_time: string;
+  }
+
+  export interface PrizePoolConfigListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: PrizePoolConfigItem[];
+  }
+
+  export interface ReqPrizePoolLogParams extends ReqPage {
+    user_id?: number | string;
+    prize_level?: number | string;
+    status?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface PrizePoolLogItem {
+    id: number;
+    user_id: number;
+    user_name: string;
+    prize_level: number;
+    prize_amount: number | string;
+    prize_date: string;
+    create_time: string;
+    status: number;
+  }
+
+  export interface PrizePoolLogListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: PrizePoolLogItem[];
+  }
+
+  export interface ReqLotteryPrizeParams extends ReqPage {
+    id?: number | string;
+    name?: string;
+    type?: number | string;
+    status?: number | string;
+  }
+
+  export interface LotteryPrizeItem {
+    id: number;
+    name: string;
+    type: number;
+    amount: number | string;
+    probability: number | string;
+    image?: string;
+    status: number;
+    create_time: string;
+  }
+
+  export interface SaveLotteryPrizeParams {
+    id?: number;
+    name: string;
+    type: number;
+    amount: number;
+    probability: number;
+    image?: string;
+    status: number;
+  }
+
+  export interface DeleteParams {
+    id: number;
+  }
+
+  export interface LotteryPrizeListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: LotteryPrizeItem[];
+  }
+
+  export interface ReqLotteryLogParams extends ReqPage {
+    user_id?: number | string;
+    prize_type?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface LotteryLogItem {
+    id: number;
+    user_id: number;
+    prize_id: number;
+    prize_name: string;
+    prize_type: number;
+    amount: number | string;
+    create_time: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface LotteryLogListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: LotteryLogItem[];
+  }
+
+  export interface ReqLotteryChanceParams extends ReqPage {
+    user_id?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface LotteryChanceItem {
+    id: number;
+    user_id: number;
+    total_chance: number;
+    used_chance: number;
+    today_chance: number;
+    rest_chance: number;
+    last_spin_date?: string;
+    update_time?: string;
+    expire_time?: string;
+    create_time?: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface LotteryChanceListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: LotteryChanceItem[];
+  }
+}
