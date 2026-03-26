@@ -22,6 +22,18 @@
           <el-tag type="success" effect="plain">真实接口：/lottery/prize/list</el-tag>
         </div>
         <div class="header-actions">
+          <el-input v-model="search.id" clearable placeholder="ID" style="width: 100px" @keyup.enter="handleSearch" />
+          <el-input v-model="search.name" clearable placeholder="奖品名称" style="width: 160px" @keyup.enter="handleSearch" />
+          <el-select v-model="search.type" clearable placeholder="类型" style="width: 120px">
+            <el-option label="现金" :value="1" />
+            <el-option label="实物" :value="2" />
+          </el-select>
+          <el-select v-model="search.status" clearable placeholder="状态" style="width: 120px">
+            <el-option label="启用" :value="1" />
+            <el-option label="禁用" :value="0" />
+          </el-select>
+          <el-button @click="resetSearch">重置</el-button>
+          <el-button type="primary" plain @click="handleSearch">查询</el-button>
           <el-button @click="fetchList">刷新</el-button>
           <el-button type="primary" @click="openDialog()">新增奖品</el-button>
         </div>
@@ -104,6 +116,12 @@ const loading = ref(false);
 const dialogVisible = ref(false);
 const list = ref<Activity.LotteryPrizeItem[]>([]);
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
+const search = reactive({
+  id: "",
+  name: "",
+  type: undefined as number | undefined,
+  status: undefined as number | undefined
+});
 
 const form = reactive<Activity.SaveLotteryPrizeParams>({
   name: "",
@@ -145,7 +163,14 @@ const openDialog = (row?: Activity.LotteryPrizeItem) => {
 const fetchList = async () => {
   loading.value = true;
   try {
-    const res = await getLotteryPrizeList({ page: pagination.page, limit: pagination.limit });
+    const res = await getLotteryPrizeList({
+      page: pagination.page,
+      limit: pagination.limit,
+      id: search.id || undefined,
+      name: search.name || undefined,
+      type: search.type,
+      status: search.status
+    });
     list.value = res.data.data || [];
     pagination.total = Number(res.data.total || 0);
   } finally {
@@ -180,6 +205,20 @@ const handleDelete = (row: Activity.LotteryPrizeItem) => {
 const handlePageChange = (page: number) => {
   pagination.page = page;
   fetchList();
+};
+
+const handleSearch = async () => {
+  pagination.page = 1;
+  await fetchList();
+};
+
+const resetSearch = async () => {
+  search.id = "";
+  search.name = "";
+  search.type = undefined;
+  search.status = undefined;
+  pagination.page = 1;
+  await fetchList();
 };
 
 const handleSizeChange = (size: number) => {

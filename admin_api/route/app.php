@@ -61,6 +61,36 @@ Route::group('api', function(){
     // 提现凭证展示列表
     Route::post('withdraw/showcase/list', \app\controller\payment\WithdrawShowcaseCon::class . '@GetShowcaseList');
 
+    // 提现凭证详情
+    Route::post('withdraw/showcase/detail', \app\controller\payment\WithdrawShowcaseCon::class . '@GetShowcaseDetail');
+
+    // 提现凭证新增
+    Route::post('withdraw/showcase/add', \app\controller\payment\WithdrawShowcaseCon::class . '@AddShowcase');
+
+    // 提现凭证修改
+    Route::post('withdraw/showcase/update', \app\controller\payment\WithdrawShowcaseCon::class . '@UpdateShowcase');
+
+    // 提现凭证删除
+    Route::post('withdraw/showcase/delete', \app\controller\payment\WithdrawShowcaseCon::class . '@DeleteShowcase');
+
+    // 提现凭证评论列表
+    Route::post('withdraw/showcase/comment/list', \app\controller\payment\WithdrawShowcaseCon::class . '@GetCommentList');
+
+    // 提现凭证评论新增
+    Route::post('withdraw/showcase/comment/add', \app\controller\payment\WithdrawShowcaseCon::class . '@AddComment');
+
+    // 提现凭证评论修改
+    Route::post('withdraw/showcase/comment/update', \app\controller\payment\WithdrawShowcaseCon::class . '@UpdateComment');
+
+    // 提现凭证评论删除
+    Route::post('withdraw/showcase/comment/delete', \app\controller\payment\WithdrawShowcaseCon::class . '@DeleteComment');
+
+    // 优惠券列表
+    Route::post('pay/coupon/list', \app\controller\payment\FinanceRecordCon::class . '@GetCouponList');
+
+    // 充值凭证列表
+    Route::post('recharge/voucher/list', \app\controller\payment\FinanceRecordCon::class . '@GetRechargeVoucherList');
+
     // 商品订单记录
     Route::post('goods/order/list', \app\controller\product\GoodsOrderCon::class . '@GetOrderList');
 
@@ -171,6 +201,51 @@ Route::group('api', function(){
 
     // 转盘次数列表
     Route::post('lottery/chance/list', \app\controller\activity\ActivityCon::class . '@GetLotteryChanceList');
+
+    // 邮件列表
+    Route::post('content/email/list', \app\controller\content\ContentCon::class . '@GetEmailList');
+
+    // 邮件新增
+    Route::post('content/email/add', \app\controller\content\ContentCon::class . '@AddEmail');
+
+    // 邮件修改
+    Route::post('content/email/update', \app\controller\content\ContentCon::class . '@UpdateEmail');
+
+    // 邮件发送
+    Route::post('content/email/send', \app\controller\content\ContentCon::class . '@SendEmail');
+
+    // 邮件删除
+    Route::post('content/email/delete', \app\controller\content\ContentCon::class . '@DeleteEmail');
+
+    // 通知列表
+    Route::post('content/notification/list', \app\controller\content\ContentCon::class . '@GetNotificationList');
+
+    // 通知新增
+    Route::post('content/notification/add', \app\controller\content\ContentCon::class . '@AddNotification');
+
+    // 通知修改
+    Route::post('content/notification/update', \app\controller\content\ContentCon::class . '@UpdateNotification');
+
+    // 通知删除
+    Route::post('content/notification/delete', \app\controller\content\ContentCon::class . '@DeleteNotification');
+
+    // 签到记录
+    Route::post('report/sign/list', \app\controller\report\RecordCon::class . '@GetSignLogList');
+
+    // 签到统计
+    Route::post('report/sign/stats', \app\controller\report\RecordCon::class . '@GetSignStats');
+
+    // 月薪记录
+    Route::post('report/monthly/salary/list', \app\controller\report\RecordCon::class . '@GetMonthlySalaryLogList');
+
+    // 月薪统计
+    Route::post('report/monthly/salary/stats', \app\controller\report\RecordCon::class . '@GetMonthlySalaryStats');
+
+    // 返佣记录
+    Route::post('report/commission/list', \app\controller\report\RecordCon::class . '@GetCommissionLogList');
+
+    // 返佣统计
+    Route::post('report/commission/stats', \app\controller\report\RecordCon::class . '@GetCommissionStats');
 
 })->middleware([AuthMiddleware::class, AdminLogMiddleware::class]);
 

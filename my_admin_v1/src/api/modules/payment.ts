@@ -1,4 +1,4 @@
-import { Cash, PayChannel, PayMoneyLog, Recharge } from "@/api/interface/index";
+import { Cash, Coupon, PayChannel, PayMoneyLog, Recharge, RechargeVoucher } from "@/api/interface/index";
 import { PORT1 } from "@/api/config/servicePort";
 import http from "@/api";
 
@@ -39,4 +39,12 @@ export const updatePayChannel = (params: PayChannel.UpdateParams) => {
 
 export const deletePayChannel = (params: PayChannel.DeleteParams) => {
   return http.post(PORT1 + `/pay/channel/delete`, params);
+};
+
+export const getCouponList = (params: Coupon.ReqParams) => {
+  return http.post<Coupon.ResListData>(PORT1 + `/pay/coupon/list`, params);
+};
+
+export const getRechargeVoucherList = (params: RechargeVoucher.ReqParams) => {
+  return http.post<RechargeVoucher.ResListData>(PORT1 + `/recharge/voucher/list`, params);
 };

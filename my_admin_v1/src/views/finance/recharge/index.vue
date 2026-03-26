@@ -97,6 +97,7 @@ const columns = reactive<ColumnProps<Recharge.ResListItem>[]>([
   { prop: "id", label: "订单ID", width: 90 },
   { prop: "uid", label: "用户ID", width: 100, search: { el: "input" } },
   { prop: "order_no", label: "订单号", minWidth: 180, search: { el: "input" } },
+  { prop: "channel_id", label: "渠道ID", width: 100, isShow: false, isSetting: false, search: { el: "input" } },
   {
     prop: "status",
     label: "状态",
@@ -133,7 +134,8 @@ const requestRechargeList = (params: Record<string, any>) => {
     limit: params.pageSize,
     user_id: params.uid,
     status: params.status,
-    order_no: params.order_no
+    order_no: params.order_no,
+    channel_id: params.channel_id
   };
 
   if (Array.isArray(params.date_range)) {

@@ -648,6 +648,53 @@ export namespace WithdrawShowcase {
     current_page: number;
     data: ResListItem[];
   }
+
+  export interface DetailParams {
+    id: number;
+  }
+
+  export interface SaveParams {
+    id?: number;
+    user_id: number;
+    withdraw_id: number;
+    voucher_image: string;
+    amount: number;
+    status: number;
+  }
+
+  export interface CommentReqParams extends ReqPage {
+    showcase_id?: number | string;
+    user_id?: number | string;
+  }
+
+  export interface CommentItem {
+    id: number;
+    showcase_id: number;
+    user_id: number;
+    content: string;
+    create_time: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface CommentListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: CommentItem[];
+  }
+
+  export interface SaveCommentParams {
+    id?: number;
+    showcase_id: number;
+    user_id: number;
+    content: string;
+  }
+
+  export interface DeleteParams {
+    id: number;
+  }
 }
 
 // VIP等级管理
@@ -1026,5 +1073,277 @@ export namespace Activity {
     per_page: number;
     current_page: number;
     data: LotteryChanceItem[];
+  }
+}
+
+export namespace Coupon {
+  export interface ReqParams extends ReqPage {
+    user_id?: number | string;
+    status?: number | string;
+    type?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    user_id: number;
+    money: number | string;
+    type: number;
+    status: number;
+    create_time: string;
+    use_time?: string;
+    exp_time: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
+}
+
+export namespace RechargeVoucher {
+  export interface ReqParams extends ReqPage {
+    user_id?: number | string;
+    recharge_id?: number | string;
+    status?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    user_id: number;
+    recharge_id: number;
+    voucher_image: string;
+    amount: number | string;
+    status: number;
+    create_time: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
+}
+
+export namespace Content {
+  export interface EmailReqParams extends ReqPage {
+    user_id?: number | string;
+    title?: string;
+    is_send?: number | string;
+    is_read?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface EmailItem {
+    id: number;
+    user_id: number;
+    title: string;
+    content: string;
+    is_send: number;
+    is_read: number;
+    send_time?: string;
+    create_time: string;
+    update_time?: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface EmailListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: EmailItem[];
+  }
+
+  export interface EmailSaveParams {
+    id?: number;
+    user_id: number;
+    title: string;
+    content: string;
+    is_send?: number;
+    is_read?: number;
+    send_time?: string;
+  }
+
+  export interface EmailDeleteParams {
+    id: number;
+  }
+
+  export interface NotificationReqParams extends ReqPage {
+    uid?: number | string;
+    title?: string;
+    type?: number | string;
+    is_read?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface NotificationItem {
+    id: number;
+    uid: number;
+    type: number;
+    title: string;
+    content: string;
+    is_read: number;
+    create_time: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface NotificationListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: NotificationItem[];
+  }
+
+  export interface NotificationSaveParams {
+    id?: number;
+    uid: number;
+    type: number;
+    title: string;
+    content: string;
+    is_read?: number;
+  }
+
+  export interface NotificationDeleteParams {
+    id: number;
+  }
+}
+
+export namespace Report {
+  export interface PeriodStatsItem {
+    total_count: number;
+    total_amount: number | string;
+    even_sign?: number;
+    status?: number;
+    money_type?: number;
+    money_type_text?: string;
+  }
+
+  export interface SignReqParams extends ReqPage {
+    user_id?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface SignItem {
+    id: number;
+    user_id: number;
+    reward_amount: number | string;
+    even_sign: number;
+    create_time: string;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface SignListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: SignItem[];
+  }
+
+  export interface SignStatsData {
+    sign_user_count: number;
+    gift_amount: number | string;
+    record_count: number;
+    reward_breakdown: PeriodStatsItem[];
+  }
+
+  export interface SalaryReqParams extends ReqPage {
+    user_id?: number | string;
+    status?: number | string;
+    claim_month?: string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface SalaryItem {
+    id: number;
+    user_id: number;
+    team_recharge_amount: number | string;
+    reward_amount: number | string;
+    claim_month: string;
+    create_time: string;
+    status: number;
+    user_name?: string;
+    nickname?: string;
+    phone?: string;
+  }
+
+  export interface SalaryListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: SalaryItem[];
+  }
+
+  export interface SalaryStatsData {
+    salary_user_count: number;
+    gift_amount: number | string;
+    team_recharge_amount: number | string;
+    record_count: number;
+    reward_breakdown: PeriodStatsItem[];
+  }
+
+  export interface CommissionReqParams extends ReqPage {
+    user_id?: number | string;
+    money_type?: number | string;
+    is_add_to_user_account?: number | string;
+    sub_id?: number | string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface CommissionItem {
+    id: number;
+    user_id: number;
+    money_amount: number | string;
+    money_type: number;
+    money_type_text: string;
+    is_add_to_user_account: number;
+    remark: string;
+    user_name: string;
+    create_time: string;
+    update_time?: string;
+    product_id?: number;
+    product_lev?: number;
+    sub_id?: number;
+    nickname?: string;
+    phone?: string;
+    sub_user_name?: string;
+    sub_nickname?: string;
+    sub_phone?: string;
+  }
+
+  export interface CommissionListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: CommissionItem[];
+  }
+
+  export interface CommissionStatsData {
+    commission_user_count: number;
+    gift_amount: number | string;
+    record_count: number;
+    reward_breakdown: PeriodStatsItem[];
   }
 }

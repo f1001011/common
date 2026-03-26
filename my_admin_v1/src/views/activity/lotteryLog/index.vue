@@ -16,6 +16,18 @@
                 style="width: 120px"
                 @keyup.enter="handleLogSearch"
               />
+              <el-select v-model="logSearch.prize_type" clearable placeholder="奖品类型" style="width: 120px">
+                <el-option label="现金" :value="1" />
+                <el-option label="实物" :value="2" />
+              </el-select>
+              <el-date-picker
+                v-model="logSearch.date_range"
+                type="datetimerange"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                style="width: 320px"
+              />
               <el-button @click="resetLogSearch">重置</el-button>
               <el-button type="primary" @click="handleLogSearch">查询</el-button>
             </div>
@@ -72,6 +84,14 @@
                 style="width: 120px"
                 @keyup.enter="handleChanceSearch"
               />
+              <el-date-picker
+                v-model="chanceSearch.date_range"
+                type="datetimerange"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                style="width: 320px"
+              />
               <el-button @click="resetChanceSearch">重置</el-button>
               <el-button type="primary" @click="handleChanceSearch">查询</el-button>
             </div>
@@ -127,8 +147,15 @@ const chanceList = ref<Activity.LotteryChanceItem[]>([]);
 
 const logPagination = reactive({ page: 1, limit: 20, total: 0 });
 const chancePagination = reactive({ page: 1, limit: 20, total: 0 });
-const logSearch = reactive({ user_id: "" });
-const chanceSearch = reactive({ user_id: "" });
+const logSearch = reactive({
+  user_id: "",
+  prize_type: undefined as number | undefined,
+  date_range: [] as string[]
+});
+const chanceSearch = reactive({
+  user_id: "",
+  date_range: [] as string[]
+});
 
 const fetchLogList = async () => {
   logLoading.value = true;
@@ -136,7 +163,10 @@ const fetchLogList = async () => {
     const res = await getLotteryLogList({
       page: logPagination.page,
       limit: logPagination.limit,
-      user_id: logSearch.user_id || undefined
+      user_id: logSearch.user_id || undefined,
+      prize_type: logSearch.prize_type,
+      start_time: logSearch.date_range?.[0],
+      end_time: logSearch.date_range?.[1]
     });
     logList.value = res.data.data || [];
     logPagination.total = Number(res.data.total || 0);
@@ -151,7 +181,9 @@ const fetchChanceList = async () => {
     const res = await getLotteryChanceList({
       page: chancePagination.page,
       limit: chancePagination.limit,
-      user_id: chanceSearch.user_id || undefined
+      user_id: chanceSearch.user_id || undefined,
+      start_time: chanceSearch.date_range?.[0],
+      end_time: chanceSearch.date_range?.[1]
     });
     chanceList.value = res.data.data || [];
     chancePagination.total = Number(res.data.total || 0);
@@ -167,6 +199,8 @@ const handleLogSearch = async () => {
 
 const resetLogSearch = async () => {
   logSearch.user_id = "";
+  logSearch.prize_type = undefined;
+  logSearch.date_range = [];
   logPagination.page = 1;
   await fetchLogList();
 };
@@ -178,6 +212,7 @@ const handleChanceSearch = async () => {
 
 const resetChanceSearch = async () => {
   chanceSearch.user_id = "";
+  chanceSearch.date_range = [];
   chancePagination.page = 1;
   await fetchChanceList();
 };

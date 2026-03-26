@@ -28,6 +28,27 @@
               <el-tag type="success" effect="plain">真实接口：/task/config/list</el-tag>
             </div>
             <div class="header-actions">
+              <el-input
+                v-model="configSearch.id"
+                clearable
+                placeholder="ID"
+                style="width: 100px"
+                @keyup.enter="handleConfigSearch"
+              />
+              <el-select v-model="configSearch.task_group" clearable placeholder="任务组" style="width: 150px">
+                <el-option label="LV2邀请任务" :value="1" />
+                <el-option label="LV1邀请任务" :value="2" />
+              </el-select>
+              <el-select v-model="configSearch.invite_level" clearable placeholder="邀请等级" style="width: 120px">
+                <el-option label="LV1" value="LV1" />
+                <el-option label="LV2" value="LV2" />
+              </el-select>
+              <el-select v-model="configSearch.status" clearable placeholder="状态" style="width: 120px">
+                <el-option label="启用" :value="1" />
+                <el-option label="禁用" :value="0" />
+              </el-select>
+              <el-button @click="resetConfigSearch">重置</el-button>
+              <el-button type="primary" plain @click="handleConfigSearch">查询</el-button>
               <el-button @click="fetchConfigList">刷新</el-button>
               <el-button type="primary" @click="openConfigDialog()">新增任务</el-button>
             </div>
@@ -106,6 +127,25 @@
                 <el-option label="未完成" :value="0" />
                 <el-option label="已完成" :value="1" />
               </el-select>
+              <el-select v-model="progressSearch.is_claimed" clearable placeholder="领取状态" style="width: 130px">
+                <el-option label="未领取" :value="0" />
+                <el-option label="已领取" :value="1" />
+              </el-select>
+              <el-input
+                v-model="progressSearch.task_id"
+                clearable
+                placeholder="任务ID"
+                style="width: 120px"
+                @keyup.enter="handleProgressSearch"
+              />
+              <el-date-picker
+                v-model="progressSearch.date_range"
+                type="datetimerange"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                style="width: 320px"
+              />
               <el-button @click="resetProgressSearch">重置</el-button>
               <el-button type="primary" @click="handleProgressSearch">查询</el-button>
             </div>
@@ -177,6 +217,21 @@
                 placeholder="用户ID"
                 style="width: 120px"
                 @keyup.enter="handleRewardSearch"
+              />
+              <el-input
+                v-model="rewardSearch.task_id"
+                clearable
+                placeholder="任务ID"
+                style="width: 120px"
+                @keyup.enter="handleRewardSearch"
+              />
+              <el-date-picker
+                v-model="rewardSearch.date_range"
+                type="datetimerange"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                style="width: 320px"
               />
               <el-button @click="resetRewardSearch">重置</el-button>
               <el-button type="primary" @click="handleRewardSearch">查询</el-button>
@@ -302,14 +357,26 @@ const configPagination = reactive({ page: 1, limit: 20, total: 0 });
 const progressPagination = reactive({ page: 1, limit: 20, total: 0 });
 const rewardPagination = reactive({ page: 1, limit: 20, total: 0 });
 
+const configSearch = reactive({
+  id: "",
+  task_group: undefined as number | undefined,
+  invite_level: "",
+  status: undefined as number | undefined
+});
+
 const progressSearch = reactive({
   user_id: "",
+  task_id: "",
   task_group: undefined as number | undefined,
-  is_completed: undefined as number | undefined
+  is_completed: undefined as number | undefined,
+  is_claimed: undefined as number | undefined,
+  date_range: [] as string[]
 });
 
 const rewardSearch = reactive({
-  user_id: ""
+  user_id: "",
+  task_id: "",
+  date_range: [] as string[]
 });
 
 const configDialogVisible = ref(false);
@@ -357,7 +424,11 @@ const fetchConfigList = async () => {
   try {
     const res = await getTaskConfigList({
       page: configPagination.page,
-      limit: configPagination.limit
+      limit: configPagination.limit,
+      id: configSearch.id || undefined,
+      task_group: configSearch.task_group,
+      invite_level: configSearch.invite_level || undefined,
+      status: configSearch.status
     });
     configList.value = res.data.data || [];
     configPagination.total = Number(res.data.total || 0);
@@ -373,8 +444,12 @@ const fetchProgressList = async () => {
       page: progressPagination.page,
       limit: progressPagination.limit,
       user_id: progressSearch.user_id || undefined,
+      task_id: progressSearch.task_id || undefined,
       task_group: progressSearch.task_group,
-      is_completed: progressSearch.is_completed
+      is_completed: progressSearch.is_completed,
+      is_claimed: progressSearch.is_claimed,
+      start_time: progressSearch.date_range?.[0],
+      end_time: progressSearch.date_range?.[1]
     });
     progressList.value = res.data.data || [];
     progressPagination.total = Number(res.data.total || 0);
@@ -389,7 +464,10 @@ const fetchRewardList = async () => {
     const res = await getTaskRewardLogList({
       page: rewardPagination.page,
       limit: rewardPagination.limit,
-      user_id: rewardSearch.user_id || undefined
+      user_id: rewardSearch.user_id || undefined,
+      task_id: rewardSearch.task_id || undefined,
+      start_time: rewardSearch.date_range?.[0],
+      end_time: rewardSearch.date_range?.[1]
     });
     rewardList.value = res.data.data || [];
     rewardPagination.total = Number(res.data.total || 0);
@@ -429,10 +507,27 @@ const handleProgressSearch = async () => {
   await fetchProgressList();
 };
 
+const handleConfigSearch = async () => {
+  configPagination.page = 1;
+  await fetchConfigList();
+};
+
+const resetConfigSearch = async () => {
+  configSearch.id = "";
+  configSearch.task_group = undefined;
+  configSearch.invite_level = "";
+  configSearch.status = undefined;
+  configPagination.page = 1;
+  await fetchConfigList();
+};
+
 const resetProgressSearch = async () => {
   progressSearch.user_id = "";
+  progressSearch.task_id = "";
   progressSearch.task_group = undefined;
   progressSearch.is_completed = undefined;
+  progressSearch.is_claimed = undefined;
+  progressSearch.date_range = [];
   progressPagination.page = 1;
   await fetchProgressList();
 };
@@ -444,6 +539,8 @@ const handleRewardSearch = async () => {
 
 const resetRewardSearch = async () => {
   rewardSearch.user_id = "";
+  rewardSearch.task_id = "";
+  rewardSearch.date_range = [];
   rewardPagination.page = 1;
   await fetchRewardList();
 };

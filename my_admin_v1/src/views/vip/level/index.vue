@@ -28,6 +28,16 @@
               <el-tag type="success" effect="plain">真实接口：/vip/list</el-tag>
             </div>
             <div class="header-actions">
+              <el-input v-model="vipSearch.id" clearable placeholder="ID" style="width: 100px" @keyup.enter="handleVipSearch" />
+              <el-input
+                v-model="vipSearch.vip"
+                clearable
+                placeholder="VIP等级"
+                style="width: 120px"
+                @keyup.enter="handleVipSearch"
+              />
+              <el-button @click="resetVipSearch">重置</el-button>
+              <el-button type="primary" plain @click="handleVipSearch">查询</el-button>
               <el-button @click="fetchVipList">刷新</el-button>
               <el-button type="primary" @click="openVipDialog()">新增 VIP</el-button>
             </div>
@@ -77,6 +87,26 @@
               <el-tag type="success" effect="plain">真实接口：/agent/level/config/list</el-tag>
             </div>
             <div class="header-actions">
+              <el-input
+                v-model="agentSearch.id"
+                clearable
+                placeholder="ID"
+                style="width: 100px"
+                @keyup.enter="handleAgentSearch"
+              />
+              <el-input
+                v-model="agentSearch.level"
+                clearable
+                placeholder="等级"
+                style="width: 100px"
+                @keyup.enter="handleAgentSearch"
+              />
+              <el-select v-model="agentSearch.member_type" clearable placeholder="会员类型" style="width: 140px">
+                <el-option label="LV1" value="LV1" />
+                <el-option label="LV123" value="LV123" />
+              </el-select>
+              <el-button @click="resetAgentSearch">重置</el-button>
+              <el-button type="primary" plain @click="handleAgentSearch">查询</el-button>
               <el-button @click="fetchAgentList">刷新</el-button>
               <el-button type="primary" @click="openAgentDialog()">新增等级</el-button>
             </div>
@@ -131,7 +161,33 @@
               <span>VIP 变更日志</span>
               <el-tag type="info" effect="plain">真实接口：/vip/log/list</el-tag>
             </div>
-            <el-button @click="fetchVipLogList">刷新</el-button>
+            <div class="header-actions">
+              <el-input
+                v-model="vipLogSearch.start_level"
+                clearable
+                placeholder="开始等级"
+                style="width: 120px"
+                @keyup.enter="handleVipLogSearch"
+              />
+              <el-input
+                v-model="vipLogSearch.end_level"
+                clearable
+                placeholder="结束等级"
+                style="width: 120px"
+                @keyup.enter="handleVipLogSearch"
+              />
+              <el-date-picker
+                v-model="vipLogSearch.date_range"
+                type="datetimerange"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                style="width: 320px"
+              />
+              <el-button @click="resetVipLogSearch">重置</el-button>
+              <el-button type="primary" plain @click="handleVipLogSearch">查询</el-button>
+              <el-button @click="fetchVipLogList">刷新</el-button>
+            </div>
           </div>
 
           <el-table v-loading="vipLogLoading" :data="vipLogList" border>
@@ -185,6 +241,14 @@
                 placeholder="VIP等级"
                 style="width: 120px"
                 @keyup.enter="handleRewardSearch"
+              />
+              <el-date-picker
+                v-model="rewardSearch.date_range"
+                type="datetimerange"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                start-placeholder="开始时间"
+                end-placeholder="结束时间"
+                style="width: 320px"
               />
               <el-button @click="resetRewardSearch">重置</el-button>
               <el-button type="primary" @click="handleRewardSearch">查询</el-button>
@@ -342,9 +406,27 @@ const agentPagination = reactive({ page: 1, limit: 20, total: 0 });
 const vipLogPagination = reactive({ page: 1, limit: 20, total: 0 });
 const rewardLogPagination = reactive({ page: 1, limit: 20, total: 0 });
 
+const vipSearch = reactive({
+  id: "",
+  vip: ""
+});
+
+const agentSearch = reactive({
+  id: "",
+  level: "",
+  member_type: ""
+});
+
+const vipLogSearch = reactive({
+  start_level: "",
+  end_level: "",
+  date_range: [] as string[]
+});
+
 const rewardSearch = reactive({
   user_id: "",
-  vip_level: ""
+  vip_level: "",
+  date_range: [] as string[]
 });
 
 const vipDialogVisible = ref(false);
@@ -420,7 +502,9 @@ const fetchVipList = async () => {
   try {
     const res = await getVipList({
       page: vipPagination.page,
-      limit: vipPagination.limit
+      limit: vipPagination.limit,
+      id: vipSearch.id || undefined,
+      vip: vipSearch.vip || undefined
     });
     vipList.value = res.data.data || [];
     vipPagination.total = Number(res.data.total || 0);
@@ -434,7 +518,10 @@ const fetchAgentList = async () => {
   try {
     const res = await getAgentLevelConfigList({
       page: agentPagination.page,
-      limit: agentPagination.limit
+      limit: agentPagination.limit,
+      id: agentSearch.id || undefined,
+      level: agentSearch.level || undefined,
+      member_type: agentSearch.member_type || undefined
     });
     agentList.value = res.data.data || [];
     agentPagination.total = Number(res.data.total || 0);
@@ -448,7 +535,11 @@ const fetchVipLogList = async () => {
   try {
     const res = await getVipLogList({
       page: vipLogPagination.page,
-      limit: vipLogPagination.limit
+      limit: vipLogPagination.limit,
+      start_level: vipLogSearch.start_level || undefined,
+      end_level: vipLogSearch.end_level || undefined,
+      start_time: vipLogSearch.date_range?.[0],
+      end_time: vipLogSearch.date_range?.[1]
     });
     vipLogList.value = res.data.data || [];
     vipLogPagination.total = Number(res.data.total || 0);
@@ -464,7 +555,9 @@ const fetchRewardLogList = async () => {
       page: rewardLogPagination.page,
       limit: rewardLogPagination.limit,
       user_id: rewardSearch.user_id || undefined,
-      vip_level: rewardSearch.vip_level || undefined
+      vip_level: rewardSearch.vip_level || undefined,
+      start_time: rewardSearch.date_range?.[0],
+      end_time: rewardSearch.date_range?.[1]
     });
     rewardLogList.value = res.data.data || [];
     rewardLogPagination.total = Number(res.data.total || 0);
@@ -526,9 +619,48 @@ const handleRewardSearch = async () => {
   await fetchRewardLogList();
 };
 
+const handleVipSearch = async () => {
+  vipPagination.page = 1;
+  await fetchVipList();
+};
+
+const resetVipSearch = async () => {
+  vipSearch.id = "";
+  vipSearch.vip = "";
+  vipPagination.page = 1;
+  await fetchVipList();
+};
+
+const handleAgentSearch = async () => {
+  agentPagination.page = 1;
+  await fetchAgentList();
+};
+
+const resetAgentSearch = async () => {
+  agentSearch.id = "";
+  agentSearch.level = "";
+  agentSearch.member_type = "";
+  agentPagination.page = 1;
+  await fetchAgentList();
+};
+
+const handleVipLogSearch = async () => {
+  vipLogPagination.page = 1;
+  await fetchVipLogList();
+};
+
+const resetVipLogSearch = async () => {
+  vipLogSearch.start_level = "";
+  vipLogSearch.end_level = "";
+  vipLogSearch.date_range = [];
+  vipLogPagination.page = 1;
+  await fetchVipLogList();
+};
+
 const resetRewardSearch = async () => {
   rewardSearch.user_id = "";
   rewardSearch.vip_level = "";
+  rewardSearch.date_range = [];
   rewardLogPagination.page = 1;
   await fetchRewardLogList();
 };

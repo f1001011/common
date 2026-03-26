@@ -36,3 +36,35 @@ export const getWaresOrderList = (params: WaresOrder.ReqParams) => {
 export const getWithdrawShowcaseList = (params: WithdrawShowcase.ReqParams) => {
   return http.post<WithdrawShowcase.ResListData>(PORT1 + `/withdraw/showcase/list`, params);
 };
+
+export const getWithdrawShowcaseDetail = (params: WithdrawShowcase.DetailParams) => {
+  return http.post<WithdrawShowcase.ResListItem>(PORT1 + `/withdraw/showcase/detail`, params);
+};
+
+export const addWithdrawShowcase = (params: WithdrawShowcase.SaveParams) => {
+  return http.post(PORT1 + `/withdraw/showcase/add`, params);
+};
+
+export const updateWithdrawShowcase = (params: WithdrawShowcase.SaveParams) => {
+  return http.post(PORT1 + `/withdraw/showcase/update`, params);
+};
+
+export const deleteWithdrawShowcase = (params: WithdrawShowcase.DeleteParams) => {
+  return http.post(PORT1 + `/withdraw/showcase/delete`, params);
+};
+
+export const getWithdrawCommentList = (params: WithdrawShowcase.CommentReqParams) => {
+  return http.post<WithdrawShowcase.CommentListData>(PORT1 + `/withdraw/showcase/comment/list`, params);
+};
+
+export const addWithdrawComment = (params: WithdrawShowcase.SaveCommentParams) => {
+  return http.post(PORT1 + `/withdraw/showcase/comment/add`, params);
+};
+
+export const updateWithdrawComment = (params: Pick<WithdrawShowcase.SaveCommentParams, "id" | "content">) => {
+  return http.post(PORT1 + `/withdraw/showcase/comment/update`, params);
+};
+
+export const deleteWithdrawComment = (params: WithdrawShowcase.DeleteParams) => {
+  return http.post(PORT1 + `/withdraw/showcase/comment/delete`, params);
+};

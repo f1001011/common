@@ -156,6 +156,34 @@
             "isAffix": false,
             "isKeepAlive": true
           }
+        },
+        {
+          "path": "/finance/coupon",
+          "name": "financeCoupon",
+          "component": "/finance/coupon/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "优惠券列表",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/finance/recharge-voucher",
+          "name": "financeRechargeVoucher",
+          "component": "/finance/rechargeVoucher/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "充值凭证列表",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
         }
       ]
     },
@@ -314,6 +342,48 @@
             "isAffix": false,
             "isKeepAlive": true
           }
+        },
+        {
+          "path": "/activity/sign-record",
+          "name": "signRecordManage",
+          "component": "/activity/signRecord/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "签到记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/activity/monthly-salary",
+          "name": "monthlySalaryManage",
+          "component": "/activity/monthlySalary/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "月薪记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/activity/commission",
+          "name": "commissionManage",
+          "component": "/activity/commission/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "返佣记录",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
         }
       ]
     },
@@ -392,10 +462,10 @@
         {
           "path": "/content/notice",
           "name": "noticeManage",
-          "component": "/admin/placeholder/index",
+          "component": "/content/notification/index",
           "meta": {
             "icon": "Menu",
-            "title": "公告管理",
+            "title": "通知列表",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -406,10 +476,10 @@
         {
           "path": "/content/broadcast",
           "name": "broadcastManage",
-          "component": "/admin/placeholder/index",
+          "component": "/content/email/index",
           "meta": {
             "icon": "Menu",
-            "title": "播报管理",
+            "title": "邮件列表",
             "isLink": "",
             "isHide": false,
             "isFull": false,

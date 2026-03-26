@@ -96,6 +96,7 @@ const columns = reactive<ColumnProps<Cash.ResListItem>[]>([
   { prop: "id", label: "订单ID", width: 90 },
   { prop: "u_id", label: "用户ID", width: 100, search: { el: "input" } },
   { prop: "order_on", label: "订单号", minWidth: 180, search: { el: "input" } },
+  { prop: "channel_id", label: "渠道ID", width: 100, isShow: false, isSetting: false, search: { el: "input" } },
   {
     prop: "status",
     label: "状态",
@@ -132,7 +133,8 @@ const requestCashList = (params: Record<string, any>) => {
     limit: params.pageSize,
     user_id: params.u_id,
     status: params.status,
-    order_on: params.order_on
+    order_on: params.order_on,
+    channel_id: params.channel_id
   };
 
   if (Array.isArray(params.date_range)) {

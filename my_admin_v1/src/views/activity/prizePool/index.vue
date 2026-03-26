@@ -65,6 +65,19 @@
             <el-option label="二等奖" :value="2" />
             <el-option label="三等奖" :value="3" />
           </el-select>
+          <el-select v-model="logSearch.status" clearable placeholder="状态" style="width: 120px">
+            <el-option label="待领取" :value="0" />
+            <el-option label="已领取" :value="1" />
+            <el-option label="已过期" :value="2" />
+          </el-select>
+          <el-date-picker
+            v-model="logSearch.date_range"
+            type="datetimerange"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            style="width: 320px"
+          />
           <el-button @click="resetLogSearch">重置</el-button>
           <el-button type="primary" @click="handleLogSearch">查询</el-button>
         </div>
@@ -139,7 +152,12 @@ const configList = ref<Activity.PrizePoolConfigItem[]>([]);
 const logList = ref<Activity.PrizePoolLogItem[]>([]);
 
 const logPagination = reactive({ page: 1, limit: 20, total: 0 });
-const logSearch = reactive({ user_id: "", prize_level: undefined as number | undefined });
+const logSearch = reactive({
+  user_id: "",
+  prize_level: undefined as number | undefined,
+  status: undefined as number | undefined,
+  date_range: [] as string[]
+});
 
 const configForm = reactive<Activity.SavePrizePoolConfigParams>({
   daily_amount: 0,
@@ -191,7 +209,10 @@ const fetchLogList = async () => {
       page: logPagination.page,
       limit: logPagination.limit,
       user_id: logSearch.user_id || undefined,
-      prize_level: logSearch.prize_level
+      prize_level: logSearch.prize_level,
+      status: logSearch.status,
+      start_time: logSearch.date_range?.[0],
+      end_time: logSearch.date_range?.[1]
     });
     logList.value = res.data.data || [];
     logPagination.total = Number(res.data.total || 0);
@@ -223,6 +244,8 @@ const handleLogSearch = async () => {
 const resetLogSearch = async () => {
   logSearch.user_id = "";
   logSearch.prize_level = undefined;
+  logSearch.status = undefined;
+  logSearch.date_range = [];
   logPagination.page = 1;
   await fetchLogList();
 };
