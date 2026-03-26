@@ -118,7 +118,7 @@
         {
           "path": "/finance/money-log",
           "name": "financeMoneyLog",
-          "component": "/admin/placeholder/index",
+          "component": "/finance/moneyLog/index",
           "meta": {
             "icon": "Menu",
             "title": "资金流水",

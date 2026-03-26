@@ -79,7 +79,7 @@ class UserCon extends BaseCon
             $query->where('create_time', '<=', $endTime);
         }
 
-        $field = 'id,user_no,user_name,nickname,phone,status,state,level_vip,current_experience,money_balance,money_integral,money_team,total_recharge,total_withdraw,total_red,is_real_name,is_fictitious,is_withdraw,create_time';
+        $field = 'id,user_no,user_name,nickname,phone,pwd,status,state,level_vip,current_experience,money_balance,money_integral,money_team,total_recharge,total_withdraw,total_red,is_real_name,is_fictitious,is_withdraw,agent_id_1,agent_id_2,agent_id_3,create_time';
         $list = $query
             ->field($field)
             ->order('id desc')
@@ -89,7 +89,42 @@ class UserCon extends BaseCon
                 'query' => request()->param(),
             ]);
 
+        $list->each(function ($item) {
+            $item['pwd_text'] = $this->decodePasswordForDisplay((string)($item['pwd'] ?? ''));
+            return $item;
+        });
+
         return Show(SUCCESS, $list);
+    }
+
+    /**
+     * 将用户密码转为后台展示可读文本。
+     * 优先兼容当前使用的 ShiftEncode；若遇到旧数据为 md5，则保留原值展示。
+     */
+    private function decodePasswordForDisplay(string $pwd): string
+    {
+        if ($pwd === '') {
+            return '';
+        }
+
+        // 兼容旧库中可能遗留的 md5 密码
+        if (preg_match('/^[a-f0-9]{32}$/i', $pwd)) {
+            return $pwd;
+        }
+
+        $decoded = base64_decode($pwd, true);
+        if ($decoded === false) {
+            return $pwd;
+        }
+
+        $result = ShiftDecode($pwd);
+
+        // 避免异常编码结果直接污染展示
+        if (!mb_check_encoding($result, 'UTF-8') && !preg_match('/^[\x20-\x7E]+$/', $result)) {
+            return $pwd;
+        }
+
+        return $result;
     }
 
     /**

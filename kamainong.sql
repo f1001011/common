@@ -11,7 +11,7 @@
  Target Server Version : 50726 (5.7.26)
  File Encoding         : 65001
 
- Date: 26/03/2026 13:58:42
+ Date: 26/03/2026 17:52:03
 */
 
 SET NAMES utf8mb4;
@@ -34,11 +34,12 @@ CREATE TABLE `ntp_common_admin`  (
   `market_uid` int(11) NULL DEFAULT NULL,
   `operate_pwd` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户余额变更使用的操作密码',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台管理员表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台管理员表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ntp_common_admin
 -- ----------------------------
+INSERT INTO `ntp_common_admin` VALUES (1, 'admin', 'NDU2Nzg5', '2026-03-26 16:14:08', 1, NULL, '0', '0', '0', NULL, '123456');
 
 -- ----------------------------
 -- Table structure for ntp_common_admin_log
@@ -53,7 +54,7 @@ CREATE TABLE `ntp_common_admin_log`  (
   `create_time` datetime NULL DEFAULT NULL,
   `rmark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of ntp_common_admin_log
@@ -70,11 +71,12 @@ CREATE TABLE `ntp_common_admin_token`  (
   `admin_uid` int(10) NULL DEFAULT NULL COMMENT '管理员ID',
   `type` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台确定单点登陆' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台确定单点登陆' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ntp_common_admin_token
 -- ----------------------------
+INSERT INTO `ntp_common_admin_token` VALUES (3, 'ce97f9b3f186aed6ef2076e408655fde', '2026-03-26 17:05:42', 1, 1);
 
 -- ----------------------------
 -- Table structure for ntp_common_ads
@@ -683,12 +685,18 @@ CREATE TABLE `ntp_common_sys_config`  (
   `mark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `sel`(`name`(191)) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台配置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '后台配置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ntp_common_sys_config
 -- ----------------------------
-INSERT INTO `ntp_common_sys_config` VALUES (1, 'asdasd', NULL, '');
+INSERT INTO `ntp_common_sys_config` VALUES (1, 'recharge_message', '充值提示语', '充值提示语');
+INSERT INTO `ntp_common_sys_config` VALUES (2, 'withdraw_message', '提现提示语', '提现提示语');
+INSERT INTO `ntp_common_sys_config` VALUES (3, 'recharge_success_message', '充值成功提示语', '充值成功提示语');
+INSERT INTO `ntp_common_sys_config` VALUES (4, 'recharge_error_message', '充值事变提示语', '充值事变提示语');
+INSERT INTO `ntp_common_sys_config` VALUES (5, 'withdraw_success_message', '提现成功提示语', '提现成功提示语');
+INSERT INTO `ntp_common_sys_config` VALUES (6, 'withdraw_error_message', '提现事变提示语', '提现事变提示语');
+INSERT INTO `ntp_common_sys_config` VALUES (7, 'home_message', '首页提示语', '首页提示语');
 
 -- ----------------------------
 -- Table structure for ntp_common_task_config
@@ -804,13 +812,12 @@ CREATE TABLE `ntp_common_user`  (
   INDEX `sel`(`user_name`, `phone`, `agent_id_1`, `agent_id_2`, `agent_id_3`, `agent_id`) USING BTREE,
   INDEX `agent_id`(`agent_id`) USING BTREE,
   INDEX `is_real_name`(`is_real_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ntp_common_user
 -- ----------------------------
-INSERT INTO `ntp_common_user` VALUES (1, 1001, 'user_1774360816', NULL, '2026-03-24 22:00:16', 'c51cd8e64b0aeb778364765013df9ebe', 'cTEyMzQ1Ng==', 1, 0, NULL, 0, 0, 0, '666666666', 0.00, 0.00, 0, 0.00, 0.00, 1001, '127.0.0.1', 0.00, 0.00, 0.00, NULL, 1, 0, 0, 0, 0, 0, 0, NULL, 0, 0, 'A6A4A3D9');
-INSERT INTO `ntp_common_user` VALUES (2, 1002, 'user_1774360848', NULL, '2026-03-24 22:00:48', 'c51cd8e64b0aeb778364765013df9ebe', 'cTEyMzQ1Ng==', 1, 0, NULL, 0, 0, 0, '666666665', 0.00, 0.00, 0, 0.00, 0.00, 1002, '127.0.0.1', 0.00, 0.00, 0.00, NULL, 1, 0, 0, 0, 0, 0, 0, NULL, 0, 0, 'DEBB0388');
+INSERT INTO `ntp_common_user` VALUES (3, 1231232, '12131', '12313', '2026-03-26 17:21:16', '123123', '123123', 1, 0, NULL, 0, 0, 0, '894568454', 0.00, 0.00, 0, 0.00, 0.00, 888888, '127.0.0.1', 0.00, 0.00, 0.00, NULL, 1, 0, 0, 0, 0, 0, 0, NULL, 0, 0, '888888');
 
 -- ----------------------------
 -- Table structure for ntp_common_user_sign_log

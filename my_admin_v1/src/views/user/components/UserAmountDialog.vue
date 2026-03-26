@@ -11,7 +11,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item :label="amountLabel" prop="amount">
-        <el-input-number v-model="form.amount" :min="0.01" :precision="2" :step="1" controls-position="right" />
+        <el-input-number v-model="form.amount" :min="0" :precision="2" :step="1" controls-position="right" />
       </el-form-item>
     </el-form>
     <template #footer>
