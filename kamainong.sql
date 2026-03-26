@@ -11,7 +11,7 @@
  Target Server Version : 50726 (5.7.26)
  File Encoding         : 65001
 
- Date: 26/03/2026 17:52:03
+ Date: 26/03/2026 21:04:24
 */
 
 SET NAMES utf8mb4;
@@ -808,16 +808,19 @@ CREATE TABLE `ntp_common_user`  (
   `current_experience` int(11) NOT NULL DEFAULT 0 COMMENT '当前经验(已经获得的经验)',
   `agent_lv` int(11) NOT NULL DEFAULT 0 COMMENT '代理的等级',
   `invitation_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`id`, `user_no`) USING BTREE,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `weiyiuser_no`(`user_no`) USING BTREE,
+  UNIQUE INDEX `weiyiphone`(`phone`) USING BTREE,
   INDEX `sel`(`user_name`, `phone`, `agent_id_1`, `agent_id_2`, `agent_id_3`, `agent_id`) USING BTREE,
   INDEX `agent_id`(`agent_id`) USING BTREE,
   INDEX `is_real_name`(`is_real_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1001 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of ntp_common_user
 -- ----------------------------
 INSERT INTO `ntp_common_user` VALUES (3, 1231232, '12131', '12313', '2026-03-26 17:21:16', '123123', '123123', 1, 0, NULL, 0, 0, 0, '894568454', 0.00, 0.00, 0, 0.00, 0.00, 888888, '127.0.0.1', 0.00, 0.00, 0.00, NULL, 1, 0, 0, 0, 0, 0, 0, NULL, 0, 0, '888888');
+INSERT INTO `ntp_common_user` VALUES (1000, 241233, '12131', '12313', '2026-03-26 17:21:16', '123123', '123123', 1, 0, NULL, 0, 0, 0, '231314134', 0.00, 0.00, 0, 0.00, 0.00, 888888, '127.0.0.1', 0.00, 0.00, 0.00, NULL, 1, 0, 0, 0, 0, 0, 0, NULL, 0, 0, '888888');
 
 -- ----------------------------
 -- Table structure for ntp_common_user_sign_log
