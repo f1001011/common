@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model="dialogVisible" :title="dialogTitle" width="760px" destroy-on-close>
+  <el-dialog v-model="dialogVisible" :title="dialogTitle" width="860px" destroy-on-close>
     <el-form ref="formRef" :model="form" :rules="rules" label-width="110px">
       <el-row :gutter="16">
         <el-col :span="12">
@@ -26,17 +26,17 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="提现金额" prop="money">
             <el-input-number v-model="form.money" :min="0" :precision="2" controls-position="right" style="width: 100%" />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="12">
           <el-form-item label="手续费">
             <el-input-number v-model="form.fee" :min="0" :precision="2" controls-position="right" style="width: 100%" />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="实际到账">
             <el-input-number v-model="form.actual_amount" :min="0" :precision="2" controls-position="right" style="width: 100%" />
           </el-form-item>
