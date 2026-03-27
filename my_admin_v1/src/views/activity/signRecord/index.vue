@@ -32,10 +32,7 @@
         <div class="summary-card period-card active">
           <span class="summary-label">{{ activePeriodCard.title }}</span>
           <strong>{{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.gift_amount || 0) }}</strong>
-          <small
-            >签到 {{ activePeriodCard.data.sign_user_count || 0 }} 人 · 记录
-            {{ activePeriodCard.data.record_count || 0 }} 条</small
-          >
+          <small>{{ formatActivePeriodSummary(activePeriodCard.data) }}</small>
         </div>
       </div>
 
@@ -185,11 +182,6 @@ const periodCards = computed(() => [
 
 const activePeriodCard = computed(() => periodCards.value.find(item => item.key === activePeriod.value) || periodCards.value[0]);
 
-const handlePeriodChange = async (type: "today" | "yesterday" | "week" | "month") => {
-  activePeriod.value = type;
-  await fetchPeriodStats(type);
-};
-
 const fetchList = async () => {
   loading.value = true;
   try {
@@ -258,6 +250,8 @@ const handleSizeChange = (size: number) => {
 };
 
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
+const formatActivePeriodSummary = (data: Report.SignStatsData) =>
+  `签到 ${data.sign_user_count || 0} 人 · 记录 ${data.record_count || 0} 条`;
 
 onMounted(async () => {
   await Promise.allSettled([fetchList(), fetchPeriodStats("today")]);
