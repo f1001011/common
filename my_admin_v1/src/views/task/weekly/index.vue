@@ -205,6 +205,14 @@
 
       <el-tab-pane label="奖励记录" name="reward">
         <div class="panel">
+          <div class="summary-grid reward-summary-grid">
+            <div v-for="item in rewardPeriodCards" :key="item.key" class="summary-card primary">
+              <span class="summary-label">{{ item.title }}</span>
+              <strong>{{ currencyPrefix }}{{ formatMoney(item.data.reward_amount) }}</strong>
+              <span class="summary-label">人数 {{ item.data.user_count }} · 任务 {{ item.data.task_count }}</span>
+            </div>
+          </div>
+
           <div class="panel-header">
             <div class="page-title">
               <span>任务奖励记录</span>
@@ -331,6 +339,7 @@
 </template>
 
 <script setup lang="ts" name="weeklyTaskManage">
+import dayjs from "dayjs";
 import { computed, onMounted, reactive, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Task } from "@/api/interface";
@@ -340,6 +349,7 @@ import {
   getTaskConfigList,
   getTaskProgressList,
   getTaskRewardLogList,
+  getTaskRewardStats,
   updateTaskConfig
 } from "@/api/modules/task";
 import { currencyPrefix } from "@/utils";
@@ -380,6 +390,20 @@ const rewardSearch = reactive({
   date_range: [] as string[]
 });
 
+const createRewardStats = (): Task.RewardStatsData => ({
+  total_count: 0,
+  user_count: 0,
+  task_count: 0,
+  reward_amount: 0
+});
+
+const rewardPeriodStats = reactive<Record<string, Task.RewardStatsData>>({
+  today: createRewardStats(),
+  yesterday: createRewardStats(),
+  week: createRewardStats(),
+  month: createRewardStats()
+});
+
 const configDialogVisible = ref(false);
 
 const configForm = reactive<Task.SaveConfigParams>({
@@ -393,6 +417,52 @@ const configForm = reactive<Task.SaveConfigParams>({
 });
 
 const enabledTaskCount = computed(() => configList.value.filter(item => Number(item.status) === 1).length);
+const rewardPeriodCards = computed(() => [
+  { key: "today", title: "今天", data: rewardPeriodStats.today },
+  { key: "yesterday", title: "昨天", data: rewardPeriodStats.yesterday },
+  { key: "week", title: "本周", data: rewardPeriodStats.week },
+  { key: "month", title: "本月", data: rewardPeriodStats.month }
+]);
+
+const getPeriodRange = (type: "today" | "yesterday" | "week" | "month") => {
+  const now = dayjs();
+  if (type === "yesterday") {
+    return {
+      start_time: now.subtract(1, "day").startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.subtract(1, "day").endOf("day").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  if (type === "week") {
+    return {
+      start_time: now.startOf("week").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.endOf("week").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  if (type === "month") {
+    return {
+      start_time: now.startOf("month").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.endOf("month").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  return {
+    start_time: now.startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+    end_time: now.endOf("day").format("YYYY-MM-DD HH:mm:ss")
+  };
+};
+
+const fetchRewardPeriodStats = async () => {
+  const [todayRes, yesterdayRes, weekRes, monthRes] = await Promise.all([
+    getTaskRewardStats(getPeriodRange("today")),
+    getTaskRewardStats(getPeriodRange("yesterday")),
+    getTaskRewardStats(getPeriodRange("week")),
+    getTaskRewardStats(getPeriodRange("month"))
+  ]);
+
+  rewardPeriodStats.today = todayRes.data;
+  rewardPeriodStats.yesterday = yesterdayRes.data;
+  rewardPeriodStats.week = weekRes.data;
+  rewardPeriodStats.month = monthRes.data;
+};
 
 const resetConfigForm = () => {
   delete configForm.id;
@@ -586,7 +656,7 @@ const getTaskGroupText = (value?: number | string) => {
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
 
 onMounted(async () => {
-  await Promise.allSettled([fetchConfigList(), fetchProgressList(), fetchRewardList()]);
+  await Promise.allSettled([fetchConfigList(), fetchProgressList(), fetchRewardList(), fetchRewardPeriodStats()]);
 });
 </script>
 
@@ -636,6 +706,10 @@ onMounted(async () => {
 .summary-label {
   font-size: 13px;
   color: #6b7280;
+}
+
+.reward-summary-grid {
+  margin-bottom: 16px;
 }
 
 .panel {

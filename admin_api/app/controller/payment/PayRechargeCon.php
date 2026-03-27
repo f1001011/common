@@ -68,6 +68,57 @@ class PayRechargeCon extends BaseCon
     }
 
     /**
+     * 充值统计接口
+     *
+     * @return mixed
+     */
+    public function GetRechargeStats()
+    {
+        $postField = 'start_time,end_time';
+        $post = $this->request->only(explode(',', $postField), 'post', null);
+
+        $startTime = $this->normalizeSearchTime($post['start_time'] ?? null);
+        if (($post['start_time'] ?? '') !== '' && $startTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $endTime = $this->normalizeSearchTime($post['end_time'] ?? null, true);
+        if (($post['end_time'] ?? '') !== '' && $endTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $query = CommonPayRechargeModel::where([]);
+        if (!empty($startTime)) {
+            $query->where('create_time', '>=', $startTime);
+        }
+        if (!empty($endTime)) {
+            $query->where('create_time', '<=', $endTime);
+        }
+
+        $summary = $query
+            ->fieldRaw(
+                'COUNT(*) as total_count,' .
+                'COUNT(DISTINCT uid) as user_count,' .
+                'SUM(CASE WHEN status = ' . CommonPayRechargeModel::STATUS_PAY_SUCCESS . ' THEN 1 ELSE 0 END) as success_count,' .
+                'SUM(CASE WHEN status IN (' . CommonPayRechargeModel::STATUS_CREATE . ',' . CommonPayRechargeModel::STATUS_WAIT_PAY . ') THEN 1 ELSE 0 END) as pending_count,' .
+                'SUM(CASE WHEN status = ' . CommonPayRechargeModel::STATUS_PAY_FAIL . ' THEN 1 ELSE 0 END) as failed_count,' .
+                'COALESCE(SUM(money), 0) as apply_amount,' .
+                'COALESCE(SUM(CASE WHEN status = ' . CommonPayRechargeModel::STATUS_PAY_SUCCESS . ' THEN CASE WHEN COALESCE(actual_amount, 0) > 0 THEN actual_amount ELSE money END ELSE 0 END), 0) as success_amount'
+            )
+            ->find();
+
+        return Show(SUCCESS, [
+            'total_count' => (int)($summary['total_count'] ?? 0),
+            'user_count' => (int)($summary['user_count'] ?? 0),
+            'success_count' => (int)($summary['success_count'] ?? 0),
+            'pending_count' => (int)($summary['pending_count'] ?? 0),
+            'failed_count' => (int)($summary['failed_count'] ?? 0),
+            'apply_amount' => (float)($summary['apply_amount'] ?? 0),
+            'success_amount' => (float)($summary['success_amount'] ?? 0),
+        ]);
+    }
+
+    /**
      * 充值订单修改接口
      * 后台可用来修正订单信息、修改渠道信息、调整订单状态。
      * 当订单状态由未到账变为已到账时，会同步给用户增加余额并写入资金流水。

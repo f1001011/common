@@ -225,6 +225,46 @@ class TaskCon extends BaseCon
         return Show(SUCCESS, $list);
     }
 
+    public function GetTaskRewardStats()
+    {
+        $postField = 'start_time,end_time';
+        $post = $this->request->only(explode(',', $postField), 'post', null);
+
+        $startTime = $this->normalizeSearchTime($post['start_time'] ?? null);
+        if (($post['start_time'] ?? '') !== '' && $startTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $endTime = $this->normalizeSearchTime($post['end_time'] ?? null, true);
+        if (($post['end_time'] ?? '') !== '' && $endTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $prefix = (string)config('database.connections.mysql.prefix');
+        $query = Db::name('common_task_reward_log')
+            ->alias('log')
+            ->leftJoin($prefix . 'common_task_config task', 'task.id = log.task_id');
+
+        if (!empty($startTime)) {
+            $query->where('log.create_time', '>=', $startTime);
+        }
+
+        if (!empty($endTime)) {
+            $query->where('log.create_time', '<=', $endTime);
+        }
+
+        $summary = $query
+            ->fieldRaw('COUNT(*) as total_count, COUNT(DISTINCT log.user_id) as user_count, COUNT(DISTINCT log.task_id) as task_count, COALESCE(SUM(log.reward_amount), 0) as reward_amount')
+            ->find();
+
+        return Show(SUCCESS, [
+            'total_count' => (int)($summary['total_count'] ?? 0),
+            'user_count' => (int)($summary['user_count'] ?? 0),
+            'task_count' => (int)($summary['task_count'] ?? 0),
+            'reward_amount' => (float)($summary['reward_amount'] ?? 0),
+        ]);
+    }
+
     protected function getTaskConfigPostData(): array
     {
         $postField = 'id,task_group,task_name,required_invites,invite_level,reward_amount,sort,status';

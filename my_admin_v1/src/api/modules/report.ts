@@ -2,6 +2,10 @@ import { PORT1 } from "@/api/config/servicePort";
 import { Report } from "@/api/interface";
 import http from "@/api";
 
+export const getDashboardOverview = (params?: Report.DashboardOverviewParams) => {
+  return http.post<Report.DashboardOverviewData>(PORT1 + `/dashboard/overview`, params);
+};
+
 export const getSignLogList = (params: Report.SignReqParams) => {
   return http.post<Report.SignListData>(PORT1 + `/report/sign/list`, params);
 };

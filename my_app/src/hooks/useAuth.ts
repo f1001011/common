@@ -8,6 +8,7 @@ export function useAuth() {
     const res = await loginApi({ phone, pwd: password })
     const token = (res as any)?.token
     if (token) localStorage.setItem('token', token)
+    router.push({ name: 'Home' })
     return res
   }
 

@@ -189,6 +189,23 @@ export namespace PayMoneyLog {
     current_page: number;
     data: ResListItem[];
   }
+
+  export interface StatsParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface StatsData {
+    total_count: number;
+    user_count: number;
+    income_amount: number | string;
+    expense_amount: number | string;
+    net_amount: number | string;
+    balance_income_amount: number | string;
+    balance_expense_amount: number | string;
+    integral_income_amount: number | string;
+    integral_expense_amount: number | string;
+  }
 }
 
 // 充值管理模块
@@ -253,6 +270,21 @@ export namespace Recharge {
     per_page: number;
     current_page: number;
     data: ResListItem[];
+  }
+
+  export interface StatsParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface StatsData {
+    total_count: number;
+    user_count: number;
+    success_count: number;
+    pending_count: number;
+    failed_count: number;
+    apply_amount: number | string;
+    success_amount: number | string;
   }
 }
 
@@ -320,6 +352,22 @@ export namespace Cash {
     per_page: number;
     current_page: number;
     data: ResListItem[];
+  }
+
+  export interface StatsParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface StatsData {
+    total_count: number;
+    user_count: number;
+    applying_count: number;
+    success_count: number;
+    reject_count: number;
+    apply_amount: number | string;
+    success_amount: number | string;
+    fee_amount: number | string;
   }
 }
 
@@ -630,6 +678,11 @@ export namespace WithdrawShowcase {
     end_time?: string;
   }
 
+  export interface StatsParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
   export interface ResListItem {
     id: number;
     user_id: number;
@@ -654,6 +707,16 @@ export namespace WithdrawShowcase {
 
   export interface DetailParams {
     id: number;
+  }
+
+  export interface StatsData {
+    total_count: number;
+    user_count: number;
+    show_count: number;
+    hide_count: number;
+    amount_total: number | string;
+    comment_total: number;
+    like_total: number;
   }
 
   export interface SaveParams {
@@ -926,6 +989,48 @@ export namespace Task {
     current_page: number;
     data: ResRewardLogItem[];
   }
+
+  export interface RewardStatsParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface RewardStatsData {
+    total_count: number;
+    user_count: number;
+    task_count: number;
+    reward_amount: number | string;
+  }
+}
+
+// 系统配置管理
+export namespace SysConfig {
+  export interface ReqParams extends ReqPage {
+    id?: number | string;
+    name?: string;
+    mark?: string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    name: string;
+    value: string;
+    mark: string;
+  }
+
+  export interface SaveParams {
+    id?: number;
+    name: string;
+    value: string;
+    mark?: string;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
 }
 
 // 活动管理
@@ -1108,6 +1213,19 @@ export namespace Coupon {
     current_page: number;
     data: ResListItem[];
   }
+
+  export interface StatsParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface StatsData {
+    total_count: number;
+    user_count: number;
+    used_count: number;
+    unused_count: number;
+    total_amount: number | string;
+  }
 }
 
 export namespace RechargeVoucher {
@@ -1137,6 +1255,20 @@ export namespace RechargeVoucher {
     per_page: number;
     current_page: number;
     data: ResListItem[];
+  }
+
+  export interface StatsParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface StatsData {
+    total_count: number;
+    user_count: number;
+    pending_count: number;
+    success_count: number;
+    reject_count: number;
+    total_amount: number | string;
   }
 }
 
@@ -1230,6 +1362,103 @@ export namespace Content {
 }
 
 export namespace Report {
+  export interface DashboardOverviewParams {
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface DashboardPendingItem {
+    title: string;
+    count: number;
+    amount: number | string;
+    type: string;
+    description: string;
+  }
+
+  export interface DashboardCapital {
+    platform_net_in_amount: number | string;
+    user_balance_amount: number | string;
+    freeze_amount: number | string;
+    team_commission_amount: number | string;
+    user_integral_amount: number | string;
+    fund_gap_amount: number | string;
+    recharge_withdraw_ratio: number | string;
+    active_channel_count: number;
+    online_user_count: number;
+  }
+
+  export interface DashboardUserTrendItem {
+    date: string;
+    register_count: number;
+    first_recharge_count: number;
+    first_invest_count: number;
+  }
+
+  export interface DashboardVipDistributionItem {
+    name: string;
+    value: number;
+  }
+
+  export interface DashboardFinanceTrendItem {
+    date: string;
+    recharge_amount: number | string;
+    withdraw_amount: number | string;
+    net_in_amount: number | string;
+  }
+
+  export interface DashboardChannelFlowItem {
+    channel_name: string;
+    recharge_amount: number | string;
+    withdraw_amount: number | string;
+    net_amount: number | string;
+  }
+
+  export interface DashboardOverviewData {
+    updated_at: string;
+    query_range: {
+      start_time: string;
+      end_time: string;
+      compare_start_time: string;
+      compare_end_time: string;
+    };
+    kpis: {
+      today_recharge_amount: number | string;
+      yesterday_recharge_amount: number | string;
+      today_withdraw_amount: number | string;
+      yesterday_withdraw_amount: number | string;
+      today_fee_amount: number | string;
+      yesterday_fee_amount: number | string;
+      today_net_in_amount: number | string;
+      yesterday_net_in_amount: number | string;
+      today_register_count: number;
+      yesterday_register_count: number;
+      today_active_count: number;
+      yesterday_active_count: number;
+      today_first_recharge_count: number;
+      yesterday_first_recharge_count: number;
+      today_first_invest_count: number;
+      yesterday_first_invest_count: number;
+      today_income_claim_amount: number | string;
+      yesterday_income_claim_amount: number | string;
+      total_user_count: number;
+      online_user_count: number;
+      active_channel_count: number;
+      user_balance_amount: number | string;
+    };
+    pending_items: DashboardPendingItem[];
+    capital: DashboardCapital;
+    user_growth: {
+      today_register_count: number;
+      today_active_count: number;
+      today_first_recharge_count: number;
+      today_first_invest_count: number;
+      register_trend: DashboardUserTrendItem[];
+      vip_distribution: DashboardVipDistributionItem[];
+    };
+    finance_trend: DashboardFinanceTrendItem[];
+    channel_flow: DashboardChannelFlowItem[];
+  }
+
   export interface PeriodStatsItem {
     total_count: number;
     total_amount: number | string;

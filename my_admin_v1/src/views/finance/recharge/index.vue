@@ -1,5 +1,16 @@
 <template>
   <div class="table-box finance-list-page">
+    <div class="period-grid">
+      <div v-for="item in periodCards" :key="item.key" class="period-card">
+        <div class="period-title">{{ item.title }}</div>
+        <strong>{{ currencyPrefix }}{{ formatMoney(item.data.success_amount) }}</strong>
+        <div class="period-meta">
+          <span>成功 {{ item.data.success_count }} 单</span>
+          <span>用户 {{ item.data.user_count }} 人</span>
+        </div>
+      </div>
+    </div>
+
     <div class="summary-grid">
       <div class="summary-card">
         <span class="summary-label">当前页订单数</span>
@@ -67,11 +78,12 @@
 </template>
 
 <script setup lang="ts" name="financeRecharge">
-import { reactive, ref } from "vue";
+import dayjs from "dayjs";
+import { computed, onMounted, reactive, ref } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { Recharge } from "@/api/interface";
-import { getRechargeList } from "@/api/modules/payment";
+import { getRechargeList, getRechargeStats } from "@/api/modules/payment";
 import { currencyPrefix } from "@/utils";
 import RechargeDialog from "@/views/finance/components/RechargeDialog.vue";
 
@@ -84,6 +96,70 @@ const summary = reactive({
   pending: 0,
   failed: 0
 });
+
+const createEmptyStats = (): Recharge.StatsData => ({
+  total_count: 0,
+  user_count: 0,
+  success_count: 0,
+  pending_count: 0,
+  failed_count: 0,
+  apply_amount: 0,
+  success_amount: 0
+});
+
+const periodStats = reactive<Record<string, Recharge.StatsData>>({
+  today: createEmptyStats(),
+  yesterday: createEmptyStats(),
+  week: createEmptyStats(),
+  month: createEmptyStats()
+});
+
+const getPeriodRange = (type: "today" | "yesterday" | "week" | "month") => {
+  const now = dayjs();
+  if (type === "yesterday") {
+    return {
+      start_time: now.subtract(1, "day").startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.subtract(1, "day").endOf("day").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  if (type === "week") {
+    return {
+      start_time: now.startOf("week").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.endOf("week").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  if (type === "month") {
+    return {
+      start_time: now.startOf("month").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.endOf("month").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  return {
+    start_time: now.startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+    end_time: now.endOf("day").format("YYYY-MM-DD HH:mm:ss")
+  };
+};
+
+const fetchPeriodStats = async () => {
+  const [todayRes, yesterdayRes, weekRes, monthRes] = await Promise.all([
+    getRechargeStats(getPeriodRange("today")),
+    getRechargeStats(getPeriodRange("yesterday")),
+    getRechargeStats(getPeriodRange("week")),
+    getRechargeStats(getPeriodRange("month"))
+  ]);
+
+  periodStats.today = todayRes.data;
+  periodStats.yesterday = yesterdayRes.data;
+  periodStats.week = weekRes.data;
+  periodStats.month = monthRes.data;
+};
+
+const periodCards = computed(() => [
+  { key: "today", title: "今天", data: periodStats.today },
+  { key: "yesterday", title: "昨天", data: periodStats.yesterday },
+  { key: "week", title: "本周", data: periodStats.week },
+  { key: "month", title: "本月", data: periodStats.month }
+]);
 
 const statusOptions = [
   { label: "全部", value: "" },
@@ -187,9 +263,46 @@ const getStatusTag = (value: number | string) => {
   };
   return map[Number(value)] || "info";
 };
+
+onMounted(fetchPeriodStats);
 </script>
 
 <style scoped lang="scss">
+.period-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.period-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid #dbeafe;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.period-title {
+  color: #475569;
+  font-size: 13px;
+}
+
+.period-card strong {
+  color: #0f172a;
+  font-size: 26px;
+}
+
+.period-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #64748b;
+  font-size: 12px;
+}
+
 .page-title {
   display: flex;
   gap: 10px;
@@ -251,12 +364,14 @@ const getStatusTag = (value: number | string) => {
 }
 
 @media (max-width: 1200px) {
+  .period-grid,
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 768px) {
+  .period-grid,
   .summary-grid {
     grid-template-columns: 1fr;
   }

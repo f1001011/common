@@ -101,6 +101,58 @@ class WithdrawShowcaseCon extends BaseCon
         return Show(SUCCESS, $result);
     }
 
+    public function GetShowcaseStats()
+    {
+        $postField = 'start_time,end_time';
+        $post = $this->request->only(explode(',', $postField), 'post', null);
+
+        $startTime = $this->normalizeSearchTime($post['start_time'] ?? null);
+        if (($post['start_time'] ?? '') !== '' && $startTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $endTime = $this->normalizeSearchTime($post['end_time'] ?? null, true);
+        if (($post['end_time'] ?? '') !== '' && $endTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $query = CommonWithdrawShowcaseModel::where([]);
+        if (!empty($startTime)) {
+            $query->where('create_time', '>=', $startTime);
+        }
+        if (!empty($endTime)) {
+            $query->where('create_time', '<=', $endTime);
+        }
+
+        $summary = (clone $query)
+            ->fieldRaw(
+                'COUNT(*) as total_count,' .
+                'COUNT(DISTINCT user_id) as user_count,' .
+                'SUM(CASE WHEN status = ' . CommonWithdrawShowcaseModel::STATUS_SHOW . ' THEN 1 ELSE 0 END) as show_count,' .
+                'SUM(CASE WHEN status = ' . CommonWithdrawShowcaseModel::STATUS_HIDE . ' THEN 1 ELSE 0 END) as hide_count,' .
+                'COALESCE(SUM(amount), 0) as amount_total'
+            )
+            ->find();
+
+        $showcaseIds = (clone $query)->column('id');
+        $commentTotal = 0;
+        $likeTotal = 0;
+        if (!empty($showcaseIds)) {
+            $commentTotal = (int)CommonWithdrawCommentModel::whereIn('showcase_id', $showcaseIds)->count();
+            $likeTotal = (int)CommonWithdrawLikeModel::whereIn('showcase_id', $showcaseIds)->count();
+        }
+
+        return Show(SUCCESS, [
+            'total_count' => (int)($summary['total_count'] ?? 0),
+            'user_count' => (int)($summary['user_count'] ?? 0),
+            'show_count' => (int)($summary['show_count'] ?? 0),
+            'hide_count' => (int)($summary['hide_count'] ?? 0),
+            'amount_total' => (float)($summary['amount_total'] ?? 0),
+            'comment_total' => $commentTotal,
+            'like_total' => $likeTotal,
+        ]);
+    }
+
     public function GetShowcaseDetail()
     {
         $postField = 'id';

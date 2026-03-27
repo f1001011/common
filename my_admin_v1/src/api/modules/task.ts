@@ -25,3 +25,7 @@ export const getTaskProgressList = (params: Task.ReqProgressParams) => {
 export const getTaskRewardLogList = (params: Task.ReqRewardLogParams) => {
   return http.post<Task.ResRewardLogListData>(PORT1 + `/task/reward/log/list`, params);
 };
+
+export const getTaskRewardStats = (params: Task.RewardStatsParams) => {
+  return http.post<Task.RewardStatsData>(PORT1 + `/task/reward/log/stats`, params);
+};

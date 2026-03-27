@@ -9,8 +9,16 @@ export const getPayMoneyLogList = (params: PayMoneyLog.ReqParams) => {
   return http.post<PayMoneyLog.ResListData>(PORT1 + `/pay/money/log/list`, params);
 };
 
+export const getPayMoneyLogStats = (params: PayMoneyLog.StatsParams) => {
+  return http.post<PayMoneyLog.StatsData>(PORT1 + `/pay/money/log/stats`, params);
+};
+
 export const getRechargeList = (params: Recharge.ReqParams) => {
   return http.post<Recharge.ResListData>(PORT1 + `/pay/recharge/list`, params);
+};
+
+export const getRechargeStats = (params: Recharge.StatsParams) => {
+  return http.post<Recharge.StatsData>(PORT1 + `/pay/recharge/stats`, params);
 };
 
 export const updateRechargeOrder = (params: Recharge.UpdateParams) => {
@@ -19,6 +27,10 @@ export const updateRechargeOrder = (params: Recharge.UpdateParams) => {
 
 export const getCashList = (params: Cash.ReqParams) => {
   return http.post<Cash.ResListData>(PORT1 + `/pay/cash/list`, params);
+};
+
+export const getCashStats = (params: Cash.StatsParams) => {
+  return http.post<Cash.StatsData>(PORT1 + `/pay/cash/stats`, params);
 };
 
 export const updateCashOrder = (params: Cash.UpdateParams) => {
@@ -45,6 +57,14 @@ export const getCouponList = (params: Coupon.ReqParams) => {
   return http.post<Coupon.ResListData>(PORT1 + `/pay/coupon/list`, params);
 };
 
+export const getCouponStats = (params: Coupon.StatsParams) => {
+  return http.post<Coupon.StatsData>(PORT1 + `/pay/coupon/stats`, params);
+};
+
 export const getRechargeVoucherList = (params: RechargeVoucher.ReqParams) => {
   return http.post<RechargeVoucher.ResListData>(PORT1 + `/recharge/voucher/list`, params);
+};
+
+export const getRechargeVoucherStats = (params: RechargeVoucher.StatsParams) => {
+  return http.post<RechargeVoucher.StatsData>(PORT1 + `/recharge/voucher/stats`, params);
 };

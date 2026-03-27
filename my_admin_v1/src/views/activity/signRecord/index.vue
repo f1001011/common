@@ -29,6 +29,14 @@
       </div>
 
       <div class="summary-grid">
+        <div v-for="item in periodCards" :key="item.key" class="summary-card period-card">
+          <span class="summary-label">{{ item.title }}</span>
+          <strong>{{ currencyPrefix }}{{ formatMoney(item.data.gift_amount || 0) }}</strong>
+          <small>签到 {{ item.data.sign_user_count || 0 }} 人 · 记录 {{ item.data.record_count || 0 }} 条</small>
+        </div>
+      </div>
+
+      <div class="summary-grid current-grid">
         <div class="summary-card">
           <span class="summary-label">签到人数</span>
           <strong>{{ stats.sign_user_count || 0 }}</strong>
@@ -96,7 +104,7 @@
 
 <script setup lang="ts" name="signRecordManage">
 import dayjs from "dayjs";
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import { Report } from "@/api/interface";
 import { getSignLogList, getSignStats } from "@/api/modules/report";
 import { currencyPrefix } from "@/utils";
@@ -113,6 +121,20 @@ const stats = reactive<Report.SignStatsData>({
 });
 const pagination = reactive({ page: 1, limit: 20, total: 0 });
 const search = reactive({ user_id: "" });
+
+const createEmptyStats = (): Report.SignStatsData => ({
+  sign_user_count: 0,
+  gift_amount: 0,
+  record_count: 0,
+  reward_breakdown: []
+});
+
+const periodStats = reactive<Record<string, Report.SignStatsData>>({
+  today: createEmptyStats(),
+  yesterday: createEmptyStats(),
+  week: createEmptyStats(),
+  month: createEmptyStats()
+});
 
 const getRangeByType = (type: string): string[] => {
   const now = dayjs();
@@ -135,6 +157,27 @@ const getRangeByType = (type: string): string[] => {
 };
 
 const getCurrentRange = () => (customRange.value.length === 2 ? customRange.value : getRangeByType(rangeType.value));
+
+const fetchPeriodStats = async () => {
+  const [todayRes, yesterdayRes, weekRes, monthRes] = await Promise.all([
+    getSignStats(getRangeByType("today")),
+    getSignStats(getRangeByType("yesterday")),
+    getSignStats(getRangeByType("week")),
+    getSignStats(getRangeByType("month"))
+  ]);
+
+  periodStats.today = todayRes.data;
+  periodStats.yesterday = yesterdayRes.data;
+  periodStats.week = weekRes.data;
+  periodStats.month = monthRes.data;
+};
+
+const periodCards = computed(() => [
+  { key: "today", title: "今天", data: periodStats.today },
+  { key: "yesterday", title: "昨天", data: periodStats.yesterday },
+  { key: "week", title: "本周", data: periodStats.week },
+  { key: "month", title: "本月", data: periodStats.month }
+]);
 
 const fetchList = async () => {
   loading.value = true;
@@ -197,7 +240,9 @@ const handleSizeChange = (size: number) => {
 
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
 
-onMounted(fetchList);
+onMounted(async () => {
+  await Promise.allSettled([fetchList(), fetchPeriodStats()]);
+});
 </script>
 
 <style scoped lang="scss">
@@ -237,9 +282,13 @@ onMounted(fetchList);
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 16px;
+}
+
+.current-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .summary-card {
@@ -255,6 +304,16 @@ onMounted(fetchList);
 .summary-card strong {
   font-size: 24px;
   color: #111827;
+}
+
+.period-card {
+  border-color: #dbeafe;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.period-card small {
+  color: #64748b;
+  line-height: 1.5;
 }
 
 .summary-card.success {
@@ -326,11 +385,19 @@ onMounted(fetchList);
   .breakdown-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .current-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
   .summary-grid,
   .breakdown-list {
+    grid-template-columns: 1fr;
+  }
+
+  .current-grid {
     grid-template-columns: 1fr;
   }
 

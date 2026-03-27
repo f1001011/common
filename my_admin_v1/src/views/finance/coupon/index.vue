@@ -1,5 +1,16 @@
 <template>
   <div class="table-box finance-list-page">
+    <div class="period-grid">
+      <div v-for="item in periodCards" :key="item.key" class="period-card">
+        <div class="period-title">{{ item.title }}</div>
+        <strong>{{ currencyPrefix }}{{ formatMoney(item.data.total_amount) }}</strong>
+        <div class="period-meta">
+          <span>已使用 {{ item.data.used_count }}</span>
+          <span>未使用 {{ item.data.unused_count }}</span>
+        </div>
+      </div>
+    </div>
+
     <ProTable
       :columns="columns"
       :request-api="requestCouponList"
@@ -39,12 +50,75 @@
 </template>
 
 <script setup lang="ts" name="couponManage">
-import { reactive } from "vue";
+import dayjs from "dayjs";
+import { computed, onMounted, reactive } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps } from "@/components/ProTable/interface";
 import { Coupon } from "@/api/interface";
-import { getCouponList } from "@/api/modules/payment";
+import { getCouponList, getCouponStats } from "@/api/modules/payment";
 import { currencyPrefix } from "@/utils";
+
+const createEmptyStats = (): Coupon.StatsData => ({
+  total_count: 0,
+  user_count: 0,
+  used_count: 0,
+  unused_count: 0,
+  total_amount: 0
+});
+
+const periodStats = reactive<Record<string, Coupon.StatsData>>({
+  today: createEmptyStats(),
+  yesterday: createEmptyStats(),
+  week: createEmptyStats(),
+  month: createEmptyStats()
+});
+
+const getPeriodRange = (type: "today" | "yesterday" | "week" | "month") => {
+  const now = dayjs();
+  if (type === "yesterday") {
+    return {
+      start_time: now.subtract(1, "day").startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.subtract(1, "day").endOf("day").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  if (type === "week") {
+    return {
+      start_time: now.startOf("week").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.endOf("week").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  if (type === "month") {
+    return {
+      start_time: now.startOf("month").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.endOf("month").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  return {
+    start_time: now.startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+    end_time: now.endOf("day").format("YYYY-MM-DD HH:mm:ss")
+  };
+};
+
+const fetchPeriodStats = async () => {
+  const [todayRes, yesterdayRes, weekRes, monthRes] = await Promise.all([
+    getCouponStats(getPeriodRange("today")),
+    getCouponStats(getPeriodRange("yesterday")),
+    getCouponStats(getPeriodRange("week")),
+    getCouponStats(getPeriodRange("month"))
+  ]);
+
+  periodStats.today = todayRes.data;
+  periodStats.yesterday = yesterdayRes.data;
+  periodStats.week = weekRes.data;
+  periodStats.month = monthRes.data;
+};
+
+const periodCards = computed(() => [
+  { key: "today", title: "今天", data: periodStats.today },
+  { key: "yesterday", title: "昨天", data: periodStats.yesterday },
+  { key: "week", title: "本周", data: periodStats.week },
+  { key: "month", title: "本月", data: periodStats.month }
+]);
 
 const columns = reactive<ColumnProps<Coupon.ResListItem>[]>([
   { type: "index", label: "#", width: 70 },
@@ -105,9 +179,46 @@ const dataCallback = (res: Coupon.ResListData) => ({
 });
 
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
+
+onMounted(fetchPeriodStats);
 </script>
 
 <style scoped lang="scss">
+.period-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.period-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid #dbeafe;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.period-title {
+  color: #475569;
+  font-size: 13px;
+}
+
+.period-card strong {
+  color: #0f172a;
+  font-size: 26px;
+}
+
+.period-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #64748b;
+  font-size: 12px;
+}
+
 .page-title {
   display: flex;
   gap: 10px;
@@ -127,5 +238,17 @@ const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
   flex-direction: column;
   gap: 4px;
   color: #4b5563;
+}
+
+@media (max-width: 1200px) {
+  .period-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .period-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

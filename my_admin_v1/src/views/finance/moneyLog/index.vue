@@ -1,5 +1,16 @@
 <template>
   <div class="table-box finance-list-page">
+    <div class="period-grid">
+      <div v-for="item in periodCards" :key="item.key" class="period-card">
+        <div class="period-title">{{ item.title }}</div>
+        <strong>{{ currencyPrefix }}{{ formatMoney(item.data.net_amount) }}</strong>
+        <div class="period-meta">
+          <span class="amount-up">入 {{ currencyPrefix }}{{ formatMoney(item.data.income_amount) }}</span>
+          <span class="amount-down">出 {{ currencyPrefix }}{{ formatMoney(item.data.expense_amount) }}</span>
+        </div>
+      </div>
+    </div>
+
     <ProTable
       ref="proTable"
       :columns="columns"
@@ -49,14 +60,81 @@
 </template>
 
 <script setup lang="ts" name="financeMoneyLog">
-import { ref, reactive } from "vue";
+import dayjs from "dayjs";
+import { computed, reactive, ref, onMounted } from "vue";
 import ProTable from "@/components/ProTable/index.vue";
 import type { ColumnProps, ProTableInstance } from "@/components/ProTable/interface";
 import { PayMoneyLog } from "@/api/interface";
-import { getPayMoneyLogList } from "@/api/modules/payment";
+import { getPayMoneyLogList, getPayMoneyLogStats } from "@/api/modules/payment";
 import { currencyPrefix } from "@/utils";
 
 const proTable = ref<ProTableInstance>();
+
+const createEmptyStats = (): PayMoneyLog.StatsData => ({
+  total_count: 0,
+  user_count: 0,
+  income_amount: 0,
+  expense_amount: 0,
+  net_amount: 0,
+  balance_income_amount: 0,
+  balance_expense_amount: 0,
+  integral_income_amount: 0,
+  integral_expense_amount: 0
+});
+
+const periodStats = reactive<Record<string, PayMoneyLog.StatsData>>({
+  today: createEmptyStats(),
+  yesterday: createEmptyStats(),
+  week: createEmptyStats(),
+  month: createEmptyStats()
+});
+
+const getPeriodRange = (type: "today" | "yesterday" | "week" | "month") => {
+  const now = dayjs();
+  if (type === "yesterday") {
+    return {
+      start_time: now.subtract(1, "day").startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.subtract(1, "day").endOf("day").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  if (type === "week") {
+    return {
+      start_time: now.startOf("week").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.endOf("week").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  if (type === "month") {
+    return {
+      start_time: now.startOf("month").format("YYYY-MM-DD HH:mm:ss"),
+      end_time: now.endOf("month").format("YYYY-MM-DD HH:mm:ss")
+    };
+  }
+  return {
+    start_time: now.startOf("day").format("YYYY-MM-DD HH:mm:ss"),
+    end_time: now.endOf("day").format("YYYY-MM-DD HH:mm:ss")
+  };
+};
+
+const fetchPeriodStats = async () => {
+  const [todayRes, yesterdayRes, weekRes, monthRes] = await Promise.all([
+    getPayMoneyLogStats(getPeriodRange("today")),
+    getPayMoneyLogStats(getPeriodRange("yesterday")),
+    getPayMoneyLogStats(getPeriodRange("week")),
+    getPayMoneyLogStats(getPeriodRange("month"))
+  ]);
+
+  periodStats.today = todayRes.data;
+  periodStats.yesterday = yesterdayRes.data;
+  periodStats.week = weekRes.data;
+  periodStats.month = monthRes.data;
+};
+
+const periodCards = computed(() => [
+  { key: "today", title: "今天", data: periodStats.today },
+  { key: "yesterday", title: "昨天", data: periodStats.yesterday },
+  { key: "week", title: "本周", data: periodStats.week },
+  { key: "month", title: "本月", data: periodStats.month }
+]);
 
 const typeOptions = [
   { label: "全部", value: "" },
@@ -163,9 +241,45 @@ const getStatusText = (value: number | string) => {
   const current = statusOptions.find(item => Number(item.value) === Number(value));
   return current?.label || `状态${value}`;
 };
+
+onMounted(fetchPeriodStats);
 </script>
 
 <style scoped lang="scss">
+.period-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.period-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid #dbeafe;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.period-title {
+  color: #475569;
+  font-size: 13px;
+}
+
+.period-card strong {
+  color: #0f172a;
+  font-size: 26px;
+}
+
+.period-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+}
+
 .page-title {
   display: flex;
   gap: 10px;
@@ -183,5 +297,17 @@ const getStatusText = (value: number | string) => {
 .amount-down {
   font-weight: 600;
   color: #dc2626;
+}
+
+@media (max-width: 1200px) {
+  .period-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .period-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

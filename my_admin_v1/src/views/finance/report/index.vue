@@ -27,6 +27,18 @@
         </div>
       </div>
 
+      <div class="period-grid">
+        <div v-for="item in periodCards" :key="item.key" class="period-card">
+          <div class="period-title">{{ item.title }}</div>
+          <strong>{{ currencyPrefix }}{{ formatMoney(item.data.net_in_amount) }}</strong>
+          <div class="period-meta">
+            <span>充 {{ currencyPrefix }}{{ formatMoney(item.data.recharge_success_amount) }}</span>
+            <span>提 {{ currencyPrefix }}{{ formatMoney(item.data.withdraw_success_amount) }}</span>
+          </div>
+          <small>充值 {{ item.data.recharge_success_count || 0 }} 笔 / 提现 {{ item.data.withdraw_success_count || 0 }} 笔</small>
+        </div>
+      </div>
+
       <div class="summary-grid">
         <div class="summary-card">
           <span class="summary-label">充值成功金额</span>
@@ -146,7 +158,7 @@ import { currencyPrefix } from "@/utils";
 const loading = ref(false);
 const rangeType = ref("today");
 const customRange = ref<string[]>([]);
-const summary = reactive<Report.FinanceSummaryData>({
+const createEmptySummary = (): Report.FinanceSummaryData => ({
   recharge_total_count: 0,
   recharge_success_count: 0,
   recharge_success_amount: 0,
@@ -166,6 +178,36 @@ const summary = reactive<Report.FinanceSummaryData>({
   recharge_channel_breakdown: [],
   withdraw_channel_breakdown: [],
   money_type_breakdown: []
+});
+
+const normalizeSummaryData = (data?: Partial<Report.FinanceSummaryData>): Report.FinanceSummaryData => ({
+  recharge_total_count: Number(data?.recharge_total_count || 0),
+  recharge_success_count: Number(data?.recharge_success_count || 0),
+  recharge_success_amount: Number(data?.recharge_success_amount || 0),
+  recharge_pending_count: Number(data?.recharge_pending_count || 0),
+  withdraw_total_count: Number(data?.withdraw_total_count || 0),
+  withdraw_success_count: Number(data?.withdraw_success_count || 0),
+  withdraw_success_amount: Number(data?.withdraw_success_amount || 0),
+  withdraw_pending_count: Number(data?.withdraw_pending_count || 0),
+  net_in_amount: Number(data?.net_in_amount || 0),
+  money_total_count: Number(data?.money_total_count || 0),
+  money_income_amount: Number(data?.money_income_amount || 0),
+  money_expense_amount: Number(data?.money_expense_amount || 0),
+  balance_income_amount: Number(data?.balance_income_amount || 0),
+  balance_expense_amount: Number(data?.balance_expense_amount || 0),
+  integral_income_amount: Number(data?.integral_income_amount || 0),
+  integral_expense_amount: Number(data?.integral_expense_amount || 0),
+  recharge_channel_breakdown: data?.recharge_channel_breakdown || [],
+  withdraw_channel_breakdown: data?.withdraw_channel_breakdown || [],
+  money_type_breakdown: data?.money_type_breakdown || []
+});
+
+const summary = reactive<Report.FinanceSummaryData>(createEmptySummary());
+const periodSummary = reactive<Record<string, Report.FinanceSummaryData>>({
+  today: createEmptySummary(),
+  yesterday: createEmptySummary(),
+  week: createEmptySummary(),
+  month: createEmptySummary()
 });
 
 const getRangeByType = (type: string): string[] => {
@@ -195,30 +237,24 @@ const fetchSummary = async () => {
   try {
     const [start_time, end_time] = getCurrentRange();
     const { data } = await getFinanceSummary({ start_time, end_time });
-    Object.assign(summary, {
-      recharge_total_count: Number(data.recharge_total_count || 0),
-      recharge_success_count: Number(data.recharge_success_count || 0),
-      recharge_success_amount: Number(data.recharge_success_amount || 0),
-      recharge_pending_count: Number(data.recharge_pending_count || 0),
-      withdraw_total_count: Number(data.withdraw_total_count || 0),
-      withdraw_success_count: Number(data.withdraw_success_count || 0),
-      withdraw_success_amount: Number(data.withdraw_success_amount || 0),
-      withdraw_pending_count: Number(data.withdraw_pending_count || 0),
-      net_in_amount: Number(data.net_in_amount || 0),
-      money_total_count: Number(data.money_total_count || 0),
-      money_income_amount: Number(data.money_income_amount || 0),
-      money_expense_amount: Number(data.money_expense_amount || 0),
-      balance_income_amount: Number(data.balance_income_amount || 0),
-      balance_expense_amount: Number(data.balance_expense_amount || 0),
-      integral_income_amount: Number(data.integral_income_amount || 0),
-      integral_expense_amount: Number(data.integral_expense_amount || 0),
-      recharge_channel_breakdown: data.recharge_channel_breakdown || [],
-      withdraw_channel_breakdown: data.withdraw_channel_breakdown || [],
-      money_type_breakdown: data.money_type_breakdown || []
-    });
+    Object.assign(summary, normalizeSummaryData(data));
   } finally {
     loading.value = false;
   }
+};
+
+const fetchPeriodSummary = async () => {
+  const periodKeys = ["today", "yesterday", "week", "month"] as const;
+  const responses = await Promise.all(
+    periodKeys.map(key => {
+      const [start_time, end_time] = getRangeByType(key);
+      return getFinanceSummary({ start_time, end_time });
+    })
+  );
+
+  periodKeys.forEach((key, index) => {
+    periodSummary[key] = normalizeSummaryData(responses[index].data);
+  });
 };
 
 const handlePresetChange = async () => {
@@ -240,9 +276,18 @@ const moneyTypeTableData = computed(() =>
   }))
 );
 
+const periodCards = computed(() => [
+  { key: "today", title: "今天", data: periodSummary.today },
+  { key: "yesterday", title: "昨天", data: periodSummary.yesterday },
+  { key: "week", title: "本周", data: periodSummary.week },
+  { key: "month", title: "本月", data: periodSummary.month }
+]);
+
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
 
-onMounted(fetchSummary);
+onMounted(async () => {
+  await Promise.allSettled([fetchSummary(), fetchPeriodSummary()]);
+});
 </script>
 
 <style scoped lang="scss">
@@ -278,6 +323,45 @@ onMounted(fetchSummary);
   font-size: 16px;
   font-weight: 600;
   color: #1f2937;
+}
+
+.period-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.period-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid #dbeafe;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.period-title {
+  color: #475569;
+  font-size: 13px;
+}
+
+.period-card strong {
+  color: #0f172a;
+  font-size: 26px;
+}
+
+.period-card small {
+  color: #64748b;
+}
+
+.period-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #64748b;
+  font-size: 12px;
 }
 
 .summary-grid {
@@ -402,5 +486,42 @@ onMounted(fetchSummary);
 .account-card strong {
   font-size: 20px;
   color: #111827;
+}
+
+@media (max-width: 1200px) {
+  .period-grid,
+  .summary-grid,
+  .section-grid,
+  .account-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .section-grid.single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .panel-header,
+  .page-title,
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .period-grid,
+  .summary-grid,
+  .section-grid,
+  .account-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-grid.single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .breakdown-item {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

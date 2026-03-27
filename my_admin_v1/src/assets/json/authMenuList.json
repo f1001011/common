@@ -588,6 +588,20 @@
           }
         },
         {
+          "path": "/system/sysConfig",
+          "name": "sysConfigManage",
+          "component": "/system/sysConfig/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "系统配置",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
           "path": "/system/timingTask",
           "name": "timingTask",
           "component": "/system/timingTask/index",

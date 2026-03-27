@@ -68,6 +68,59 @@ class PayCashCon extends BaseCon
     }
 
     /**
+     * 提现统计接口
+     *
+     * @return mixed
+     */
+    public function GetCashStats()
+    {
+        $postField = 'start_time,end_time';
+        $post = $this->request->only(explode(',', $postField), 'post', null);
+
+        $startTime = $this->normalizeSearchTime($post['start_time'] ?? null);
+        if (($post['start_time'] ?? '') !== '' && $startTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $endTime = $this->normalizeSearchTime($post['end_time'] ?? null, true);
+        if (($post['end_time'] ?? '') !== '' && $endTime === false) {
+            return Show(ERROR, [], 10025);
+        }
+
+        $query = CommonPayCashModel::where([]);
+        if (!empty($startTime)) {
+            $query->where('create_time', '>=', $startTime);
+        }
+        if (!empty($endTime)) {
+            $query->where('create_time', '<=', $endTime);
+        }
+
+        $summary = $query
+            ->fieldRaw(
+                'COUNT(*) as total_count,' .
+                'COUNT(DISTINCT u_id) as user_count,' .
+                'SUM(CASE WHEN status = ' . CommonPayCashModel::STATUS_APPLY . ' THEN 1 ELSE 0 END) as applying_count,' .
+                'SUM(CASE WHEN status = ' . CommonPayCashModel::STATUS_SUCCESS . ' THEN 1 ELSE 0 END) as success_count,' .
+                'SUM(CASE WHEN status = ' . CommonPayCashModel::STATUS_REJECT . ' THEN 1 ELSE 0 END) as reject_count,' .
+                'COALESCE(SUM(money), 0) as apply_amount,' .
+                'COALESCE(SUM(CASE WHEN status = ' . CommonPayCashModel::STATUS_SUCCESS . ' THEN CASE WHEN COALESCE(actual_amount, 0) > 0 THEN actual_amount WHEN COALESCE(money_actual, 0) > 0 THEN money_actual ELSE money END ELSE 0 END), 0) as success_amount,' .
+                'COALESCE(SUM(CASE WHEN status = ' . CommonPayCashModel::STATUS_SUCCESS . ' THEN CASE WHEN COALESCE(fee, 0) > 0 THEN fee ELSE COALESCE(money_fee, 0) END ELSE 0 END), 0) as fee_amount'
+            )
+            ->find();
+
+        return Show(SUCCESS, [
+            'total_count' => (int)($summary['total_count'] ?? 0),
+            'user_count' => (int)($summary['user_count'] ?? 0),
+            'applying_count' => (int)($summary['applying_count'] ?? 0),
+            'success_count' => (int)($summary['success_count'] ?? 0),
+            'reject_count' => (int)($summary['reject_count'] ?? 0),
+            'apply_amount' => (float)($summary['apply_amount'] ?? 0),
+            'success_amount' => (float)($summary['success_amount'] ?? 0),
+            'fee_amount' => (float)($summary['fee_amount'] ?? 0),
+        ]);
+    }
+
+    /**
      * 提现订单修改接口
      * 后台可用来修正提现订单信息、渠道信息、审核状态。
      * 当提现状态从申请中改为拒绝时，会把提现金额退回用户余额并写入资金流水。

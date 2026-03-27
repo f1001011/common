@@ -35,14 +35,23 @@ Route::group('api', function(){
     // 资金流水记录
     Route::post('pay/money/log/list', \app\controller\payment\PayMoneyLogCon::class . '@GetMoneyLogList');
 
+    // 资金流水统计
+    Route::post('pay/money/log/stats', \app\controller\payment\PayMoneyLogCon::class . '@GetMoneyLogStats');
+
     // 充值记录
     Route::post('pay/recharge/list', \app\controller\payment\PayRechargeCon::class . '@GetRechargeList');
+
+    // 充值统计
+    Route::post('pay/recharge/stats', \app\controller\payment\PayRechargeCon::class . '@GetRechargeStats');
 
     // 充值订单修改
     Route::post('pay/recharge/update', \app\controller\payment\PayRechargeCon::class . '@UpdateRechargeOrder');
 
     // 提现记录
     Route::post('pay/cash/list', \app\controller\payment\PayCashCon::class . '@GetCashList');
+
+    // 提现统计
+    Route::post('pay/cash/stats', \app\controller\payment\PayCashCon::class . '@GetCashStats');
 
     // 提现订单修改
     Route::post('pay/cash/update', \app\controller\payment\PayCashCon::class . '@UpdateCashOrder');
@@ -61,6 +70,9 @@ Route::group('api', function(){
 
     // 提现凭证展示列表
     Route::post('withdraw/showcase/list', \app\controller\payment\WithdrawShowcaseCon::class . '@GetShowcaseList');
+
+    // 提现凭证展示统计
+    Route::post('withdraw/showcase/stats', \app\controller\payment\WithdrawShowcaseCon::class . '@GetShowcaseStats');
 
     // 提现凭证详情
     Route::post('withdraw/showcase/detail', \app\controller\payment\WithdrawShowcaseCon::class . '@GetShowcaseDetail');
@@ -89,8 +101,14 @@ Route::group('api', function(){
     // 优惠券列表
     Route::post('pay/coupon/list', \app\controller\payment\FinanceRecordCon::class . '@GetCouponList');
 
+    // 优惠券统计
+    Route::post('pay/coupon/stats', \app\controller\payment\FinanceRecordCon::class . '@GetCouponStats');
+
     // 充值凭证列表
     Route::post('recharge/voucher/list', \app\controller\payment\FinanceRecordCon::class . '@GetRechargeVoucherList');
+
+    // 充值凭证统计
+    Route::post('recharge/voucher/stats', \app\controller\payment\FinanceRecordCon::class . '@GetRechargeVoucherStats');
 
     // 商品订单记录
     Route::post('goods/order/list', \app\controller\product\GoodsOrderCon::class . '@GetOrderList');
@@ -179,6 +197,18 @@ Route::group('api', function(){
     // 周任务奖励记录
     Route::post('task/reward/log/list', \app\controller\task\TaskCon::class . '@GetTaskRewardLogList');
 
+    // 周任务奖励统计
+    Route::post('task/reward/log/stats', \app\controller\task\TaskCon::class . '@GetTaskRewardStats');
+
+    // 系统配置列表
+    Route::post('config/list', \app\controller\config\SysConfigCon::class . '@GetConfigList');
+
+    // 系统配置新增
+    Route::post('config/add', \app\controller\config\SysConfigCon::class . '@AddConfig');
+
+    // 系统配置修改
+    Route::post('config/update', \app\controller\config\SysConfigCon::class . '@UpdateConfig');
+
     // 奖池配置列表
     Route::post('prize/pool/config/list', \app\controller\activity\ActivityCon::class . '@GetPrizePoolConfigList');
 
@@ -256,6 +286,9 @@ Route::group('api', function(){
 
     // 财务报表
     Route::post('report/finance/summary', \app\controller\report\RecordCon::class . '@GetFinanceSummary');
+
+    // 控制台总览
+    Route::post('dashboard/overview', \app\controller\report\DashboardCon::class . '@GetOverview');
 
 })->middleware([AuthMiddleware::class, AdminLogMiddleware::class]);
 

@@ -37,6 +37,10 @@ export const getWithdrawShowcaseList = (params: WithdrawShowcase.ReqParams) => {
   return http.post<WithdrawShowcase.ResListData>(PORT1 + `/withdraw/showcase/list`, params);
 };
 
+export const getWithdrawShowcaseStats = (params: WithdrawShowcase.StatsParams) => {
+  return http.post<WithdrawShowcase.StatsData>(PORT1 + `/withdraw/showcase/stats`, params);
+};
+
 export const getWithdrawShowcaseDetail = (params: WithdrawShowcase.DetailParams) => {
   return http.post<WithdrawShowcase.ResListItem>(PORT1 + `/withdraw/showcase/detail`, params);
 };
