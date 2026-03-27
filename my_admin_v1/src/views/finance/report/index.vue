@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="report-page">
     <div v-loading="loading" class="panel">
       <div class="panel-header">
@@ -28,14 +28,14 @@
       </div>
 
       <div class="period-grid">
-        <div v-for="item in periodCards" :key="item.key" class="period-card">
-          <div class="period-title">{{ item.title }}</div>
-          <strong>{{ currencyPrefix }}{{ formatMoney(item.data.net_in_amount) }}</strong>
+        <div class="period-card active">
+          <div class="period-title">{{ activePeriodCard.title }}</div>
+          <strong>{{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.net_in_amount) }}</strong>
           <div class="period-meta">
-            <span>充 {{ currencyPrefix }}{{ formatMoney(item.data.recharge_success_amount) }}</span>
-            <span>提 {{ currencyPrefix }}{{ formatMoney(item.data.withdraw_success_amount) }}</span>
+            <span>充 {{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.recharge_success_amount) }}</span>
+            <span>提 {{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.withdraw_success_amount) }}</span>
           </div>
-          <small>充值 {{ item.data.recharge_success_count || 0 }} 笔 / 提现 {{ item.data.withdraw_success_count || 0 }} 笔</small>
+          <small>{{ activePeriodSummaryText }}</small>
         </div>
       </div>
 
@@ -68,10 +68,7 @@
         <div class="summary-card info">
           <span class="summary-label">资金流水</span>
           <strong>{{ summary.money_total_count || 0 }} 条</strong>
-          <small>
-            收入 {{ currencyPrefix }}{{ formatMoney(summary.money_income_amount) }} / 支出 {{ currencyPrefix
-            }}{{ formatMoney(summary.money_expense_amount) }}
-          </small>
+          <small>{{ moneyFlowSummaryText }}</small>
         </div>
       </div>
 
@@ -158,6 +155,7 @@ import { currencyPrefix } from "@/utils";
 const loading = ref(false);
 const rangeType = ref("today");
 const customRange = ref<string[]>([]);
+
 const createEmptySummary = (): Report.FinanceSummaryData => ({
   recharge_total_count: 0,
   recharge_success_count: 0,
@@ -209,6 +207,13 @@ const periodSummary = reactive<Record<string, Report.FinanceSummaryData>>({
   week: createEmptySummary(),
   month: createEmptySummary()
 });
+const activePeriod = ref<"today" | "yesterday" | "week" | "month">("today");
+const loadedPeriods = reactive<Record<"today" | "yesterday" | "week" | "month", boolean>>({
+  today: false,
+  yesterday: false,
+  week: false,
+  month: false
+});
 
 const getRangeByType = (type: string): string[] => {
   const now = dayjs();
@@ -243,29 +248,31 @@ const fetchSummary = async () => {
   }
 };
 
-const fetchPeriodSummary = async () => {
-  const periodKeys = ["today", "yesterday", "week", "month"] as const;
-  const responses = await Promise.all(
-    periodKeys.map(key => {
-      const [start_time, end_time] = getRangeByType(key);
-      return getFinanceSummary({ start_time, end_time });
-    })
-  );
+const fetchPeriodSummary = async (type: "today" | "yesterday" | "week" | "month", force = false) => {
+  if (!force && loadedPeriods[type]) return;
+  const [start_time, end_time] = getRangeByType(type);
+  const { data } = await getFinanceSummary({ start_time, end_time });
+  periodSummary[type] = normalizeSummaryData(data);
+  loadedPeriods[type] = true;
+};
 
-  periodKeys.forEach((key, index) => {
-    periodSummary[key] = normalizeSummaryData(responses[index].data);
-  });
+const syncActivePeriod = async (type: string) => {
+  if (!["today", "yesterday", "week", "month"].includes(type)) return;
+  activePeriod.value = type as "today" | "yesterday" | "week" | "month";
+  await fetchPeriodSummary(activePeriod.value);
 };
 
 const handlePresetChange = async () => {
   customRange.value = [];
+  await syncActivePeriod(rangeType.value);
   await fetchSummary();
 };
 
 const resetSearch = async () => {
   rangeType.value = "today";
   customRange.value = [];
-  await fetchSummary();
+  activePeriod.value = "today";
+  await Promise.all([fetchSummary(), fetchPeriodSummary("today")]);
 };
 
 const moneyTypeTableData = computed(() =>
@@ -282,11 +289,20 @@ const periodCards = computed(() => [
   { key: "week", title: "本周", data: periodSummary.week },
   { key: "month", title: "本月", data: periodSummary.month }
 ]);
+const activePeriodCard = computed(() => periodCards.value.find(item => item.key === activePeriod.value) || periodCards.value[0]);
+const activePeriodSummaryText = computed(
+  () =>
+    `充值 ${activePeriodCard.value.data.recharge_success_count || 0} 笔 / 提现 ${activePeriodCard.value.data.withdraw_success_count || 0} 笔`
+);
+const moneyFlowSummaryText = computed(
+  () =>
+    `收入 ${currencyPrefix}${formatMoney(summary.money_income_amount)} / 支出 ${currencyPrefix}${formatMoney(summary.money_expense_amount)}`
+);
 
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
 
 onMounted(async () => {
-  await Promise.allSettled([fetchSummary(), fetchPeriodSummary()]);
+  await Promise.allSettled([fetchSummary(), fetchPeriodSummary("today")]);
 });
 </script>
 
@@ -327,7 +343,7 @@ onMounted(async () => {
 
 .period-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(280px, 380px);
   gap: 16px;
   margin-bottom: 16px;
 }
@@ -337,9 +353,15 @@ onMounted(async () => {
   flex-direction: column;
   gap: 10px;
   padding: 18px 20px;
+  cursor: pointer;
   border-radius: 14px;
   border: 1px solid #dbeafe;
   background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.period-card.active {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 2px rgb(20 184 166 / 12%);
 }
 
 .period-title {

@@ -29,5 +29,7 @@ return [
     'error_message'    => '页面错误！请稍后再试～',
     // 显示错误信息
     'show_error_msg'   => true,
-    'image_url'         =>"http://127.0.0.1:8081/"
+    'image_url'         =>"http://127.0.0.1:8081/",//图片保存地址域名
+    'home_url'         =>"http://127.0.0.1:8081/", //前端域名
+    'home_pay_url'         =>"http://127.0.0.1:123/api/pay"//前端拉起付款域名
 ];

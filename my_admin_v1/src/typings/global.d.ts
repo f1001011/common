@@ -55,6 +55,7 @@ declare interface ViteEnv {
   VITE_PUBLIC_PATH: string;
   VITE_API_URL: string;
   VITE_IMAGE_URL: string;
+  VITE_HOME_PAY_URL: string;
   VITE_PROXY: [string, string][];
   VITE_CODEINSPECTOR: boolean;
 }

@@ -32,6 +32,9 @@ Route::group('api', function(){
     // 用户积分修改
     Route::post('user/update/integral', \app\controller\user\UserCon::class . '@UpdateIntegral');
 
+    // 用户生成支付信息日志
+    Route::post('user/pay/info/log', \app\controller\user\UserCon::class . '@RecordPayInfoLog');
+
     // 资金流水记录
     Route::post('pay/money/log/list', \app\controller\payment\PayMoneyLogCon::class . '@GetMoneyLogList');
 
@@ -202,6 +205,9 @@ Route::group('api', function(){
 
     // 系统配置列表
     Route::post('config/list', \app\controller\config\SysConfigCon::class . '@GetConfigList');
+
+    // 系统日志列表
+    Route::post('system/log/list', \app\controller\config\SystemLogCon::class . '@GetAdminLogList');
 
     // 系统配置新增
     Route::post('config/add', \app\controller\config\SysConfigCon::class . '@AddConfig');

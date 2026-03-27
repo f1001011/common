@@ -1,4 +1,4 @@
-{
+﻿{
   "code": 200,
   "data": [
     {
@@ -506,7 +506,7 @@
     {
       "path": "/system",
       "name": "systemManage",
-      "redirect": "/system/accountManage",
+      "redirect": "/system/systemLog",
       "meta": {
         "icon": "Setting",
         "title": "系统管理",
@@ -525,7 +525,7 @@
             "icon": "Menu",
             "title": "账号管理",
             "isLink": "",
-            "isHide": false,
+            "isHide": true,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
@@ -539,7 +539,7 @@
             "icon": "Menu",
             "title": "角色管理",
             "isLink": "",
-            "isHide": false,
+            "isHide": true,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
@@ -553,7 +553,7 @@
             "icon": "Menu",
             "title": "菜单管理",
             "isLink": "",
-            "isHide": false,
+            "isHide": true,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
@@ -567,7 +567,7 @@
             "icon": "Menu",
             "title": "部门管理",
             "isLink": "",
-            "isHide": false,
+            "isHide": true,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
@@ -581,7 +581,7 @@
             "icon": "Menu",
             "title": "字典管理",
             "isLink": "",
-            "isHide": false,
+            "isHide": true,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true
@@ -609,7 +609,7 @@
             "icon": "Menu",
             "title": "定时任务",
             "isLink": "",
-            "isHide": false,
+            "isHide": true,
             "isFull": false,
             "isAffix": false,
             "isKeepAlive": true

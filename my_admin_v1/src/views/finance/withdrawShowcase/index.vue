@@ -1,16 +1,25 @@
 <template>
   <div class="showcase-page">
+    <div class="period-switch">
+      <el-radio-group v-model="activePeriod" @change="handlePeriodChange">
+        <el-radio-button label="today">今日</el-radio-button>
+        <el-radio-button label="yesterday">昨日</el-radio-button>
+        <el-radio-button label="week">本周</el-radio-button>
+        <el-radio-button label="month">本月</el-radio-button>
+      </el-radio-group>
+    </div>
+
     <div class="period-grid">
-      <div v-for="item in periodCards" :key="item.key" class="period-card">
-        <div class="period-title">{{ item.title }}</div>
-        <strong>{{ currencyPrefix }}{{ formatMoney(item.data.amount_total) }}</strong>
+      <div class="period-card active">
+        <div class="period-title">{{ activePeriodCard.title }}</div>
+        <strong>{{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.amount_total) }}</strong>
         <div class="period-meta">
-          <span>展示 {{ item.data.show_count }}</span>
-          <span>用户 {{ item.data.user_count }}</span>
+          <span>展示 {{ activePeriodCard.data.show_count }}</span>
+          <span>用户 {{ activePeriodCard.data.user_count }}</span>
         </div>
         <div class="period-meta">
-          <span>评论 {{ item.data.comment_total }}</span>
-          <span>点赞 {{ item.data.like_total }}</span>
+          <span>评论 {{ activePeriodCard.data.comment_total }}</span>
+          <span>点赞 {{ activePeriodCard.data.like_total }}</span>
         </div>
       </div>
     </div>
@@ -371,6 +380,13 @@ const periodStats = reactive<Record<string, WithdrawShowcase.StatsData>>({
   week: createEmptyStats(),
   month: createEmptyStats()
 });
+const activePeriod = ref<"today" | "yesterday" | "week" | "month">("today");
+const loadedPeriods = reactive<Record<"today" | "yesterday" | "week" | "month", boolean>>({
+  today: false,
+  yesterday: false,
+  week: false,
+  month: false
+});
 
 const showcaseSearch = reactive({
   user_id: "",
@@ -424,18 +440,11 @@ const getPeriodRange = (type: "today" | "yesterday" | "week" | "month") => {
   };
 };
 
-const fetchPeriodStats = async () => {
-  const [todayRes, yesterdayRes, weekRes, monthRes] = await Promise.all([
-    getWithdrawShowcaseStats(getPeriodRange("today")),
-    getWithdrawShowcaseStats(getPeriodRange("yesterday")),
-    getWithdrawShowcaseStats(getPeriodRange("week")),
-    getWithdrawShowcaseStats(getPeriodRange("month"))
-  ]);
-
-  periodStats.today = todayRes.data;
-  periodStats.yesterday = yesterdayRes.data;
-  periodStats.week = weekRes.data;
-  periodStats.month = monthRes.data;
+const fetchPeriodStats = async (type: "today" | "yesterday" | "week" | "month", force = false) => {
+  if (!force && loadedPeriods[type]) return;
+  const { data } = await getWithdrawShowcaseStats(getPeriodRange(type));
+  periodStats[type] = data;
+  loadedPeriods[type] = true;
 };
 
 const periodCards = computed(() => [
@@ -444,6 +453,12 @@ const periodCards = computed(() => [
   { key: "week", title: "本周", data: periodStats.week },
   { key: "month", title: "本月", data: periodStats.month }
 ]);
+const activePeriodCard = computed(() => periodCards.value.find(item => item.key === activePeriod.value) || periodCards.value[0]);
+
+const handlePeriodChange = async (type: "today" | "yesterday" | "week" | "month") => {
+  activePeriod.value = type;
+  await fetchPeriodStats(type);
+};
 
 const showcaseForm = reactive<WithdrawShowcase.SaveParams>(createDefaultShowcaseForm());
 const commentForm = reactive<WithdrawShowcase.SaveCommentParams>(createDefaultCommentForm());
@@ -556,7 +571,7 @@ const handleSaveShowcase = async () => {
   ElMessage.success(res.message || "保存成功");
   showcaseDialogVisible.value = false;
   await fetchShowcaseList();
-  await fetchPeriodStats();
+  await fetchPeriodStats("today", true);
   if (showcaseForm.id && detailId.value === showcaseForm.id) {
     await fetchDetail();
   }
@@ -577,7 +592,7 @@ const handleSaveComment = async () => {
   await fetchCommentList();
   if (detailId.value) await fetchDetail();
   await fetchShowcaseList();
-  await fetchPeriodStats();
+  await fetchPeriodStats("today", true);
 };
 
 const handleDeleteShowcase = (row: WithdrawShowcase.ResListItem) => {
@@ -585,7 +600,7 @@ const handleDeleteShowcase = (row: WithdrawShowcase.ResListItem) => {
     const res = await deleteWithdrawShowcase({ id: row.id });
     ElMessage.success(res.message || "删除成功");
     await fetchShowcaseList();
-    await fetchPeriodStats();
+    await fetchPeriodStats("today", true);
     if (detailId.value === row.id) detail.value = null;
   });
 };
@@ -597,7 +612,7 @@ const handleDeleteComment = (row: WithdrawShowcase.CommentItem) => {
     await fetchCommentList();
     if (detailId.value) await fetchDetail();
     await fetchShowcaseList();
-    await fetchPeriodStats();
+    await fetchPeriodStats("today", true);
   });
 };
 
@@ -652,7 +667,7 @@ const handleCommentSizeChange = (size: number) => {
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
 
 onMounted(async () => {
-  await Promise.allSettled([fetchShowcaseList(), fetchCommentList(), fetchPeriodStats()]);
+  await Promise.allSettled([fetchShowcaseList(), fetchCommentList(), fetchPeriodStats("today")]);
 });
 </script>
 
@@ -665,8 +680,12 @@ onMounted(async () => {
 
 .period-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(280px, 380px);
   gap: 16px;
+}
+
+.period-switch {
+  display: flex;
 }
 
 .period-card {
@@ -674,9 +693,15 @@ onMounted(async () => {
   flex-direction: column;
   gap: 10px;
   padding: 18px 20px;
+  cursor: pointer;
   border-radius: 14px;
   border: 1px solid #dbeafe;
   background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.period-card.active {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 2px rgb(20 184 166 / 12%);
 }
 
 .period-title {

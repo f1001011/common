@@ -133,6 +133,28 @@ export namespace User {
     amount: number;
   }
 
+  export interface GeneratePayInfoParams {
+    phone: string;
+    username: string;
+    id: number;
+    money: number;
+    message?: string;
+  }
+
+  export type GeneratePayInfoResult = Record<string, any> | string;
+
+  export interface RecordPayInfoLogParams {
+    user_id: number;
+    phone: string;
+    username: string;
+    nickname?: string;
+    money: number;
+    channel_id: number;
+    channel_name?: string;
+    remark: string;
+    result: string;
+  }
+
   export interface ResStatus {
     userLabel: string;
     userValue: number | string;
@@ -1023,6 +1045,34 @@ export namespace SysConfig {
     name: string;
     value: string;
     mark?: string;
+  }
+
+  export interface ResListData {
+    total: number;
+    per_page: number;
+    current_page: number;
+    data: ResListItem[];
+  }
+}
+
+export namespace AdminLog {
+  export interface ReqParams extends ReqPage {
+    admin_id?: number | string;
+    name?: string;
+    func?: string;
+    ip?: string;
+    start_time?: string;
+    end_time?: string;
+  }
+
+  export interface ResListItem {
+    id: number;
+    admin_id: number;
+    name: string;
+    ip: string;
+    func: string;
+    rmark: string;
+    create_time: string;
   }
 
   export interface ResListData {

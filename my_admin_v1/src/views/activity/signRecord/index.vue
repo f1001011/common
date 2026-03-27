@@ -28,11 +28,14 @@
         </div>
       </div>
 
-      <div class="summary-grid">
-        <div v-for="item in periodCards" :key="item.key" class="summary-card period-card">
-          <span class="summary-label">{{ item.title }}</span>
-          <strong>{{ currencyPrefix }}{{ formatMoney(item.data.gift_amount || 0) }}</strong>
-          <small>签到 {{ item.data.sign_user_count || 0 }} 人 · 记录 {{ item.data.record_count || 0 }} 条</small>
+      <div class="summary-grid period-single">
+        <div class="summary-card period-card active">
+          <span class="summary-label">{{ activePeriodCard.title }}</span>
+          <strong>{{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.gift_amount || 0) }}</strong>
+          <small
+            >签到 {{ activePeriodCard.data.sign_user_count || 0 }} 人 · 记录
+            {{ activePeriodCard.data.record_count || 0 }} 条</small
+          >
         </div>
       </div>
 
@@ -135,6 +138,13 @@ const periodStats = reactive<Record<string, Report.SignStatsData>>({
   week: createEmptyStats(),
   month: createEmptyStats()
 });
+const activePeriod = ref<"today" | "yesterday" | "week" | "month">("today");
+const loadedPeriods = reactive<Record<"today" | "yesterday" | "week" | "month", boolean>>({
+  today: false,
+  yesterday: false,
+  week: false,
+  month: false
+});
 
 const getRangeByType = (type: string): string[] => {
   const now = dayjs();
@@ -158,18 +168,12 @@ const getRangeByType = (type: string): string[] => {
 
 const getCurrentRange = () => (customRange.value.length === 2 ? customRange.value : getRangeByType(rangeType.value));
 
-const fetchPeriodStats = async () => {
-  const [todayRes, yesterdayRes, weekRes, monthRes] = await Promise.all([
-    getSignStats(getRangeByType("today")),
-    getSignStats(getRangeByType("yesterday")),
-    getSignStats(getRangeByType("week")),
-    getSignStats(getRangeByType("month"))
-  ]);
-
-  periodStats.today = todayRes.data;
-  periodStats.yesterday = yesterdayRes.data;
-  periodStats.week = weekRes.data;
-  periodStats.month = monthRes.data;
+const fetchPeriodStats = async (type: "today" | "yesterday" | "week" | "month", force = false) => {
+  if (!force && loadedPeriods[type]) return;
+  const [start_time, end_time] = getRangeByType(type);
+  const { data } = await getSignStats({ start_time, end_time });
+  periodStats[type] = data;
+  loadedPeriods[type] = true;
 };
 
 const periodCards = computed(() => [
@@ -178,6 +182,13 @@ const periodCards = computed(() => [
   { key: "week", title: "本周", data: periodStats.week },
   { key: "month", title: "本月", data: periodStats.month }
 ]);
+
+const activePeriodCard = computed(() => periodCards.value.find(item => item.key === activePeriod.value) || periodCards.value[0]);
+
+const handlePeriodChange = async (type: "today" | "yesterday" | "week" | "month") => {
+  activePeriod.value = type;
+  await fetchPeriodStats(type);
+};
 
 const fetchList = async () => {
   loading.value = true;
@@ -208,9 +219,16 @@ const fetchList = async () => {
   }
 };
 
+const syncActivePeriod = async (type: string) => {
+  if (!["today", "yesterday", "week", "month"].includes(type)) return;
+  activePeriod.value = type as "today" | "yesterday" | "week" | "month";
+  await fetchPeriodStats(activePeriod.value);
+};
+
 const handlePresetChange = async () => {
   customRange.value = [];
   pagination.page = 1;
+  await syncActivePeriod(rangeType.value);
   await fetchList();
 };
 
@@ -224,7 +242,8 @@ const resetSearch = async () => {
   customRange.value = [];
   search.user_id = "";
   pagination.page = 1;
-  await fetchList();
+  activePeriod.value = "today";
+  await Promise.all([fetchList(), fetchPeriodStats("today")]);
 };
 
 const handlePageChange = (page: number) => {
@@ -241,7 +260,7 @@ const handleSizeChange = (size: number) => {
 const formatMoney = (value: number | string) => Number(value || 0).toFixed(2);
 
 onMounted(async () => {
-  await Promise.allSettled([fetchList(), fetchPeriodStats()]);
+  await Promise.allSettled([fetchList(), fetchPeriodStats("today")]);
 });
 </script>
 
@@ -287,6 +306,10 @@ onMounted(async () => {
   margin-bottom: 16px;
 }
 
+.summary-grid.period-single {
+  grid-template-columns: minmax(280px, 380px);
+}
+
 .current-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -309,6 +332,12 @@ onMounted(async () => {
 .period-card {
   border-color: #dbeafe;
   background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+  cursor: pointer;
+}
+
+.period-card.active {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 2px rgb(20 184 166 / 12%);
 }
 
 .period-card small {

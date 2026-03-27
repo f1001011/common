@@ -5,6 +5,7 @@ namespace app\controller\report;
 
 use app\controller\BaseCon;
 use app\model\CommonGoodsOrderModel;
+use app\model\CommonHomeTokenModel;
 use app\model\CommonIncomeClaimLogModel;
 use app\model\CommonPayCashModel;
 use app\model\CommonPayRechargeModel;
@@ -254,45 +255,11 @@ class DashboardCon extends BaseCon
 
     protected function getActiveUserCount(string $startTime, string $endTime): int
     {
-        $userIds = [];
-
-        $rechargeIds = Db::name('common_pay_recharge')
-            ->where('status', CommonPayRechargeModel::STATUS_PAY_SUCCESS)
+        return (int)Db::name('common_home_token')
             ->where('create_time', '>=', $startTime)
             ->where('create_time', '<=', $endTime)
-            ->distinct(true)
-            ->column('uid');
-
-        $withdrawIds = Db::name('common_pay_cash')
-            ->where('status', CommonPayCashModel::STATUS_SUCCESS)
-            ->where('create_time', '>=', $startTime)
-            ->where('create_time', '<=', $endTime)
-            ->distinct(true)
-            ->column('u_id');
-
-        $goodsOrderIds = Db::name('common_goods_order')
-            ->where('status', '<>', CommonGoodsOrderModel::STATUS_DELETE)
-            ->where('create_time', '>=', $startTime)
-            ->where('create_time', '<=', $endTime)
-            ->distinct(true)
-            ->column('user_id');
-
-        $claimIds = Db::name('common_income_claim_log')
-            ->where('status', CommonIncomeClaimLogModel::STATUS_CLAIMED)
-            ->where('claim_time', '>=', $startTime)
-            ->where('claim_time', '<=', $endTime)
-            ->distinct(true)
-            ->column('user_id');
-
-        foreach ([$rechargeIds, $withdrawIds, $goodsOrderIds, $claimIds] as $group) {
-            foreach ($group as $id) {
-                if ((int)$id > 0) {
-                    $userIds[(int)$id] = true;
-                }
-            }
-        }
-
-        return count($userIds);
+            ->where('user_id', '>', 0)
+            ->count('distinct user_id');
     }
 
     protected function getUserAssetSummary()

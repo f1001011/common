@@ -70,12 +70,14 @@
         <el-button type="primary" link @click="openBaseDialog(scope.row)">编辑</el-button>
         <el-button type="primary" link @click="openAmountDialog('balance', scope.row)">调余额</el-button>
         <el-button type="primary" link @click="openAmountDialog('integral', scope.row)">调积分</el-button>
+        <el-button type="primary" link @click="openPayInfoDialog(scope.row)">生成支付信息</el-button>
       </template>
     </ProTable>
 
     <UserBaseDialog ref="baseDialogRef" />
     <UserAmountDialog ref="amountDialogRef" />
     <UserStatusDialog ref="statusDialogRef" />
+    <UserPayInfoDialog ref="payInfoDialogRef" />
   </div>
 </template>
 
@@ -89,11 +91,13 @@ import { currencyPrefix } from "@/utils";
 import UserBaseDialog from "@/views/user/components/UserBaseDialog.vue";
 import UserAmountDialog from "@/views/user/components/UserAmountDialog.vue";
 import UserStatusDialog from "@/views/user/components/UserStatusDialog.vue";
+import UserPayInfoDialog from "@/views/user/components/UserPayInfoDialog.vue";
 
 const proTable = ref<ProTableInstance>();
 const baseDialogRef = ref<InstanceType<typeof UserBaseDialog> | null>(null);
 const amountDialogRef = ref<InstanceType<typeof UserAmountDialog> | null>(null);
 const statusDialogRef = ref<InstanceType<typeof UserStatusDialog> | null>(null);
+const payInfoDialogRef = ref<InstanceType<typeof UserPayInfoDialog> | null>(null);
 
 const statusOptions = [
   { label: "全部", value: "" },
@@ -153,7 +157,7 @@ const columns = reactive<ColumnProps<User.ResUserList>[]>([
       props: { type: "datetimerange", valueFormat: "YYYY-MM-DD HH:mm:ss" }
     }
   },
-  { prop: "operation", label: "操作", fixed: "right", width: 220 }
+  { prop: "operation", label: "操作", fixed: "right", width: 320 }
 ]);
 
 const vipColumn = columns.find(item => item.prop === "level_vip");
@@ -237,6 +241,12 @@ const openStatusDialog = (mode: "status" | "state", row: User.ResUserList) => {
     mode,
     row,
     getTableList: refreshTable
+  });
+};
+
+const openPayInfoDialog = (row: User.ResUserList) => {
+  payInfoDialogRef.value?.acceptParams({
+    row
   });
 };
 </script>

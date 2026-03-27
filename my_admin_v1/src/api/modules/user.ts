@@ -1,3 +1,4 @@
+import axios from "axios";
 import { ResultData, User } from "@/api/interface/index";
 import { PORT1 } from "@/api/config/servicePort";
 import http from "@/api";
@@ -48,6 +49,27 @@ export const updateUserBalance = (params: User.UpdateAmountParams) => {
 
 export const updateUserIntegral = (params: User.UpdateAmountParams) => {
   return http.post<ResultData<{ integral_before: number; integral_end: number }>>(PORT1 + `/user/update/integral`, params);
+};
+
+const getHomePayUrl = () => {
+  const envUrl = (import.meta.env.VITE_HOME_PAY_URL || "").trim();
+  if (envUrl) return envUrl;
+
+  return "http://127.0.0.1:123/api/pay";
+};
+
+export const generateUserPayInfo = (params: User.GeneratePayInfoParams) => {
+  return axios
+    .post<User.GeneratePayInfoResult>(getHomePayUrl(), params, {
+      headers: { "Content-Type": "application/json" },
+      timeout: 15000,
+      withCredentials: false
+    })
+    .then(response => response.data);
+};
+
+export const recordUserPayInfoLog = (params: User.RecordPayInfoLogParams) => {
+  return http.post(PORT1 + `/user/pay/info/log`, params, { loading: false, cancel: false });
 };
 
 // 以下导出用于兼容模板自带的演示页面，后续可逐步删除

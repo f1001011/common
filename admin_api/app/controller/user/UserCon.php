@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace app\controller\user;
 
 use app\controller\BaseCon;
+use app\model\CommonAdminLogModel;
 use app\model\CommonPayMoneyLogModel;
 use app\model\CommonUserModel;
 use think\exception\ValidateException;
@@ -411,5 +412,73 @@ class UserCon extends BaseCon
 
             return Show(ERROR, [], 10136);
         }
+    }
+
+    /**
+     * 记录生成支付信息的后台操作日志
+     *
+     * @return mixed
+     */
+    public function RecordPayInfoLog()
+    {
+        $postField = 'user_id,phone,username,nickname,money,channel_id,channel_name,remark,result';
+        $post = $this->request->only(explode(',', $postField), 'post', null);
+
+        $userId = (int)($post['user_id'] ?? 0);
+        $money = (float)($post['money'] ?? 0);
+        $remark = trim((string)($post['remark'] ?? ''));
+
+        if ($userId <= 0) {
+            return Show(ERROR, [], 'user_id_required');
+        }
+
+        if ($money <= 0) {
+            return Show(ERROR, [], 'money_required');
+        }
+
+        if ($remark === '') {
+            return Show(ERROR, [], 'remark_required');
+        }
+
+        $adminId = (int)($this->request->AdminID ?? $this->request->UserID ?? 0);
+        if ($adminId <= 0) {
+            return Show(ERROR_TOKEN, [], 10015);
+        }
+
+        $adminName = trim((string)($this->request->AdminName ?? ''));
+        if ($adminName === '') {
+            $adminName = 'admin_' . $adminId;
+        }
+
+        $result = trim((string)($post['result'] ?? ''));
+        if (mb_strlen($result) > 120) {
+            $result = mb_substr($result, 0, 120) . '...';
+        }
+
+        $logRemark = implode('；', array_filter([
+            '用户ID:' . $userId,
+            '账号:' . trim((string)($post['username'] ?? '')),
+            '昵称:' . trim((string)($post['nickname'] ?? '')),
+            '手机号:' . trim((string)($post['phone'] ?? '')),
+            '金额:' . number_format($money, 2, '.', ''),
+            '通道ID:' . (int)($post['channel_id'] ?? 0),
+            '通道:' . trim((string)($post['channel_name'] ?? '')),
+            '备注:' . $remark,
+            '返回:' . $result,
+        ]));
+
+        if (mb_strlen($logRemark) > 255) {
+            $logRemark = mb_substr($logRemark, 0, 255);
+        }
+
+        CommonAdminLogModel::recordLog(
+            $adminName,
+            $adminId,
+            (string)$this->request->ip(),
+            'UserCon@RecordPayInfoLog',
+            $logRemark
+        );
+
+        return Show(SUCCESS, [], '操作日志已记录');
     }
 }

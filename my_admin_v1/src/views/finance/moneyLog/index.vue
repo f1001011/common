@@ -1,12 +1,21 @@
 <template>
   <div class="table-box finance-list-page">
+    <div class="period-switch">
+      <el-radio-group v-model="activePeriod" @change="handlePeriodChange">
+        <el-radio-button label="today">今日</el-radio-button>
+        <el-radio-button label="yesterday">昨日</el-radio-button>
+        <el-radio-button label="week">本周</el-radio-button>
+        <el-radio-button label="month">本月</el-radio-button>
+      </el-radio-group>
+    </div>
+
     <div class="period-grid">
-      <div v-for="item in periodCards" :key="item.key" class="period-card">
-        <div class="period-title">{{ item.title }}</div>
-        <strong>{{ currencyPrefix }}{{ formatMoney(item.data.net_amount) }}</strong>
+      <div class="period-card active">
+        <div class="period-title">{{ activePeriodCard.title }}</div>
+        <strong>{{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.net_amount) }}</strong>
         <div class="period-meta">
-          <span class="amount-up">入 {{ currencyPrefix }}{{ formatMoney(item.data.income_amount) }}</span>
-          <span class="amount-down">出 {{ currencyPrefix }}{{ formatMoney(item.data.expense_amount) }}</span>
+          <span class="amount-up">入 {{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.income_amount) }}</span>
+          <span class="amount-down">出 {{ currencyPrefix }}{{ formatMoney(activePeriodCard.data.expense_amount) }}</span>
         </div>
       </div>
     </div>
@@ -88,6 +97,13 @@ const periodStats = reactive<Record<string, PayMoneyLog.StatsData>>({
   week: createEmptyStats(),
   month: createEmptyStats()
 });
+const activePeriod = ref<"today" | "yesterday" | "week" | "month">("today");
+const loadedPeriods = reactive<Record<"today" | "yesterday" | "week" | "month", boolean>>({
+  today: false,
+  yesterday: false,
+  week: false,
+  month: false
+});
 
 const getPeriodRange = (type: "today" | "yesterday" | "week" | "month") => {
   const now = dayjs();
@@ -115,18 +131,11 @@ const getPeriodRange = (type: "today" | "yesterday" | "week" | "month") => {
   };
 };
 
-const fetchPeriodStats = async () => {
-  const [todayRes, yesterdayRes, weekRes, monthRes] = await Promise.all([
-    getPayMoneyLogStats(getPeriodRange("today")),
-    getPayMoneyLogStats(getPeriodRange("yesterday")),
-    getPayMoneyLogStats(getPeriodRange("week")),
-    getPayMoneyLogStats(getPeriodRange("month"))
-  ]);
-
-  periodStats.today = todayRes.data;
-  periodStats.yesterday = yesterdayRes.data;
-  periodStats.week = weekRes.data;
-  periodStats.month = monthRes.data;
+const fetchPeriodStats = async (type: "today" | "yesterday" | "week" | "month", force = false) => {
+  if (!force && loadedPeriods[type]) return;
+  const { data } = await getPayMoneyLogStats(getPeriodRange(type));
+  periodStats[type] = data;
+  loadedPeriods[type] = true;
 };
 
 const periodCards = computed(() => [
@@ -135,6 +144,12 @@ const periodCards = computed(() => [
   { key: "week", title: "本周", data: periodStats.week },
   { key: "month", title: "本月", data: periodStats.month }
 ]);
+const activePeriodCard = computed(() => periodCards.value.find(item => item.key === activePeriod.value) || periodCards.value[0]);
+
+const handlePeriodChange = async (type: "today" | "yesterday" | "week" | "month") => {
+  activePeriod.value = type;
+  await fetchPeriodStats(type);
+};
 
 const typeOptions = [
   { label: "全部", value: "" },
@@ -242,14 +257,19 @@ const getStatusText = (value: number | string) => {
   return current?.label || `状态${value}`;
 };
 
-onMounted(fetchPeriodStats);
+onMounted(() => fetchPeriodStats("today"));
 </script>
 
 <style scoped lang="scss">
 .period-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(280px, 380px);
   gap: 16px;
+  margin-bottom: 16px;
+}
+
+.period-switch {
+  display: flex;
   margin-bottom: 16px;
 }
 
@@ -258,9 +278,15 @@ onMounted(fetchPeriodStats);
   flex-direction: column;
   gap: 10px;
   padding: 18px 20px;
+  cursor: pointer;
   border-radius: 14px;
   border: 1px solid #dbeafe;
   background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+}
+
+.period-card.active {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 2px rgb(20 184 166 / 12%);
 }
 
 .period-title {

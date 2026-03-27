@@ -37,13 +37,7 @@
 
       <div class="toolbar">
         <div class="toolbar-left">
-          <el-input
-            v-model="searchForm.id"
-            clearable
-            placeholder="按 ID 查询"
-            style="width: 140px"
-            @keyup.enter="handleSearch"
-          />
+          <el-input v-model="searchForm.id" clearable placeholder="按 ID 查询" style="width: 140px" @keyup.enter="handleSearch" />
           <el-input
             v-model="searchForm.name"
             clearable
