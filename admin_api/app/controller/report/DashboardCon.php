@@ -9,10 +9,13 @@ use app\model\CommonIncomeClaimLogModel;
 use app\model\CommonPayCashModel;
 use app\model\CommonPayRechargeModel;
 use app\model\CommonUserModel;
+use think\facade\Cache;
 use think\facade\Db;
 
 class DashboardCon extends BaseCon
 {
+    protected const OVERVIEW_CACHE_EXPIRE = 180;
+
     public function GetOverview()
     {
         $postField = 'start_time,end_time';
@@ -30,91 +33,102 @@ class DashboardCon extends BaseCon
 
         [$todayStart, $todayEnd, $yesterdayStart, $yesterdayEnd] = $this->resolveRange($startTime, $endTime);
 
-        $todayRecharge = $this->getRechargeSummary($todayStart, $todayEnd);
-        $yesterdayRecharge = $this->getRechargeSummary($yesterdayStart, $yesterdayEnd);
+        $cacheKey = $this->buildOverviewCacheKey([$todayStart, $todayEnd, $yesterdayStart, $yesterdayEnd]);
 
-        $todayWithdraw = $this->getWithdrawSummary($todayStart, $todayEnd);
-        $yesterdayWithdraw = $this->getWithdrawSummary($yesterdayStart, $yesterdayEnd);
+        $data = Cache::remember($cacheKey, function () use ($todayStart, $todayEnd, $yesterdayStart, $yesterdayEnd) {
+            $todayRecharge = $this->getRechargeSummary($todayStart, $todayEnd);
+            $yesterdayRecharge = $this->getRechargeSummary($yesterdayStart, $yesterdayEnd);
 
-        $todayRegisterCount = $this->getRegisterCount($todayStart, $todayEnd);
-        $yesterdayRegisterCount = $this->getRegisterCount($yesterdayStart, $yesterdayEnd);
+            $todayWithdraw = $this->getWithdrawSummary($todayStart, $todayEnd);
+            $yesterdayWithdraw = $this->getWithdrawSummary($yesterdayStart, $yesterdayEnd);
 
-        $todayFirstRechargeCount = $this->getFirstRechargeCount($todayStart, $todayEnd);
-        $yesterdayFirstRechargeCount = $this->getFirstRechargeCount($yesterdayStart, $yesterdayEnd);
+            $todayRegisterCount = $this->getRegisterCount($todayStart, $todayEnd);
+            $yesterdayRegisterCount = $this->getRegisterCount($yesterdayStart, $yesterdayEnd);
 
-        $todayFirstInvestCount = $this->getFirstInvestCount($todayStart, $todayEnd);
-        $yesterdayFirstInvestCount = $this->getFirstInvestCount($yesterdayStart, $yesterdayEnd);
+            $todayFirstRechargeCount = $this->getFirstRechargeCount($todayStart, $todayEnd);
+            $yesterdayFirstRechargeCount = $this->getFirstRechargeCount($yesterdayStart, $yesterdayEnd);
 
-        $todayActiveCount = $this->getActiveUserCount($todayStart, $todayEnd);
-        $yesterdayActiveCount = $this->getActiveUserCount($yesterdayStart, $yesterdayEnd);
+            $todayFirstInvestCount = $this->getFirstInvestCount($todayStart, $todayEnd);
+            $yesterdayFirstInvestCount = $this->getFirstInvestCount($yesterdayStart, $yesterdayEnd);
 
-        $todayIncomeClaimAmount = $this->getIncomeClaimAmount($todayStart, $todayEnd);
-        $yesterdayIncomeClaimAmount = $this->getIncomeClaimAmount($yesterdayStart, $yesterdayEnd);
+            $todayActiveCount = $this->getActiveUserCount($todayStart, $todayEnd);
+            $yesterdayActiveCount = $this->getActiveUserCount($yesterdayStart, $yesterdayEnd);
 
-        $userAssetSummary = $this->getUserAssetSummary();
-        $platformNetInAmount = $this->getPlatformNetInAmount();
-        $activeChannelCount = $this->getActiveChannelCount();
-        $onlineUserCount = $this->getOnlineUserCount();
-        $pendingItems = $this->getPendingItems($todayStart, $todayEnd);
+            $todayIncomeClaimAmount = $this->getIncomeClaimAmount($todayStart, $todayEnd);
+            $yesterdayIncomeClaimAmount = $this->getIncomeClaimAmount($yesterdayStart, $yesterdayEnd);
 
-        $rechargeAmount = (float)($todayRecharge['success_amount'] ?? 0);
-        $withdrawAmount = (float)($todayWithdraw['success_amount'] ?? 0);
+            $userAssetSummary = $this->getUserAssetSummary();
+            $platformNetInAmount = $this->getPlatformNetInAmount();
+            $activeChannelCount = $this->getActiveChannelCount();
+            $onlineUserCount = $this->getOnlineUserCount();
+            $pendingItems = $this->getPendingItems($todayStart, $todayEnd);
 
-        return Show(SUCCESS, [
-            'updated_at' => date('Y-m-d H:i:s'),
-            'query_range' => [
-                'start_time' => $todayStart,
-                'end_time' => $todayEnd,
-                'compare_start_time' => $yesterdayStart,
-                'compare_end_time' => $yesterdayEnd,
-            ],
-            'kpis' => [
-                'today_recharge_amount' => $rechargeAmount,
-                'yesterday_recharge_amount' => (float)($yesterdayRecharge['success_amount'] ?? 0),
-                'today_withdraw_amount' => $withdrawAmount,
-                'yesterday_withdraw_amount' => (float)($yesterdayWithdraw['success_amount'] ?? 0),
-                'today_fee_amount' => (float)($todayWithdraw['fee_amount'] ?? 0),
-                'yesterday_fee_amount' => (float)($yesterdayWithdraw['fee_amount'] ?? 0),
-                'today_net_in_amount' => $rechargeAmount - $withdrawAmount,
-                'yesterday_net_in_amount' => (float)($yesterdayRecharge['success_amount'] ?? 0) - (float)($yesterdayWithdraw['success_amount'] ?? 0),
-                'today_register_count' => $todayRegisterCount,
-                'yesterday_register_count' => $yesterdayRegisterCount,
-                'today_active_count' => $todayActiveCount,
-                'yesterday_active_count' => $yesterdayActiveCount,
-                'today_first_recharge_count' => $todayFirstRechargeCount,
-                'yesterday_first_recharge_count' => $yesterdayFirstRechargeCount,
-                'today_first_invest_count' => $todayFirstInvestCount,
-                'yesterday_first_invest_count' => $yesterdayFirstInvestCount,
-                'today_income_claim_amount' => $todayIncomeClaimAmount,
-                'yesterday_income_claim_amount' => $yesterdayIncomeClaimAmount,
-                'total_user_count' => $this->getTotalUserCount(),
-                'online_user_count' => $onlineUserCount,
-                'active_channel_count' => $activeChannelCount,
-                'user_balance_amount' => (float)($userAssetSummary['balance_amount'] ?? 0),
-            ],
-            'pending_items' => $pendingItems,
-            'capital' => [
-                'platform_net_in_amount' => $platformNetInAmount,
-                'user_balance_amount' => (float)($userAssetSummary['balance_amount'] ?? 0),
-                'freeze_amount' => (float)($userAssetSummary['freeze_amount'] ?? 0),
-                'team_commission_amount' => (float)($userAssetSummary['team_amount'] ?? 0),
-                'user_integral_amount' => (float)($userAssetSummary['integral_amount'] ?? 0),
-                'fund_gap_amount' => $platformNetInAmount - (float)($userAssetSummary['balance_amount'] ?? 0) - (float)($userAssetSummary['freeze_amount'] ?? 0),
-                'recharge_withdraw_ratio' => $withdrawAmount > 0 ? round($rechargeAmount / $withdrawAmount, 2) : 0,
-                'active_channel_count' => $activeChannelCount,
-                'online_user_count' => $onlineUserCount,
-            ],
-            'user_growth' => [
-                'today_register_count' => $todayRegisterCount,
-                'today_active_count' => $todayActiveCount,
-                'today_first_recharge_count' => $todayFirstRechargeCount,
-                'today_first_invest_count' => $todayFirstInvestCount,
-                'register_trend' => $this->getRegisterTrend($todayStart, $todayEnd),
-                'vip_distribution' => $this->getVipDistribution(),
-            ],
-            'finance_trend' => $this->getFinanceTrend($todayStart, $todayEnd),
-            'channel_flow' => $this->getChannelFlow($todayStart, $todayEnd),
-        ]);
+            $rechargeAmount = (float)($todayRecharge['success_amount'] ?? 0);
+            $withdrawAmount = (float)($todayWithdraw['success_amount'] ?? 0);
+
+            return [
+                'updated_at' => date('Y-m-d H:i:s'),
+                'query_range' => [
+                    'start_time' => $todayStart,
+                    'end_time' => $todayEnd,
+                    'compare_start_time' => $yesterdayStart,
+                    'compare_end_time' => $yesterdayEnd,
+                ],
+                'kpis' => [
+                    'today_recharge_amount' => $rechargeAmount,
+                    'yesterday_recharge_amount' => (float)($yesterdayRecharge['success_amount'] ?? 0),
+                    'today_withdraw_amount' => $withdrawAmount,
+                    'yesterday_withdraw_amount' => (float)($yesterdayWithdraw['success_amount'] ?? 0),
+                    'today_fee_amount' => (float)($todayWithdraw['fee_amount'] ?? 0),
+                    'yesterday_fee_amount' => (float)($yesterdayWithdraw['fee_amount'] ?? 0),
+                    'today_net_in_amount' => $rechargeAmount - $withdrawAmount,
+                    'yesterday_net_in_amount' => (float)($yesterdayRecharge['success_amount'] ?? 0) - (float)($yesterdayWithdraw['success_amount'] ?? 0),
+                    'today_register_count' => $todayRegisterCount,
+                    'yesterday_register_count' => $yesterdayRegisterCount,
+                    'today_active_count' => $todayActiveCount,
+                    'yesterday_active_count' => $yesterdayActiveCount,
+                    'today_first_recharge_count' => $todayFirstRechargeCount,
+                    'yesterday_first_recharge_count' => $yesterdayFirstRechargeCount,
+                    'today_first_invest_count' => $todayFirstInvestCount,
+                    'yesterday_first_invest_count' => $yesterdayFirstInvestCount,
+                    'today_income_claim_amount' => $todayIncomeClaimAmount,
+                    'yesterday_income_claim_amount' => $yesterdayIncomeClaimAmount,
+                    'total_user_count' => $this->getTotalUserCount(),
+                    'online_user_count' => $onlineUserCount,
+                    'active_channel_count' => $activeChannelCount,
+                    'user_balance_amount' => (float)($userAssetSummary['balance_amount'] ?? 0),
+                ],
+                'pending_items' => $pendingItems,
+                'capital' => [
+                    'platform_net_in_amount' => $platformNetInAmount,
+                    'user_balance_amount' => (float)($userAssetSummary['balance_amount'] ?? 0),
+                    'freeze_amount' => (float)($userAssetSummary['freeze_amount'] ?? 0),
+                    'team_commission_amount' => (float)($userAssetSummary['team_amount'] ?? 0),
+                    'user_integral_amount' => (float)($userAssetSummary['integral_amount'] ?? 0),
+                    'fund_gap_amount' => $platformNetInAmount - (float)($userAssetSummary['balance_amount'] ?? 0) - (float)($userAssetSummary['freeze_amount'] ?? 0),
+                    'recharge_withdraw_ratio' => $withdrawAmount > 0 ? round($rechargeAmount / $withdrawAmount, 2) : 0,
+                    'active_channel_count' => $activeChannelCount,
+                    'online_user_count' => $onlineUserCount,
+                ],
+                'user_growth' => [
+                    'today_register_count' => $todayRegisterCount,
+                    'today_active_count' => $todayActiveCount,
+                    'today_first_recharge_count' => $todayFirstRechargeCount,
+                    'today_first_invest_count' => $todayFirstInvestCount,
+                    'register_trend' => $this->getRegisterTrend($todayStart, $todayEnd),
+                    'vip_distribution' => $this->getVipDistribution(),
+                ],
+                'finance_trend' => $this->getFinanceTrend($todayStart, $todayEnd),
+                'channel_flow' => $this->getChannelFlow($todayStart, $todayEnd),
+            ];
+        }, self::OVERVIEW_CACHE_EXPIRE);
+
+        return Show(SUCCESS, $data);
+    }
+
+    protected function buildOverviewCacheKey(array $parts = []): string
+    {
+        return 'dashboard:overview:' . md5(json_encode($parts, JSON_UNESCAPED_UNICODE));
     }
 
     protected function getDayRange(int $offset = 0): array
